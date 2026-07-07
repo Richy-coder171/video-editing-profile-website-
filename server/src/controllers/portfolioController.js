@@ -1,6 +1,43 @@
+import { getSupabaseClient } from '../config/supabase.js';
 import { PORTFOLIO_TYPES } from '../config/portfolioTypes.js';
 import asyncHandler from '../utils/asyncHandler.js';
-import { searchPortfolioAssets } from '../utils/cloudinaryUpload.js';
+import { deleteFromCloudinary } from '../utils/cloudinaryUpload.js';
+import {
+  normalizePortfolioRow,
+  normalizeTools,
+  parseFeatured,
+  parseSortOrder
+} from '../utils/portfolioRows.js';
+
+const hasOwn = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
+
+const getLimit = (value, fallback = 60) => Math.min(Math.max(Number(value) || fallback, 1), 200);
+
+const throwSupabaseError = (error, fallbackMessage = 'Supabase request failed') => {
+  const requestError = new Error(error?.message || fallbackMessage);
+  requestError.statusCode = error?.code === 'PGRST116' ? 404 : 500;
+  throw requestError;
+};
+
+const getPortfolioQuery = ({ type, featured, limit }) => {
+  const supabase = getSupabaseClient();
+  let query = supabase
+    .from('portfolio_items')
+    .select('*')
+    .order('sort_order', { ascending: true, nullsFirst: false })
+    .order('created_at', { ascending: false })
+    .limit(getLimit(limit));
+
+  if (type) {
+    query = query.eq('type', type);
+  }
+
+  if (featured) {
+    query = query.eq('featured', true);
+  }
+
+  return query;
+};
 
 const getPortfolioItems = asyncHandler(async (req, res) => {
   const { type, featured, limit = 60 } = req.query;
@@ -10,17 +47,28 @@ const getPortfolioItems = asyncHandler(async (req, res) => {
     throw new Error(`type must be one of: ${PORTFOLIO_TYPES.join(', ')}`);
   }
 
-  const items = await searchPortfolioAssets({
+  const { data, error } = await getPortfolioQuery({
     type,
     featured: featured === 'true',
     limit
   });
 
+  if (error) {
+    throwSupabaseError(error);
+  }
+
+  const items = (data || []).map(normalizePortfolioRow);
   res.json({ items, count: items.length });
 });
 
 const getFeaturedItems = asyncHandler(async (_req, res) => {
-  const items = await searchPortfolioAssets({ featured: true, limit: 12 });
+  const { data, error } = await getPortfolioQuery({ featured: true, limit: 12 });
+
+  if (error) {
+    throwSupabaseError(error);
+  }
+
+  const items = (data || []).map(normalizePortfolioRow);
   res.json({ items, count: items.length });
 });
 
@@ -32,8 +80,114 @@ const getItemsByType = asyncHandler(async (req, res) => {
     throw new Error(`type must be one of: ${PORTFOLIO_TYPES.join(', ')}`);
   }
 
-  const items = await searchPortfolioAssets({ type, limit: 100 });
+  const { data, error } = await getPortfolioQuery({ type, limit: req.query.limit || 100 });
+
+  if (error) {
+    throwSupabaseError(error);
+  }
+
+  const items = (data || []).map(normalizePortfolioRow);
   res.json({ items, count: items.length });
 });
 
-export { getPortfolioItems, getFeaturedItems, getItemsByType };
+const buildUpdatePayload = (body) => {
+  const payload = {};
+  const errors = [];
+
+  if (hasOwn(body, 'title')) {
+    const title = String(body.title || '').trim();
+    if (!title) {
+      errors.push('title is required');
+    }
+    payload.title = title;
+  }
+
+  if (hasOwn(body, 'description')) {
+    payload.description = String(body.description || '').trim();
+  }
+
+  if (hasOwn(body, 'type')) {
+    if (!PORTFOLIO_TYPES.includes(body.type)) {
+      errors.push(`type must be one of: ${PORTFOLIO_TYPES.join(', ')}`);
+    }
+    payload.type = body.type;
+  }
+
+  if (hasOwn(body, 'category')) {
+    payload.category = String(body.category || '').trim();
+  }
+
+  if (hasOwn(body, 'tools')) {
+    payload.tools = normalizeTools(body.tools);
+  }
+
+  if (hasOwn(body, 'featured')) {
+    payload.featured = parseFeatured(body.featured);
+  }
+
+  const sortOrder = hasOwn(body, 'sort_order') ? body.sort_order : body.sortOrder;
+  if (sortOrder !== undefined) {
+    payload.sort_order = parseSortOrder(sortOrder);
+  }
+
+  const thumbnailUrl = hasOwn(body, 'thumbnail_url') ? body.thumbnail_url : body.thumbnailUrl;
+  if (thumbnailUrl !== undefined) {
+    payload.thumbnail_url = String(thumbnailUrl || '').trim();
+  }
+
+  if (errors.length) {
+    const error = new Error(errors.join(', '));
+    error.statusCode = 400;
+    throw error;
+  }
+
+  payload.updated_at = new Date().toISOString();
+  return payload;
+};
+
+const updatePortfolioItem = asyncHandler(async (req, res) => {
+  const payload = buildUpdatePayload(req.body);
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase
+    .from('portfolio_items')
+    .update(payload)
+    .eq('id', req.params.id)
+    .select('*')
+    .single();
+
+  if (error) {
+    throwSupabaseError(error, 'Unable to update portfolio item');
+  }
+
+  const item = normalizePortfolioRow(data);
+  res.json({ item, ...item });
+});
+
+const deletePortfolioItem = asyncHandler(async (req, res) => {
+  const supabase = getSupabaseClient();
+  const { data: row, error: findError } = await supabase
+    .from('portfolio_items')
+    .select('*')
+    .eq('id', req.params.id)
+    .single();
+
+  if (findError) {
+    throwSupabaseError(findError, 'Portfolio item not found');
+  }
+
+  await deleteFromCloudinary(row.cloudinary_public_id, row.resource_type || 'image');
+
+  if (row.thumbnail_public_id) {
+    await deleteFromCloudinary(row.thumbnail_public_id, 'image');
+  }
+
+  const { error: deleteError } = await supabase.from('portfolio_items').delete().eq('id', req.params.id);
+
+  if (deleteError) {
+    throwSupabaseError(deleteError, 'Unable to delete portfolio item');
+  }
+
+  res.json({ message: 'Portfolio item deleted' });
+});
+
+export { getPortfolioItems, getFeaturedItems, getItemsByType, updatePortfolioItem, deletePortfolioItem };

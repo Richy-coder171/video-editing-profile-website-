@@ -33,6 +33,11 @@ const PORTFOLIO_TYPE_CONFIG = {
     folder: 'portfolio/logos',
     resourceType: 'image',
     label: 'Logo'
+  },
+  social: {
+    folder: 'portfolio/social',
+    resourceType: 'image',
+    label: 'Social'
   }
 };
 
@@ -40,6 +45,4 @@ const PORTFOLIO_TYPES = Object.keys(PORTFOLIO_TYPE_CONFIG);
 
 const getTypeConfig = (type) => PORTFOLIO_TYPE_CONFIG[type];
 
-const typeTag = (type) => `type_${type}`;
-
-export { PORTFOLIO_TYPE_CONFIG, PORTFOLIO_TYPES, getTypeConfig, typeTag };
+export { PORTFOLIO_TYPE_CONFIG, PORTFOLIO_TYPES, getTypeConfig };

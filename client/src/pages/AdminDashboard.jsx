@@ -53,13 +53,7 @@ const AdminDashboard = () => {
       return;
     }
 
-    await api.delete('/upload', {
-      data: {
-        publicId: item.publicId,
-        resourceType: item.resourceType,
-        thumbnailPublicId: item.thumbnailPublicId || undefined
-      }
-    });
+    await api.delete(`/portfolio/${item.id}`);
     await loadItems();
   };
 
@@ -69,7 +63,7 @@ const AdminDashboard = () => {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="eyebrow">Admin dashboard</p>
-            <h1 className="mt-3 font-display text-5xl font-black leading-none text-white md:text-7xl">
+            <h1 className="mt-3 font-display text-4xl font-black leading-none text-white md:text-6xl lg:text-7xl">
               Manage portfolio uploads.
             </h1>
             <p className="mt-4 text-sm text-white/60">Signed in as {admin?.email}</p>
@@ -122,10 +116,11 @@ const AdminDashboard = () => {
               )}
 
               {filteredItems.map((item) => (
-                <article key={item.publicId} className="grid gap-4 rounded-lg border border-white/10 bg-black/30 p-3 sm:grid-cols-[112px_1fr]">
+                <article key={item.id} className="grid gap-4 rounded-lg border border-white/10 bg-black/30 p-3 sm:grid-cols-[112px_1fr]">
                   <img
                     src={item.thumbnailUrl || item.mediaUrl || '/cinematic-editor-hero.png'}
                     alt={item.title}
+                    loading="lazy"
                     className="aspect-video w-full rounded-md object-cover sm:h-24"
                   />
                   <div className="min-w-0">

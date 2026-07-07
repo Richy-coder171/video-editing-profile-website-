@@ -2,39 +2,24 @@
 
 A real anime-style cinematic portfolio for a video editor and graphic designer. The site showcases uploaded reels, long-form edits, Photoshop work, Illustrator work, thumbnails, posters, logos, and social media designs.
 
-This project uses Cloudinary only for portfolio storage. It does not use MongoDB, Mongoose, SQL, local JSON storage, seeded demo projects, fake clients, or fake testimonials. Public portfolio pages show real work uploaded through the protected admin dashboard. If no work has been uploaded yet, the site shows a clean empty state: "No projects uploaded yet."
+The project uses Supabase PostgreSQL for portfolio metadata and Cloudinary for video/image files. It does not use MongoDB, Mongoose, seeded demo projects, fake clients, or fake testimonials. Public pages show only real uploaded work from Supabase records. If no records exist, the site shows: "No projects uploaded yet."
 
 ## Stack
 
 - Client: React, Vite, Tailwind CSS, React Router, GSAP ScrollTrigger, Lenis, Framer Motion, Axios
-- Server: Node.js, Express, Multer, Cloudinary, JWT, bcrypt
-- Storage: Cloudinary folders, tags, and context metadata
+- Server: Node.js, Express, Supabase JS, Multer, Cloudinary, JWT, bcrypt
+- Database: Supabase PostgreSQL table `portfolio_items`
+- Media storage: Cloudinary folders for videos, images, and thumbnails
 - Deployment targets: Vercel for `client/`, Render for `server/`
 
-## Cloudinary Storage
+## Architecture
 
-Uploaded media is stored in these Cloudinary folders:
-
-- `portfolio/reels`
-- `portfolio/videos`
-- `portfolio/photoshop`
-- `portfolio/illustrator`
-- `portfolio/thumbnails`
-- `portfolio/logos`
-- `portfolio/posters`
-
-Portfolio metadata is stored on Cloudinary assets using tags and context fields:
-
-- `title`
-- `description`
-- `type`
-- `category`
-- `tools`
-- `featured`
-- `thumbnailUrl`
-- `thumbnailPublicId`
-
-Metadata edits use Cloudinary context and tags through the Cloudinary Admin API. If your Cloudinary account settings or plan reject metadata updates, the admin dashboard will show the Cloudinary API error; the project does not fall back to any local database.
+- Cloudinary stores the actual uploaded media files.
+- Supabase stores portfolio metadata only.
+- The frontend never connects to Supabase directly.
+- The Supabase secret/service key is used only by the backend.
+- Admin upload is protected by JWT.
+- Public pages load portfolio data from backend API routes.
 
 ## Project Structure
 
@@ -65,12 +50,23 @@ Install dependencies from the project root:
 npm install
 ```
 
-Create environment files:
+## Environment Setup
 
-```bash
-cp server/.env.example server/.env
-cp client/.env.example client/.env
+Create `server/.env` from the `server` folder:
+
+```powershell
+Set-Location server
+Copy-Item .env.example .env
+Set-Location ..
 ```
+
+Create `client/.env` from the project root:
+
+```powershell
+Copy-Item client/.env.example client/.env
+```
+
+Do not commit real `.env` files. They are ignored by Git.
 
 Fill in `server/.env`:
 
@@ -79,16 +75,25 @@ PORT=5000
 NODE_ENV=development
 CLIENT_URL=http://localhost:5173
 CORS_ORIGINS=http://localhost:5173
-JWT_SECRET=replace_with_a_long_random_secret
+JWT_SECRET=replace_with_long_random_secret
 JWT_EXPIRES_IN=7d
+
 ADMIN_EMAIL=you@example.com
 ADMIN_PASSWORD=change_me_in_development
+ADMIN_PASSWORD_HASH=
+
 CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
 CLOUDINARY_API_KEY=your_cloudinary_api_key
 CLOUDINARY_API_SECRET=your_cloudinary_api_secret
+
+SUPABASE_URL=https://your-project-id.supabase.co
+SUPABASE_SECRET_KEY=your_supabase_service_role_key
+
+MAX_IMAGE_SIZE_MB=8
+MAX_VIDEO_SIZE_MB=80
 ```
 
-For production, prefer `ADMIN_PASSWORD_HASH` instead of `ADMIN_PASSWORD`.
+Manually replace the Cloudinary and Supabase placeholders with real values. For production, prefer `ADMIN_PASSWORD_HASH` instead of `ADMIN_PASSWORD`.
 
 Fill in `client/.env`:
 
@@ -104,6 +109,66 @@ VITE_DRIBBBLE_URL=
 
 Leave optional contact/social values empty until you have real links. The public contact page only shows configured links.
 
+## Supabase Table
+
+Create the metadata table in the Supabase SQL editor:
+
+```sql
+create extension if not exists pgcrypto;
+
+create table if not exists public.portfolio_items (
+  id uuid primary key default gen_random_uuid(),
+  title text not null,
+  description text,
+  type text check (
+    type in (
+      'reel',
+      'video',
+      'photoshop',
+      'illustrator',
+      'thumbnail',
+      'poster',
+      'logo',
+      'social'
+    )
+  ),
+  category text,
+  tools text[] default '{}',
+  media_url text,
+  thumbnail_url text,
+  cloudinary_public_id text unique,
+  thumbnail_public_id text,
+  resource_type text,
+  featured boolean default false,
+  sort_order integer,
+  created_at timestamptz default now(),
+  updated_at timestamptz default now()
+);
+
+create index if not exists portfolio_items_type_idx on public.portfolio_items (type);
+create index if not exists portfolio_items_featured_idx on public.portfolio_items (featured);
+create index if not exists portfolio_items_sort_idx on public.portfolio_items (sort_order, created_at desc);
+```
+
+Use the Supabase service role key as `SUPABASE_SECRET_KEY` on the backend only. Never add it to `client/.env`, Vercel frontend variables, or browser code.
+
+## Cloudinary Folders
+
+Uploaded media is stored in these Cloudinary folders:
+
+- `portfolio/reels`
+- `portfolio/videos`
+- `portfolio/photoshop`
+- `portfolio/illustrator`
+- `portfolio/thumbnails`
+- `portfolio/logos`
+- `portfolio/posters`
+- `portfolio/social`
+
+Cloudinary stores files only. Supabase stores metadata such as title, type, tools, featured status, sort order, media URL, Cloudinary public ID, and thumbnail public ID.
+
+## Run Locally
+
 Start both apps:
 
 ```bash
@@ -113,6 +178,8 @@ npm run dev
 Client: `http://localhost:5173`
 
 Server: `http://localhost:5000`
+
+Health check: `http://localhost:5000/api/health`
 
 ## Admin Login
 
@@ -137,12 +204,12 @@ Portfolio:
 - `GET /api/portfolio`
 - `GET /api/portfolio/featured`
 - `GET /api/portfolio/type/:type`
+- `PUT /api/portfolio/:id`
+- `DELETE /api/portfolio/:id`
 
-Cloudinary uploads:
+Upload:
 
 - `POST /api/upload`
-- `DELETE /api/upload`
-- `PUT /api/upload/metadata`
 
 Upload requests are protected and expect multipart fields:
 
@@ -154,23 +221,7 @@ Upload requests are protected and expect multipart fields:
 - `category`
 - `tools`
 - `featured`
-
-Delete requests are protected and expect JSON. Sending `publicId` in the body supports Cloudinary IDs with slashes, such as `portfolio/reels/example`.
-
-- `publicId`
-- `resourceType`
-- `thumbnailPublicId` when deleting an attached thumbnail
-
-Metadata update requests are protected and expect JSON or multipart data:
-
-- `publicId`
-- `title`
-- `description`
-- `type`
-- `category`
-- `tools`
-- `featured`
-- optional `thumbnail`
+- `sort_order`
 
 Supported portfolio types:
 
@@ -181,6 +232,18 @@ Supported portfolio types:
 - `thumbnail`
 - `poster`
 - `logo`
+- `social`
+
+## Admin Workflow
+
+1. Log in with `ADMIN_EMAIL` and `ADMIN_PASSWORD`.
+2. Upload a video or image from the admin dashboard.
+3. The backend uploads media to Cloudinary.
+4. The backend inserts the metadata row into Supabase.
+5. Public pages refresh from the Supabase-backed API.
+6. Deleting an item removes the Cloudinary media, optional Cloudinary thumbnail, and Supabase metadata row.
+
+If Supabase insert fails after a Cloudinary upload, the backend cleans up the uploaded Cloudinary files to avoid orphan media.
 
 ## Deployment
 
@@ -190,6 +253,8 @@ Supported portfolio types:
 - Build command: `npm run build`
 - Output directory: `dist`
 - Environment variable: `VITE_API_URL=https://your-render-api.onrender.com/api`
+- Add only public contact/social variables as needed.
+- Do not add `SUPABASE_SECRET_KEY` to Vercel.
 
 ### Render Server
 
@@ -199,22 +264,32 @@ Supported portfolio types:
 - Set all server environment variables from `server/.env.example`
 - Set `NODE_ENV=production`
 - Set `CLIENT_URL` and `CORS_ORIGINS` to the deployed Vercel URL
+- Add `SUPABASE_URL` and `SUPABASE_SECRET_KEY`
+- Add Cloudinary credentials
+
+### Supabase
+
+- Create a Supabase project.
+- Run the SQL table creation script above.
+- Copy the project URL into `SUPABASE_URL`.
+- Copy the service role key into `SUPABASE_SECRET_KEY` on Render only.
 
 ### Cloudinary
 
-- Create a Cloudinary account
-- Copy cloud name, API key, and API secret into `server/.env`
-- Keep the API secret only on the backend
-- Upload portfolio work from the protected admin dashboard
+- Create a Cloudinary account.
+- Copy cloud name, API key, and API secret into `server/.env` or Render server variables.
+- Keep the API secret only on the backend.
+- Upload real portfolio work from the protected admin dashboard.
 
 ## Performance And Security
 
 - No fake project cards or seeded demo work
-- Empty states are shown when no assets exist
-- Videos use thumbnails, `preload="none"`, and muted previews on hover/open
-- Public media is delivered through Cloudinary optimized URLs
+- Empty states are shown when no records exist
+- Videos use thumbnails, `preload="none"`, and muted previews
+- Public media is delivered through Cloudinary URLs
+- Supabase secret key stays backend-only
 - Upload routes are protected by JWT
-- JWT sessions are stored in an httpOnly cookie, not browser local storage
+- JWT sessions are stored in an httpOnly cookie
 - Admin password is compared with bcrypt when `ADMIN_PASSWORD_HASH` is used
 - File types and upload size are validated
 - Helmet, CORS, rate limiting, and centralized error handling are enabled

@@ -14,6 +14,7 @@ const blankForm = {
   cloudinaryPublicId: '',
   thumbnailPublicId: '',
   resourceType: 'video',
+  sortOrder: '',
   featured: false
 };
 
@@ -38,6 +39,7 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         cloudinaryPublicId: editingItem.cloudinaryPublicId || '',
         thumbnailPublicId: editingItem.thumbnailPublicId || '',
         resourceType: editingItem.resourceType || 'image',
+        sortOrder: editingItem.sortOrder ?? '',
         featured: Boolean(editingItem.featured)
       });
     } else {
@@ -79,6 +81,7 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
     payload.append('category', form.category);
     payload.append('tools', form.tools);
     payload.append('featured', String(form.featured));
+    payload.append('sort_order', form.sortOrder);
 
     if (mediaFile) {
       payload.append('file', mediaFile);
@@ -101,30 +104,8 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
     return data;
   };
 
-  const updatePortfolioMetadata = async (payload) => {
-    if (!thumbnailFile) {
-      return api.put('/upload/metadata', {
-        ...payload,
-        publicId: editingItem.publicId
-      });
-    }
-
-    const formData = new FormData();
-    Object.entries(payload).forEach(([key, value]) => {
-      formData.append(key, Array.isArray(value) ? value.join(', ') : String(value ?? ''));
-    });
-    formData.append('publicId', editingItem.publicId);
-    formData.append('thumbnail', thumbnailFile);
-
-    return api.put('/upload/metadata', formData, {
-      headers: { 'Content-Type': 'multipart/form-data' },
-      timeout: 0,
-      onUploadProgress: (event) => {
-        if (event.total) {
-          setProgress(Math.round((event.loaded * 100) / event.total));
-        }
-      }
-    });
+  const updatePortfolioItem = async (payload) => {
+    return api.put(`/portfolio/${editingItem.id}`, payload);
   };
 
   const handleSubmit = async (event) => {
@@ -135,15 +116,27 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
 
     try {
       const payload = {
-        ...form,
+        title: form.title,
+        description: form.description,
+        type: form.type,
+        category: form.category,
         tools: form.tools
           .split(',')
           .map((tool) => tool.trim())
-          .filter(Boolean)
+          .filter(Boolean),
+        featured: form.featured,
+        sort_order: form.sortOrder,
+        thumbnail_url: form.thumbnailUrl
       };
 
-      if (editingItem?.publicId && !mediaFile) {
-        await updatePortfolioMetadata(payload);
+      if (editingItem?.id && !mediaFile) {
+        if (thumbnailFile) {
+          setError('Choose a media file too when replacing a thumbnail file, or update the thumbnail URL field.');
+          setSaving(false);
+          return;
+        }
+
+        await updatePortfolioItem(payload);
       } else {
         if (!mediaFile) {
           setError('Choose a media file to upload.');
@@ -153,14 +146,8 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
 
         await savePortfolioAsset();
 
-        if (editingItem?.publicId) {
-          await api.delete('/upload', {
-            data: {
-              publicId: editingItem.publicId,
-              resourceType: editingItem.resourceType,
-              thumbnailPublicId: editingItem.thumbnailPublicId || undefined
-            }
-          });
+        if (editingItem?.id) {
+          await api.delete(`/portfolio/${editingItem.id}`);
         }
       }
 
@@ -217,12 +204,34 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
           Tools used
           <input className="input" value={form.tools} onChange={(event) => updateField('tools', event.target.value)} placeholder="Premiere Pro, Photoshop" />
         </label>
+        <label className="field-label">
+          Sort order
+          <input
+            className="input"
+            type="number"
+            inputMode="numeric"
+            value={form.sortOrder}
+            onChange={(event) => updateField('sortOrder', event.target.value)}
+            placeholder="0"
+          />
+        </label>
       </div>
 
       <label className="field-label mt-4">
         Description
         <textarea className="input min-h-28 resize-y" value={form.description} onChange={(event) => updateField('description', event.target.value)} required />
       </label>
+
+      {editingItem && (
+        <label className="field-label mt-4">
+          Thumbnail URL
+          <input
+            className="input"
+            value={form.thumbnailUrl}
+            onChange={(event) => updateField('thumbnailUrl', event.target.value)}
+          />
+        </label>
+      )}
 
       <div className="mt-4 grid gap-4 sm:grid-cols-2">
         <label className="field-label">

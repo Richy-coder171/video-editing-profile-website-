@@ -23,7 +23,7 @@ const SiteLayout = () => {
   const { isAuthenticated, logout } = useAuth();
 
   return (
-    <div className="min-h-screen bg-ink text-frost">
+    <div className="min-h-screen overflow-x-hidden bg-ink text-frost">
       <ScrollProgress />
       <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink/80 backdrop-blur-xl">
         <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
@@ -64,13 +64,18 @@ const SiteLayout = () => {
             )}
           </div>
 
-          <button className="icon-button md:hidden" onClick={() => setOpen((value) => !value)} aria-label="Menu">
+          <button
+            className="icon-button md:hidden"
+            onClick={() => setOpen((value) => !value)}
+            aria-expanded={open}
+            aria-label="Menu"
+          >
             {open ? <X size={20} /> : <Menu size={20} />}
           </button>
         </div>
 
         {open && (
-          <div className="border-t border-white/10 bg-ink px-4 py-4 md:hidden">
+          <div className="border-t border-white/10 bg-ink px-4 py-4 shadow-[0_28px_80px_rgba(0,0,0,0.55)] md:hidden">
             <nav className="grid gap-2">
               {navItems.map((item) => (
                 <NavLink key={item.to} to={item.to} className={navClass} onClick={() => setOpen(false)}>
@@ -84,10 +89,25 @@ const SiteLayout = () => {
               >
                 {isAuthenticated ? 'Dashboard' : 'Admin'}
               </NavLink>
+              {isAuthenticated && (
+                <button
+                  className="btn-ghost justify-start"
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    logout();
+                  }}
+                >
+                  <LogOut size={18} />
+                  Logout
+                </button>
+              )}
             </nav>
           </div>
         )}
       </header>
+
+      {open && <div className="h-[27rem] md:hidden" />}
 
       <Outlet />
 

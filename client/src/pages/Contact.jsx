@@ -14,9 +14,9 @@ const Contact = () => (
         </p>
         <div className="mt-8 grid gap-3 text-sm text-white/70">
           {primaryContactLinks.map((link) => (
-            <a key={link.label} className="flex items-center gap-3 hover:text-white" href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noreferrer' : undefined}>
+            <a key={link.label} className="flex min-w-0 items-center gap-3 break-words hover:text-white" href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noreferrer' : undefined}>
               <link.icon size={18} />
-              {link.label}
+              <span className="min-w-0">{link.label}</span>
             </a>
           ))}
           <span className="flex items-center gap-3">

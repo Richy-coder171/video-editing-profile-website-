@@ -9,7 +9,7 @@ const heroStats = [
 ];
 
 const HeroSection = () => (
-  <section className="relative isolate min-h-[90svh] overflow-hidden pt-24 sm:pt-28">
+  <section className="relative isolate min-h-[86svh] overflow-hidden pt-24 sm:pt-28">
     <img
       src="/cinematic-editor-hero.png"
       alt="Cinematic editing studio with video timeline and design boards"
@@ -21,7 +21,7 @@ const HeroSection = () => (
     <div className="absolute inset-x-0 top-24 -z-10 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
     <div className="absolute bottom-0 right-0 -z-10 hidden h-48 w-2/3 bg-[linear-gradient(90deg,transparent,rgba(51,214,255,0.12),rgba(255,54,94,0.1),transparent)] lg:block" />
 
-    <div className="section-shell flex min-h-[calc(90svh-6rem)] items-center py-12">
+    <div className="section-shell flex min-h-[calc(86svh-6rem)] items-center py-10 sm:py-12">
       <div className="max-w-5xl">
         <motion.p
           className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/10 bg-black/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl sm:text-sm"
@@ -33,7 +33,7 @@ const HeroSection = () => (
           Anime energy for reels, edits, thumbnails, posters
         </motion.p>
         <motion.h1
-          className="mt-6 max-w-5xl font-display text-5xl font-black leading-[0.9] text-white sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl"
+          className="mt-6 max-w-5xl font-display text-4xl font-black leading-[0.92] text-white sm:text-5xl md:text-6xl lg:text-7xl"
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.08 }}
@@ -49,20 +49,20 @@ const HeroSection = () => (
           Reels, cinematic edits, thumbnails, posters, Photoshop, Illustrator, and visual storytelling.
         </motion.p>
         <motion.div
-          className="mt-9 flex flex-wrap gap-3"
+          className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.24 }}
         >
-          <Link className="btn-primary" to="/reels">
+          <Link className="btn-primary w-full sm:w-auto" to="/reels">
             <Play size={18} fill="currentColor" />
             Watch Reels
           </Link>
-          <Link className="btn-secondary" to="/designs">
+          <Link className="btn-secondary w-full sm:w-auto" to="/designs">
             <Images size={18} />
             View Designs
           </Link>
-          <Link className="btn-secondary" to="/contact">
+          <Link className="btn-secondary w-full sm:w-auto" to="/contact">
             Hire Me
             <ArrowRight size={18} />
           </Link>

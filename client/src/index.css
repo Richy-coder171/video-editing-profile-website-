@@ -22,6 +22,7 @@ html {
 }
 
 body {
+  width: 100%;
   min-width: 320px;
   margin: 0;
   overflow-x: hidden;
@@ -104,7 +105,7 @@ video {
   }
 
   .page-title {
-    @apply font-display text-4xl font-black leading-[0.98] text-white sm:text-6xl lg:text-7xl;
+    @apply font-display text-4xl font-black leading-[0.98] text-white md:text-6xl lg:text-7xl;
   }
 
   .filter-chip {

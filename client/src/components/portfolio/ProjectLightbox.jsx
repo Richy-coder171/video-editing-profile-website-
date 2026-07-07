@@ -8,14 +8,14 @@ const ProjectLightbox = ({ item, onClose }) => {
     <AnimatePresence>
       {item && (
         <motion.div
-          className="fixed inset-0 z-[90] grid place-items-center bg-black/90 px-4 py-10 backdrop-blur-lg"
+          className="fixed inset-0 z-[90] grid place-items-start bg-black/90 px-3 py-4 backdrop-blur-lg sm:place-items-center sm:px-4 sm:py-10"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
           onClick={onClose}
         >
           <motion.div
-            className="max-h-[90vh] w-full max-w-5xl overflow-y-auto rounded-lg border border-white/10 bg-graphite"
+            className="max-h-[92svh] w-full max-w-5xl overflow-y-auto rounded-lg border border-white/10 bg-graphite"
             initial={{ y: 24, scale: 0.98 }}
             animate={{ y: 0, scale: 1 }}
             exit={{ y: 24, scale: 0.98 }}
@@ -31,10 +31,10 @@ const ProjectLightbox = ({ item, onClose }) => {
               </button>
             </div>
 
-            <div className="grid gap-6 p-4 lg:grid-cols-[1.45fr_0.55fr]">
+            <div className="grid gap-5 p-3 sm:p-4 lg:grid-cols-[1.45fr_0.55fr]">
               <div className={`${item.type === 'reel' ? 'mx-auto aspect-[9/16] max-h-[72vh] w-full max-w-sm' : 'aspect-video'} overflow-hidden rounded-lg bg-black`}>
                 {isVideo && item.mediaUrl ? (
-                  <video className="h-full w-full object-contain" controls autoPlay muted poster={item.thumbnailUrl}>
+                  <video className="h-full w-full object-contain" controls autoPlay muted playsInline poster={item.thumbnailUrl}>
                     <source src={item.mediaUrl} />
                   </video>
                 ) : (
