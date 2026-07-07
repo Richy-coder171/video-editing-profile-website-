@@ -9,12 +9,13 @@ const FeaturedShowcase = ({ items }) => {
   const sectionRef = useRef(null);
 
   return (
-    <section ref={sectionRef} className="section-pad bg-ink">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+    <section ref={sectionRef} className="section-pad relative overflow-hidden bg-ink">
+      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
+      <div className="section-shell">
         <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
           <div>
             <p className="eyebrow">Featured projects</p>
-            <h2 className="reveal-text mt-3 max-w-3xl font-display text-4xl font-bold text-white md:text-6xl">
+            <h2 className="reveal-text section-title mt-3 max-w-3xl">
               Edits and visuals built for attention, rhythm, and recall.
             </h2>
           </div>
@@ -23,12 +24,12 @@ const FeaturedShowcase = ({ items }) => {
           </p>
         </div>
 
-        <div className="grid gap-4 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {featured.map((item, index) => (
             <motion.button
               key={item._id || item.id}
-              className={`group relative min-h-[360px] overflow-hidden rounded-lg border border-white/10 bg-white/5 text-left ${
-                index === 0 ? 'lg:col-span-2 lg:row-span-2' : ''
+              className={`group relative min-h-[340px] overflow-hidden rounded-lg border border-white/10 bg-white/5 text-left shadow-[0_22px_80px_rgba(0,0,0,0.28)] transition duration-500 hover:-translate-y-1 hover:border-white/20 ${
+                index === 0 ? 'sm:col-span-2 lg:col-span-2 lg:row-span-2 lg:min-h-[700px]' : ''
               }`}
               onClick={() => setActiveItem(item)}
               initial={{ opacity: 0, y: 24 }}
@@ -43,13 +44,23 @@ const FeaturedShowcase = ({ items }) => {
                 className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
               />
               <span className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
-              <span className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white text-ink">
+              <span className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/60 to-transparent" />
+              <span className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white text-ink shadow-[0_12px_34px_rgba(0,0,0,0.28)] transition group-hover:rotate-12">
                 <ArrowUpRight size={19} />
               </span>
               <span className="absolute bottom-0 left-0 right-0 p-5">
-                <span className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">{item.category}</span>
-                <span className="mt-4 block font-display text-2xl font-semibold text-white">{item.title}</span>
+                <span className="rounded-full border border-white/10 bg-black/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-white/70 backdrop-blur">
+                  {item.category}
+                </span>
+                <span className="mt-4 block font-display text-2xl font-bold leading-tight text-white">{item.title}</span>
                 <span className="mt-2 block text-sm leading-6 text-white/60">{item.description}</span>
+                <span className="mt-4 flex flex-wrap gap-2">
+                  {(item.tools || []).slice(0, 3).map((tool) => (
+                    <span key={tool} className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">
+                      {tool}
+                    </span>
+                  ))}
+                </span>
               </span>
             </motion.button>
           ))}

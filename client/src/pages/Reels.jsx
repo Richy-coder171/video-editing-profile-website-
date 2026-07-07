@@ -6,19 +6,31 @@ const Reels = () => {
 
   return (
     <main className="page-pad bg-ink">
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <p className="eyebrow">Reels and shorts</p>
-        <h1 className="mt-4 max-w-4xl font-display text-5xl font-black leading-none text-white md:text-7xl">
-          Vertical edits built for hooks, holds, and replay value.
-        </h1>
-        <div className="mt-5 flex flex-wrap gap-3 text-sm text-white/60">
-          <span>9:16 cards</span>
-          <span>Muted preview-ready</span>
-          <span>Poster-first loading</span>
+      <section className="section-shell">
+        <div className="relative overflow-hidden rounded-lg border border-white/10 bg-black p-6 sm:p-8 lg:p-10">
+          <img
+            src="/cinematic-editor-hero.png"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover opacity-25"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 to-black/50" />
+          <div className="relative">
+            <p className="eyebrow">Reels and shorts</p>
+            <h1 className="page-title mt-4 max-w-4xl">
+              Vertical edits built for hooks, holds, and replay value.
+            </h1>
+            <div className="mt-6 flex flex-wrap gap-2 text-sm text-white/60">
+              {['9:16 frame', 'Hook-focused', 'Mobile-first'].map((label) => (
+                <span key={label} className="rounded-full border border-white/10 bg-white/10 px-3 py-1">
+                  {label}
+                </span>
+              ))}
+            </div>
+          </div>
         </div>
         {error && <p className="mt-6 text-sm text-ember">{error}</p>}
         {loading && <p className="mt-6 text-sm text-white/60">Loading reel wall...</p>}
-        <div className="mt-12">
+        <div className="mt-8 sm:mt-12">
           <PortfolioGrid items={items} variant="reel" columns="lg:grid-cols-4" />
         </div>
       </section>

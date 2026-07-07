@@ -1,5 +1,6 @@
-import { motion } from 'framer-motion';
+import { motion, useInView } from 'framer-motion';
 import { Maximize2, Play, Sparkles } from 'lucide-react';
+import { useEffect, useRef } from 'react';
 
 const aspectMap = {
   reel: 'aspect-[9/16]',
@@ -11,25 +12,54 @@ const aspectMap = {
 const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
   const isVideo = item.type === 'video' || item.type === 'reel';
   const poster = item.thumbnailUrl || item.mediaUrl || '/cinematic-editor-hero.png';
+  const videoRef = useRef(null);
+  const cardRef = useRef(null);
+  const inView = useInView(cardRef, { amount: 0.55, margin: '0px 0px -12% 0px' });
+  const isReel = variant === 'reel';
+  const isDesign = variant === 'design';
+
+  useEffect(() => {
+    const video = videoRef.current;
+
+    if (!video || !isVideo || !item.mediaUrl) {
+      return;
+    }
+
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
+    if (inView) {
+      video.play().catch(() => undefined);
+      return;
+    }
+
+    video.pause();
+  }, [inView, isVideo, item.mediaUrl]);
 
   return (
     <motion.article
-      className="group overflow-hidden rounded-lg border border-white/10 bg-white/[0.045] shadow-glow"
+      ref={cardRef}
+      className={`group relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.045] shadow-[0_18px_80px_rgba(0,0,0,0.26)] transition duration-500 hover:-translate-y-1 hover:border-white/20 ${
+        isReel ? 'p-2' : ''
+      }`}
       initial={{ opacity: 0, y: 24 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true, margin: '-80px' }}
       transition={{ duration: 0.55, delay: Math.min(index * 0.05, 0.25) }}
     >
+      <span className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent opacity-0 transition group-hover:opacity-100" />
       <button
-        className={`relative block w-full overflow-hidden ${aspectMap[variant] || aspectMap.video}`}
+        className={`relative block w-full overflow-hidden rounded-md ${aspectMap[variant] || aspectMap.video}`}
         onClick={() => onOpen?.(item)}
         aria-label={`Open ${item.title}`}
       >
         {isVideo && item.mediaUrl ? (
           <video
+            ref={videoRef}
             className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
             poster={poster}
-            preload="metadata"
+            preload="none"
             muted
             loop
             playsInline
@@ -50,23 +80,29 @@ const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
           />
         )}
 
-        <span className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-75" />
-        <span className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/60 px-3 py-1 text-xs text-white/80 backdrop-blur">
+        <span className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent opacity-85" />
+        <span className="absolute inset-x-0 top-0 h-16 bg-gradient-to-b from-black/60 to-transparent" />
+        <span className="absolute left-4 top-4 rounded-full border border-white/10 bg-black/70 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-white/80 backdrop-blur">
           {item.category}
         </span>
-        <span className="absolute bottom-4 right-4 grid h-10 w-10 place-items-center rounded-full bg-white text-ink transition group-hover:scale-105">
+        <span className="absolute bottom-4 right-4 grid h-11 w-11 place-items-center rounded-full bg-white text-ink shadow-[0_12px_30px_rgba(0,0,0,0.28)] transition group-hover:scale-105">
           {isVideo ? <Play size={18} fill="currentColor" /> : <Maximize2 size={18} />}
         </span>
       </button>
 
-      <div className="space-y-4 p-5">
+      <div className={`${isReel ? 'px-2 pb-3 pt-5' : 'p-5'} space-y-4`}>
         <div>
-          <h3 className="font-display text-lg font-semibold text-white">{item.title}</h3>
+          <h3 className={`${isDesign ? 'text-xl' : 'text-lg'} font-display font-bold leading-tight text-white`}>
+            {item.title}
+          </h3>
           <p className="mt-2 line-clamp-3 text-sm leading-6 text-white/60">{item.description}</p>
         </div>
         <div className="flex flex-wrap gap-2">
           {(item.tools || []).slice(0, 4).map((tool) => (
-            <span key={tool} className="inline-flex items-center gap-1 rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">
+            <span
+              key={tool}
+              className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-black/25 px-3 py-1 text-xs text-white/70"
+            >
               <Sparkles size={12} />
               {tool}
             </span>

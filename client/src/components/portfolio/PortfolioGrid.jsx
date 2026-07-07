@@ -7,7 +7,7 @@ const PortfolioGrid = ({ items, variant = 'video', columns = 'lg:grid-cols-3' })
 
   return (
     <>
-      <div className={`grid gap-5 sm:grid-cols-2 ${columns}`}>
+      <div className={`grid gap-4 sm:grid-cols-2 lg:gap-5 ${columns}`}>
         {items.map((item, index) => (
           <MediaCard key={item._id || item.id} item={item} variant={variant} index={index} onOpen={setActiveItem} />
         ))}

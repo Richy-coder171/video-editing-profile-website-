@@ -20,22 +20,45 @@ const Home = () => {
       gsap.utils.toArray('.reveal-text').forEach((element) => {
         gsap.fromTo(
           element,
-          { y: 34, opacity: 0 },
+          { y: 42, opacity: 0, clipPath: 'inset(0 0 100% 0)' },
           {
             y: 0,
             opacity: 1,
-            duration: 0.85,
-            ease: 'power3.out',
+            clipPath: 'inset(0 0 0% 0)',
+            duration: 1,
+            ease: 'power4.out',
             scrollTrigger: {
               trigger: element,
-              start: 'top 82%'
+              start: 'top 84%'
             }
           }
         );
       });
+
+      gsap.utils.toArray('.panel-premium').forEach((element) => {
+        gsap.fromTo(
+          element,
+          { y: 22, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.75,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: element,
+              start: 'top 88%'
+            }
+          }
+        );
+      });
+
+      window.addEventListener('load', ScrollTrigger.refresh);
     });
 
-    return () => ctx.revert();
+    return () => {
+      window.removeEventListener('load', ScrollTrigger.refresh);
+      ctx.revert();
+    };
   }, []);
 
   return (

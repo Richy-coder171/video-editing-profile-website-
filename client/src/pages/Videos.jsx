@@ -17,18 +17,25 @@ const Videos = () => {
 
   return (
     <main className="page-pad bg-black">
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <p className="eyebrow">Long-form edits</p>
-        <h1 className="mt-4 max-w-4xl font-display text-5xl font-black leading-none text-white md:text-7xl">
-          Widescreen stories with cinematic pacing and polish.
-        </h1>
-        <div className="mt-8 flex flex-wrap gap-2">
+      <section className="section-shell">
+        <div className="grid gap-8 lg:grid-cols-[1fr_0.38fr] lg:items-end">
+          <div>
+            <p className="eyebrow">Long-form edits</p>
+            <h1 className="page-title mt-4 max-w-4xl">
+              Widescreen stories with cinematic pacing and polish.
+            </h1>
+          </div>
+          <div className="panel-premium rounded-lg p-5">
+            <p className="text-xs uppercase tracking-[0.24em] text-white/50">Delivery format</p>
+            <p className="mt-3 font-display text-3xl font-bold text-white">16:9</p>
+            <p className="mt-2 text-sm leading-6 text-white/60">YouTube, ads, podcasts, gaming edits, and color grade reels.</p>
+          </div>
+        </div>
+        <div className="mt-8 flex gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible">
           {['All', ...videoCategories].map((category) => (
             <button
               key={category}
-              className={`rounded-full px-4 py-2 text-sm transition ${
-                activeCategory === category ? 'bg-white text-ink' : 'border border-white/10 text-white/60 hover:text-white'
-              }`}
+              className={`filter-chip shrink-0 ${activeCategory === category ? 'filter-chip-active' : ''}`}
               onClick={() => setActiveCategory(category)}
             >
               {category}
@@ -37,7 +44,7 @@ const Videos = () => {
         </div>
         {error && <p className="mt-6 text-sm text-ember">{error}</p>}
         {loading && <p className="mt-6 text-sm text-white/60">Loading video edits...</p>}
-        <div className="mt-12">
+        <div className="mt-8 sm:mt-12">
           <PortfolioGrid items={filteredItems} variant="video" />
         </div>
       </section>
