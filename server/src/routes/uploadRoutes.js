@@ -1,11 +1,16 @@
 import express from 'express';
-import { uploadImage as uploadImageController, uploadVideo as uploadVideoController } from '../controllers/uploadController.js';
+import {
+  deletePortfolioAsset,
+  updatePortfolioMetadata,
+  uploadPortfolioAsset
+} from '../controllers/uploadController.js';
 import protect from '../middleware/auth.js';
-import { uploadImage, uploadVideo } from '../middleware/upload.js';
+import { portfolioUpload } from '../middleware/upload.js';
 
 const router = express.Router();
 
-router.post('/image', protect, uploadImage, uploadImageController);
-router.post('/video', protect, uploadVideo, uploadVideoController);
+router.post('/', protect, portfolioUpload, uploadPortfolioAsset);
+router.delete('/:publicId(*)', protect, deletePortfolioAsset);
+router.put('/:publicId(*)/metadata', protect, updatePortfolioMetadata);
 
 export default router;

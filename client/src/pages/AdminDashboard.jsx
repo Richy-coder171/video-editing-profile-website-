@@ -2,9 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { Edit3, LogOut, RefreshCw, Star, Trash2 } from 'lucide-react';
 import PortfolioForm from '../components/admin/PortfolioForm.jsx';
 import { useAuth } from '../contexts/authContext.js';
+import { portfolioTypes } from '../data/portfolioMeta.js';
 import { api } from '../services/api.js';
 
-const filters = ['all', 'reel', 'video', 'photoshop', 'illustrator'];
+const filters = [{ label: 'All', value: 'all' }, ...portfolioTypes];
 
 const AdminDashboard = () => {
   const [items, setItems] = useState([]);
@@ -52,7 +53,12 @@ const AdminDashboard = () => {
       return;
     }
 
-    await api.delete(`/portfolio/${item._id}`);
+    await api.delete(`/upload/${encodeURIComponent(item.publicId)}`, {
+      params: {
+        resourceType: item.resourceType,
+        thumbnailPublicId: item.thumbnailPublicId || undefined
+      }
+    });
     await loadItems();
   };
 
@@ -91,14 +97,14 @@ const AdminDashboard = () => {
               <div className="flex flex-wrap gap-2">
                 {filters.map((itemFilter) => (
                   <button
-                    key={itemFilter}
+                    key={itemFilter.value}
                     className={`rounded-full px-3 py-2 text-xs capitalize ${
-                      filter === itemFilter ? 'bg-white text-ink' : 'border border-white/10 text-white/60'
+                      filter === itemFilter.value ? 'bg-white text-ink' : 'border border-white/10 text-white/60'
                     }`}
-                    onClick={() => setFilter(itemFilter)}
+                    onClick={() => setFilter(itemFilter.value)}
                     type="button"
                   >
-                    {itemFilter}
+                    {itemFilter.label}
                   </button>
                 ))}
               </div>
@@ -115,7 +121,7 @@ const AdminDashboard = () => {
               )}
 
               {filteredItems.map((item) => (
-                <article key={item._id} className="grid gap-4 rounded-lg border border-white/10 bg-black/30 p-3 sm:grid-cols-[112px_1fr]">
+                <article key={item.publicId} className="grid gap-4 rounded-lg border border-white/10 bg-black/30 p-3 sm:grid-cols-[112px_1fr]">
                   <img
                     src={item.thumbnailUrl || item.mediaUrl || '/cinematic-editor-hero.png'}
                     alt={item.title}

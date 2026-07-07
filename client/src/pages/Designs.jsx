@@ -1,28 +1,21 @@
 import { useMemo, useState } from 'react';
+import EmptyState from '../components/portfolio/EmptyState.jsx';
 import PortfolioGrid from '../components/portfolio/PortfolioGrid.jsx';
 import usePortfolio from '../hooks/usePortfolio.js';
-import { designCategories } from '../data/fallbackPortfolio.js';
+import { designTabs, designTypes } from '../data/portfolioMeta.js';
 
 const Designs = () => {
-  const { items, loading, error } = usePortfolio('/portfolio', (item) => item.type === 'photoshop' || item.type === 'illustrator');
-  const designItems = items.filter((item) => item.type === 'photoshop' || item.type === 'illustrator');
-  const [activeCategory, setActiveCategory] = useState('All');
+  const { items, loading } = usePortfolio('/portfolio');
+  const designItems = items.filter((item) => designTypes.includes(item.type));
+  const [activeType, setActiveType] = useState('all');
 
   const filteredItems = useMemo(() => {
-    if (activeCategory === 'All') {
+    if (activeType === 'all') {
       return designItems;
     }
 
-    if (activeCategory === 'Photoshop') {
-      return designItems.filter((item) => item.type === 'photoshop');
-    }
-
-    if (activeCategory === 'Illustrator') {
-      return designItems.filter((item) => item.type === 'illustrator');
-    }
-
-    return designItems.filter((item) => item.category === activeCategory);
-  }, [activeCategory, designItems]);
+    return designItems.filter((item) => item.type === activeType);
+  }, [activeType, designItems]);
 
   return (
     <main className="page-pad bg-graphite">
@@ -48,20 +41,23 @@ const Designs = () => {
           </div>
         </div>
         <div className="mt-8 flex gap-2 overflow-x-auto pb-2 sm:flex-wrap sm:overflow-visible">
-          {['All', ...designCategories].map((category) => (
+          {designTabs.map((tab) => (
             <button
-              key={category}
-              className={`filter-chip shrink-0 ${activeCategory === category ? 'filter-chip-active' : ''}`}
-              onClick={() => setActiveCategory(category)}
+              key={tab.value}
+              className={`filter-chip shrink-0 ${activeType === tab.value ? 'filter-chip-active' : ''}`}
+              onClick={() => setActiveType(tab.value)}
             >
-              {category}
+              {tab.label}
             </button>
           ))}
         </div>
-        {error && <p className="mt-6 text-sm text-ember">{error}</p>}
         {loading && <p className="mt-6 text-sm text-white/60">Loading design work...</p>}
         <div className="mt-8 sm:mt-12">
-          <PortfolioGrid items={filteredItems} variant="design" columns="lg:grid-cols-3" />
+          {filteredItems.length ? (
+            <PortfolioGrid items={filteredItems} variant="design" columns="lg:grid-cols-3" />
+          ) : (
+            !loading && <EmptyState />
+          )}
         </div>
       </section>
     </main>

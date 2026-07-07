@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowRight, Aperture, BriefcaseBusiness, Film, Play, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowRight, Aperture, Film, Images, Play, Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const heroStats = [
@@ -29,7 +29,7 @@ const HeroSection = () => (
           transition={{ duration: 0.7 }}
         >
           <Play size={15} fill="currentColor" />
-          Reels, YouTube edits, thumbnails, posters, branding
+          Anime energy for reels, edits, thumbnails, posters
         </motion.p>
         <motion.h1
           className="mt-6 max-w-5xl font-display text-[clamp(3rem,11vw,8.7rem)] font-black leading-[0.88] text-white"
@@ -37,7 +37,7 @@ const HeroSection = () => (
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.08 }}
         >
-          Scroll-Stopping Reels, Cinematic Edits & Visual Designs
+          I Edit Videos That Feel Like Anime Openings
         </motion.h1>
         <motion.p
           className="mt-6 max-w-2xl text-base leading-8 text-white/70 sm:text-lg"
@@ -45,8 +45,7 @@ const HeroSection = () => (
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.16 }}
         >
-          Video editor and designer specializing in reels, YouTube edits, thumbnails, posters, branding, Photoshop,
-          and Illustrator work.
+          Reels, cinematic edits, thumbnails, posters, Photoshop, Illustrator, and visual storytelling.
         </motion.p>
         <motion.div
           className="mt-9 flex flex-wrap gap-3"
@@ -55,8 +54,12 @@ const HeroSection = () => (
           transition={{ duration: 0.8, delay: 0.24 }}
         >
           <Link className="btn-primary" to="/reels">
-            <BriefcaseBusiness size={18} />
-            View Work
+            <Play size={18} fill="currentColor" />
+            Watch Reels
+          </Link>
+          <Link className="btn-secondary" to="/designs">
+            <Images size={18} />
+            View Designs
           </Link>
           <Link className="btn-secondary" to="/contact">
             Hire Me

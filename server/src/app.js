@@ -9,7 +9,6 @@ import portfolioRoutes from './routes/portfolioRoutes.js';
 import uploadRoutes from './routes/uploadRoutes.js';
 import notFound from './middleware/notFound.js';
 import errorHandler from './middleware/errorHandler.js';
-import requireDatabase from './middleware/requireDatabase.js';
 
 const app = express();
 
@@ -75,8 +74,8 @@ app.get('/api/health', (_req, res) => {
 });
 
 app.use('/api/auth', authLimiter, authRoutes);
-app.use('/api/portfolio', apiLimiter, requireDatabase, portfolioRoutes);
-app.use('/api/upload', apiLimiter, requireDatabase, uploadRoutes);
+app.use('/api/portfolio', apiLimiter, portfolioRoutes);
+app.use('/api/upload', apiLimiter, uploadRoutes);
 
 app.use(notFound);
 app.use(errorHandler);

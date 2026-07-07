@@ -1,5 +1,4 @@
 import jwt from 'jsonwebtoken';
-import Admin from '../models/Admin.js';
 import asyncHandler from '../utils/asyncHandler.js';
 
 const getTokenFromRequest = (req) => {
@@ -22,14 +21,14 @@ const protect = asyncHandler(async (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const admin = await Admin.findById(decoded.adminId);
+    const configuredEmail = process.env.ADMIN_EMAIL;
 
-    if (!admin) {
+    if (!configuredEmail || decoded.email !== configuredEmail) {
       res.status(401);
-      throw new Error('Admin account no longer exists');
+      throw new Error('Admin credentials changed');
     }
 
-    req.admin = admin;
+    req.admin = { email: configuredEmail };
     next();
   } catch (_error) {
     res.status(401);

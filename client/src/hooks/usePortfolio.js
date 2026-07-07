@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { api } from '../services/api.js';
-import { fallbackPortfolio } from '../data/fallbackPortfolio.js';
 
-const usePortfolio = (endpoint = '/portfolio', fallbackFilter = () => true) => {
+const usePortfolio = (endpoint = '/portfolio') => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -38,13 +37,7 @@ const usePortfolio = (endpoint = '/portfolio', fallbackFilter = () => true) => {
     };
   }, [endpoint]);
 
-  const displayItems = useMemo(() => {
-    if (items.length) {
-      return items;
-    }
-
-    return fallbackPortfolio.filter(fallbackFilter);
-  }, [fallbackFilter, items]);
+  const displayItems = useMemo(() => items, [items]);
 
   return { items: displayItems, hasLiveItems: items.length > 0, loading, error };
 };

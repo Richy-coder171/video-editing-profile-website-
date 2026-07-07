@@ -1,8 +1,9 @@
 import PortfolioGrid from '../components/portfolio/PortfolioGrid.jsx';
+import EmptyState from '../components/portfolio/EmptyState.jsx';
 import usePortfolio from '../hooks/usePortfolio.js';
 
 const Reels = () => {
-  const { items, loading, error } = usePortfolio('/portfolio/type/reel', (item) => item.type === 'reel');
+  const { items, loading } = usePortfolio('/portfolio/type/reel');
 
   return (
     <main className="page-pad bg-ink">
@@ -28,10 +29,9 @@ const Reels = () => {
             </div>
           </div>
         </div>
-        {error && <p className="mt-6 text-sm text-ember">{error}</p>}
         {loading && <p className="mt-6 text-sm text-white/60">Loading reel wall...</p>}
         <div className="mt-8 sm:mt-12">
-          <PortfolioGrid items={items} variant="reel" columns="lg:grid-cols-4" />
+          {items.length ? <PortfolioGrid items={items} variant="reel" columns="lg:grid-cols-4" /> : !loading && <EmptyState />}
         </div>
       </section>
     </main>

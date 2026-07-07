@@ -1,10 +1,11 @@
 import { useMemo, useState } from 'react';
+import EmptyState from '../components/portfolio/EmptyState.jsx';
 import PortfolioGrid from '../components/portfolio/PortfolioGrid.jsx';
 import usePortfolio from '../hooks/usePortfolio.js';
-import { videoCategories } from '../data/fallbackPortfolio.js';
+import { videoCategories } from '../data/portfolioMeta.js';
 
 const Videos = () => {
-  const { items, loading, error } = usePortfolio('/portfolio/type/video', (item) => item.type === 'video');
+  const { items, loading } = usePortfolio('/portfolio/type/video');
   const [activeCategory, setActiveCategory] = useState('All');
 
   const filteredItems = useMemo(() => {
@@ -42,10 +43,9 @@ const Videos = () => {
             </button>
           ))}
         </div>
-        {error && <p className="mt-6 text-sm text-ember">{error}</p>}
         {loading && <p className="mt-6 text-sm text-white/60">Loading video edits...</p>}
         <div className="mt-8 sm:mt-12">
-          <PortfolioGrid items={filteredItems} variant="video" />
+          {filteredItems.length ? <PortfolioGrid items={filteredItems} variant="video" /> : !loading && <EmptyState />}
         </div>
       </section>
     </main>

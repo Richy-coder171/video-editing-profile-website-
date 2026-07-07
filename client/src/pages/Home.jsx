@@ -13,7 +13,7 @@ import usePortfolio from '../hooks/usePortfolio.js';
 gsap.registerPlugin(ScrollTrigger);
 
 const Home = () => {
-  const { items } = usePortfolio('/portfolio/featured', (item) => item.featured);
+  const { items } = usePortfolio('/portfolio/featured');
 
   useEffect(() => {
     const ctx = gsap.context(() => {

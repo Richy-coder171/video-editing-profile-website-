@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ImageUp, LoaderCircle, Save, UploadCloud, X } from 'lucide-react';
+import { portfolioTypes } from '../../data/portfolioMeta.js';
 import { api } from '../../services/api.js';
 
 const blankForm = {
@@ -11,15 +12,10 @@ const blankForm = {
   mediaUrl: '',
   thumbnailUrl: '',
   cloudinaryPublicId: '',
+  thumbnailPublicId: '',
+  resourceType: 'video',
   featured: false
 };
-
-const typeOptions = [
-  { label: 'Reel', value: 'reel' },
-  { label: 'Video', value: 'video' },
-  { label: 'Photoshop', value: 'photoshop' },
-  { label: 'Illustrator', value: 'illustrator' }
-];
 
 const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
   const [form, setForm] = useState(blankForm);
@@ -40,6 +36,8 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         mediaUrl: editingItem.mediaUrl || '',
         thumbnailUrl: editingItem.thumbnailUrl || '',
         cloudinaryPublicId: editingItem.cloudinaryPublicId || '',
+        thumbnailPublicId: editingItem.thumbnailPublicId || '',
+        resourceType: editingItem.resourceType || 'image',
         featured: Boolean(editingItem.featured)
       });
     } else {
@@ -72,12 +70,25 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
     setForm((current) => ({ ...current, [field]: value }));
   };
 
-  const uploadFile = async (file, type) => {
+  const savePortfolioAsset = async () => {
     const payload = new FormData();
-    payload.append('file', file);
 
-    const endpoint = type === 'video' ? '/upload/video' : '/upload/image';
-    const { data } = await api.post(endpoint, payload, {
+    payload.append('title', form.title);
+    payload.append('description', form.description);
+    payload.append('type', form.type);
+    payload.append('category', form.category);
+    payload.append('tools', form.tools);
+    payload.append('featured', String(form.featured));
+
+    if (mediaFile) {
+      payload.append('file', mediaFile);
+    }
+
+    if (thumbnailFile) {
+      payload.append('thumbnail', thumbnailFile);
+    }
+
+    const { data } = await api.post('/upload', payload, {
       headers: { 'Content-Type': 'multipart/form-data' },
       timeout: 0,
       onUploadProgress: (event) => {
@@ -97,7 +108,7 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
     setProgress(0);
 
     try {
-      let payload = {
+      const payload = {
         ...form,
         tools: form.tools
           .split(',')
@@ -105,26 +116,25 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
           .filter(Boolean)
       };
 
-      if (mediaFile) {
-        const uploadType = form.type === 'reel' || form.type === 'video' ? 'video' : 'image';
-        const uploaded = await uploadFile(mediaFile, uploadType);
-        payload = {
-          ...payload,
-          mediaUrl: uploaded.mediaUrl,
-          thumbnailUrl: uploaded.thumbnailUrl || payload.thumbnailUrl,
-          cloudinaryPublicId: uploaded.cloudinaryPublicId
-        };
-      }
-
-      if (thumbnailFile) {
-        const uploadedThumbnail = await uploadFile(thumbnailFile, 'image');
-        payload.thumbnailUrl = uploadedThumbnail.mediaUrl;
-      }
-
-      if (editingItem?._id) {
-        await api.put(`/portfolio/${editingItem._id}`, payload);
+      if (editingItem?.publicId && !mediaFile && !thumbnailFile) {
+        await api.put(`/upload/${encodeURIComponent(editingItem.publicId)}/metadata`, payload);
       } else {
-        await api.post('/portfolio', payload);
+        if (!mediaFile) {
+          setError('Choose a media file to upload.');
+          setSaving(false);
+          return;
+        }
+
+        await savePortfolioAsset();
+
+        if (editingItem?.publicId) {
+          await api.delete(`/upload/${encodeURIComponent(editingItem.publicId)}`, {
+            params: {
+              resourceType: editingItem.resourceType,
+              thumbnailPublicId: editingItem.thumbnailPublicId || undefined
+            }
+          });
+        }
       }
 
       onSaved?.();
@@ -165,7 +175,7 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         <label className="field-label">
           Type
           <select className="input" value={form.type} onChange={(event) => updateField('type', event.target.value)}>
-            {typeOptions.map((option) => (
+            {portfolioTypes.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
@@ -203,17 +213,6 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
             <span>{thumbnailFile ? thumbnailFile.name : 'Optional poster image'}</span>
             <input className="sr-only" type="file" accept="image/*" onChange={(event) => setThumbnailFile(event.target.files?.[0] || null)} />
           </span>
-        </label>
-      </div>
-
-      <div className="mt-4 grid gap-4 sm:grid-cols-2">
-        <label className="field-label">
-          Media URL
-          <input className="input" value={form.mediaUrl} onChange={(event) => updateField('mediaUrl', event.target.value)} required={!mediaFile} />
-        </label>
-        <label className="field-label">
-          Thumbnail URL
-          <input className="input" value={form.thumbnailUrl} onChange={(event) => updateField('thumbnailUrl', event.target.value)} />
         </label>
       </div>
 

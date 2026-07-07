@@ -9,27 +9,31 @@ const allowedMimeTypes = {
   video: ['video/mp4', 'video/webm', 'video/quicktime']
 };
 
-const createUploader = (kind) =>
-  multer({
-    storage,
-    limits: {
-      fileSize:
-        kind === 'video'
-          ? bytesFromMb(process.env.MAX_VIDEO_SIZE_MB, 80)
-          : bytesFromMb(process.env.MAX_IMAGE_SIZE_MB, 8),
-      files: 1
-    },
-    fileFilter(_req, file, callback) {
-      if (!allowedMimeTypes[kind].includes(file.mimetype)) {
-        callback(new Error(`Invalid ${kind} file type`));
-        return;
-      }
-
-      callback(null, true);
+const portfolioUpload = multer({
+  storage,
+  limits: {
+    fileSize: bytesFromMb(process.env.MAX_VIDEO_SIZE_MB, 80),
+    files: 2
+  },
+  fileFilter(_req, file, callback) {
+    if (file.fieldname === 'thumbnail' && !allowedMimeTypes.image.includes(file.mimetype)) {
+      callback(new Error('Invalid thumbnail file type'));
+      return;
     }
-  });
 
-const uploadImage = createUploader('image').single('file');
-const uploadVideo = createUploader('video').single('file');
+    if (
+      file.fieldname === 'file' &&
+      ![...allowedMimeTypes.image, ...allowedMimeTypes.video].includes(file.mimetype)
+    ) {
+      callback(new Error('Invalid portfolio file type'));
+      return;
+    }
 
-export { uploadImage, uploadVideo };
+    callback(null, true);
+  }
+}).fields([
+  { name: 'file', maxCount: 1 },
+  { name: 'thumbnail', maxCount: 1 }
+]);
+
+export { allowedMimeTypes, portfolioUpload };

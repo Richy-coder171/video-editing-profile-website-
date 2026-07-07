@@ -1,8 +1,8 @@
-import { Mail, MapPin, MessageCircle, Send } from 'lucide-react';
+import { ExternalLink, Instagram, Mail, MapPin, MessageCircle, Send, Youtube } from 'lucide-react';
 
 const Contact = () => (
   <main className="page-pad bg-black">
-    <section className="mx-auto grid max-w-7xl gap-10 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
+    <section className="section-shell grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
       <div>
         <p className="eyebrow">Contact</p>
         <h1 className="mt-4 font-display text-5xl font-black leading-none text-white md:text-7xl">
@@ -24,6 +24,19 @@ const Contact = () => (
             <MapPin size={18} />
             Available for remote projects
           </span>
+        </div>
+        <div className="mt-6 flex flex-wrap gap-2">
+          {[
+            { label: 'Instagram', href: 'https://instagram.com/', icon: Instagram },
+            { label: 'YouTube', href: 'https://youtube.com/', icon: Youtube },
+            { label: 'Behance', href: 'https://behance.net/', icon: ExternalLink },
+            { label: 'Dribbble', href: 'https://dribbble.com/', icon: ExternalLink }
+          ].map((link) => (
+            <a key={link.label} className="btn-ghost" href={link.href} target="_blank" rel="noreferrer">
+              <link.icon size={16} />
+              {link.label}
+            </a>
+          ))}
         </div>
       </div>
 

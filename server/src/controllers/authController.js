@@ -1,4 +1,4 @@
-import Admin from '../models/Admin.js';
+import bcrypt from 'bcryptjs';
 import asyncHandler from '../utils/asyncHandler.js';
 import generateToken from '../utils/generateToken.js';
 import sanitizeAdmin from '../utils/sanitizeAdmin.js';
@@ -17,46 +17,24 @@ const clearCookieOptions = {
 };
 
 const sendAuthResponse = (res, admin, statusCode = 200) => {
-  const token = generateToken(admin._id);
+  const token = generateToken(admin);
   res.cookie('token', token, cookieOptions);
   res.status(statusCode).json({ admin: sanitizeAdmin(admin), token });
 };
 
-const register = asyncHandler(async (req, res) => {
-  const { name, email, password, setupKey } = req.body;
-  const existingAdminCount = await Admin.countDocuments();
-  const providedKey = req.headers['x-admin-registration-key'] || setupKey;
+const getEnvAdmin = () => {
+  const email = process.env.ADMIN_EMAIL;
+  const password = process.env.ADMIN_PASSWORD;
+  const passwordHash = process.env.ADMIN_PASSWORD_HASH;
 
-  if (process.env.ADMIN_REGISTRATION_KEY) {
-    if (providedKey !== process.env.ADMIN_REGISTRATION_KEY) {
-      res.status(403);
-      throw new Error('Admin registration requires a valid setup key');
-    }
-  } else if (process.env.NODE_ENV === 'production' || existingAdminCount > 0) {
-    res.status(403);
-    throw new Error('Admin registration is locked');
+  if (!email || (!password && !passwordHash)) {
+    const error = new Error('Admin credentials are not configured');
+    error.statusCode = 503;
+    throw error;
   }
 
-  if (!name || !email || !password) {
-    res.status(400);
-    throw new Error('Name, email, and password are required');
-  }
-
-  if (password.length < 8) {
-    res.status(400);
-    throw new Error('Password must be at least 8 characters');
-  }
-
-  const adminExists = await Admin.findOne({ email });
-
-  if (adminExists) {
-    res.status(409);
-    throw new Error('An admin with that email already exists');
-  }
-
-  const admin = await Admin.create({ name, email, password });
-  sendAuthResponse(res, admin, 201);
-});
+  return { email, password, passwordHash };
+};
 
 const login = asyncHandler(async (req, res) => {
   const { email, password } = req.body;
@@ -66,9 +44,13 @@ const login = asyncHandler(async (req, res) => {
     throw new Error('Email and password are required');
   }
 
-  const admin = await Admin.findOne({ email }).select('+password');
+  const admin = getEnvAdmin();
+  const emailMatches = email.toLowerCase().trim() === admin.email.toLowerCase().trim();
+  const passwordMatches = admin.passwordHash
+    ? await bcrypt.compare(password, admin.passwordHash)
+    : password === admin.password;
 
-  if (!admin || !(await admin.matchPassword(password))) {
+  if (!emailMatches || !passwordMatches) {
     res.status(401);
     throw new Error('Invalid email or password');
   }
@@ -85,4 +67,4 @@ const me = asyncHandler(async (req, res) => {
   res.json({ admin: sanitizeAdmin(req.admin) });
 });
 
-export { register, login, logout, me };
+export { login, logout, me };
