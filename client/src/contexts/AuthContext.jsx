@@ -1,23 +1,18 @@
 import { useEffect, useMemo, useState } from 'react';
-import { api, clearToken, saveToken, TOKEN_KEY } from '../services/api.js';
+import { api } from '../services/api.js';
 import { AuthContext } from './authContext.js';
 
 const AuthProvider = ({ children }) => {
   const [admin, setAdmin] = useState(null);
-  const [loading, setLoading] = useState(Boolean(localStorage.getItem(TOKEN_KEY)));
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const bootstrap = async () => {
-      if (!localStorage.getItem(TOKEN_KEY)) {
-        setLoading(false);
-        return;
-      }
-
       try {
         const { data } = await api.get('/auth/me');
         setAdmin(data.admin);
       } catch {
-        clearToken();
+        setAdmin(null);
       } finally {
         setLoading(false);
       }
@@ -28,7 +23,6 @@ const AuthProvider = ({ children }) => {
 
   const login = async (credentials) => {
     const { data } = await api.post('/auth/login', credentials);
-    saveToken(data.token);
     setAdmin(data.admin);
     return data.admin;
   };
@@ -37,7 +31,6 @@ const AuthProvider = ({ children }) => {
     try {
       await api.post('/auth/logout');
     } finally {
-      clearToken();
       setAdmin(null);
     }
   };

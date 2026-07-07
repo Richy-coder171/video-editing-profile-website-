@@ -53,8 +53,9 @@ const AdminDashboard = () => {
       return;
     }
 
-    await api.delete(`/upload/${encodeURIComponent(item.publicId)}`, {
-      params: {
+    await api.delete('/upload', {
+      data: {
+        publicId: item.publicId,
         resourceType: item.resourceType,
         thumbnailPublicId: item.thumbnailPublicId || undefined
       }

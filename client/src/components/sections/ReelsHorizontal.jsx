@@ -20,15 +20,19 @@ const ReelsHorizontal = ({ items }) => {
     }
 
     const ctx = gsap.context(() => {
-      const distance = Math.max(0, track.scrollWidth - section.offsetWidth + 64);
+      const getDistance = () => Math.max(0, track.scrollWidth - section.offsetWidth + 64);
+
+      if (getDistance() <= 0) {
+        return;
+      }
 
       gsap.to(track, {
-        x: -distance,
+        x: () => -getDistance(),
         ease: 'none',
         scrollTrigger: {
           trigger: section,
           start: 'top top',
-          end: () => `+=${distance}`,
+          end: () => `+=${getDistance()}`,
           scrub: 1,
           pin: true,
           invalidateOnRefresh: true
@@ -49,7 +53,7 @@ const ReelsHorizontal = ({ items }) => {
       <div className="section-shell">
         <p className="eyebrow">Vertical reels</p>
         <h2 className="reveal-text section-title mt-3 max-w-4xl">
-          A swipe-styled reel wall with agency-grade scroll motion.
+          A focused wall of vertical edits with clean cinematic pacing.
         </h2>
       </div>
 

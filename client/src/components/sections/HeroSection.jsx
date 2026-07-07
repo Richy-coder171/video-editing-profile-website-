@@ -9,10 +9,11 @@ const heroStats = [
 ];
 
 const HeroSection = () => (
-  <section className="relative isolate min-h-[96svh] overflow-hidden pt-24 sm:pt-28">
+  <section className="relative isolate min-h-[90svh] overflow-hidden pt-24 sm:pt-28">
     <img
       src="/cinematic-editor-hero.png"
       alt="Cinematic editing studio with video timeline and design boards"
+      fetchPriority="high"
       className="absolute inset-0 -z-30 h-full w-full object-cover"
     />
     <div className="absolute inset-0 -z-20 bg-[linear-gradient(90deg,#050505_0%,rgba(5,5,5,0.93)_38%,rgba(5,5,5,0.44)_100%)]" />
@@ -20,7 +21,7 @@ const HeroSection = () => (
     <div className="absolute inset-x-0 top-24 -z-10 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
     <div className="absolute bottom-0 right-0 -z-10 hidden h-48 w-2/3 bg-[linear-gradient(90deg,transparent,rgba(51,214,255,0.12),rgba(255,54,94,0.1),transparent)] lg:block" />
 
-    <div className="section-shell flex min-h-[calc(96svh-6rem)] items-center py-12">
+    <div className="section-shell flex min-h-[calc(90svh-6rem)] items-center py-12">
       <div className="max-w-5xl">
         <motion.p
           className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/10 bg-black/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl sm:text-sm"
@@ -32,7 +33,7 @@ const HeroSection = () => (
           Anime energy for reels, edits, thumbnails, posters
         </motion.p>
         <motion.h1
-          className="mt-6 max-w-5xl font-display text-[clamp(3rem,11vw,8.7rem)] font-black leading-[0.88] text-white"
+          className="mt-6 max-w-5xl font-display text-5xl font-black leading-[0.9] text-white sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl"
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.08 }}

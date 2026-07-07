@@ -10,7 +10,9 @@ import { portfolioUpload } from '../middleware/upload.js';
 const router = express.Router();
 
 router.post('/', protect, portfolioUpload, uploadPortfolioAsset);
+router.delete('/', protect, deletePortfolioAsset);
+router.put('/metadata', protect, portfolioUpload, updatePortfolioMetadata);
 router.delete('/:publicId(*)', protect, deletePortfolioAsset);
-router.put('/:publicId(*)/metadata', protect, updatePortfolioMetadata);
+router.put('/:publicId(*)/metadata', protect, portfolioUpload, updatePortfolioMetadata);
 
 export default router;

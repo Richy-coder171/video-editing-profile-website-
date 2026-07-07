@@ -101,6 +101,32 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
     return data;
   };
 
+  const updatePortfolioMetadata = async (payload) => {
+    if (!thumbnailFile) {
+      return api.put('/upload/metadata', {
+        ...payload,
+        publicId: editingItem.publicId
+      });
+    }
+
+    const formData = new FormData();
+    Object.entries(payload).forEach(([key, value]) => {
+      formData.append(key, Array.isArray(value) ? value.join(', ') : String(value ?? ''));
+    });
+    formData.append('publicId', editingItem.publicId);
+    formData.append('thumbnail', thumbnailFile);
+
+    return api.put('/upload/metadata', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+      timeout: 0,
+      onUploadProgress: (event) => {
+        if (event.total) {
+          setProgress(Math.round((event.loaded * 100) / event.total));
+        }
+      }
+    });
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSaving(true);
@@ -116,8 +142,8 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
           .filter(Boolean)
       };
 
-      if (editingItem?.publicId && !mediaFile && !thumbnailFile) {
-        await api.put(`/upload/${encodeURIComponent(editingItem.publicId)}/metadata`, payload);
+      if (editingItem?.publicId && !mediaFile) {
+        await updatePortfolioMetadata(payload);
       } else {
         if (!mediaFile) {
           setError('Choose a media file to upload.');
@@ -128,8 +154,9 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         await savePortfolioAsset();
 
         if (editingItem?.publicId) {
-          await api.delete(`/upload/${encodeURIComponent(editingItem.publicId)}`, {
-            params: {
+          await api.delete('/upload', {
+            data: {
+              publicId: editingItem.publicId,
               resourceType: editingItem.resourceType,
               thumbnailPublicId: editingItem.thumbnailPublicId || undefined
             }

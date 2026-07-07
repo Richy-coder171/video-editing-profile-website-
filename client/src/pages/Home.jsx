@@ -6,7 +6,6 @@ import FeaturedShowcase from '../components/sections/FeaturedShowcase.jsx';
 import ReelsHorizontal from '../components/sections/ReelsHorizontal.jsx';
 import ServicesTools from '../components/sections/ServicesTools.jsx';
 import ProcessTimeline from '../components/sections/ProcessTimeline.jsx';
-import BeforeAfter from '../components/sections/BeforeAfter.jsx';
 import ContactCTA from '../components/sections/ContactCTA.jsx';
 import usePortfolio from '../hooks/usePortfolio.js';
 
@@ -68,7 +67,6 @@ const Home = () => {
       <ReelsHorizontal items={items} />
       <ServicesTools />
       <ProcessTimeline />
-      <BeforeAfter />
       <ContactCTA />
     </main>
   );

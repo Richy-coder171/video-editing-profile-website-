@@ -7,7 +7,7 @@ const ProcessTimeline = () => (
         <div className="lg:sticky lg:top-28 lg:h-fit">
           <p className="eyebrow">Editing process</p>
           <h2 className="reveal-text section-title mt-3">
-            Anime-style scroll panels for the edit process.
+            A polished process from raw footage to final delivery.
           </h2>
           <p className="mt-6 max-w-lg text-sm leading-7 text-white/60">
             A clear production pipeline keeps each project fast, focused, and consistent across platforms.

@@ -19,7 +19,7 @@ const clearCookieOptions = {
 const sendAuthResponse = (res, admin, statusCode = 200) => {
   const token = generateToken(admin);
   res.cookie('token', token, cookieOptions);
-  res.status(statusCode).json({ admin: sanitizeAdmin(admin), token });
+  res.status(statusCode).json({ admin: sanitizeAdmin(admin) });
 };
 
 const getEnvAdmin = () => {

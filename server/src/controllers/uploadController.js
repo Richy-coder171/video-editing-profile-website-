@@ -28,10 +28,50 @@ const normalizeTools = (tools) => {
 
 const parseFeatured = (value) => value === true || value === 'true';
 
+const bytesFromMb = (value, fallback) => Number(value || fallback) * 1024 * 1024;
+
+const assertFileSize = (file, kind) => {
+  if (!file) {
+    return;
+  }
+
+  const maxBytes =
+    kind === 'video'
+      ? bytesFromMb(process.env.MAX_VIDEO_SIZE_MB, 80)
+      : bytesFromMb(process.env.MAX_IMAGE_SIZE_MB, 8);
+
+  if (file.size > maxBytes) {
+    const maxMb = kind === 'video' ? process.env.MAX_VIDEO_SIZE_MB || 80 : process.env.MAX_IMAGE_SIZE_MB || 8;
+    const error = new Error(`${kind === 'video' ? 'Video' : 'Image'} uploads must be ${maxMb}MB or smaller`);
+    error.statusCode = 400;
+    throw error;
+  }
+};
+
 const getUploadFiles = (req) => ({
   file: req.files?.file?.[0],
   thumbnail: req.files?.thumbnail?.[0]
 });
+
+const safeDecodeURIComponent = (value) => {
+  try {
+    return decodeURIComponent(value);
+  } catch {
+    return value;
+  }
+};
+
+const getPublicIdFromRequest = (req) => {
+  const rawPublicId = req.body?.publicId || req.params.publicId;
+
+  if (!rawPublicId) {
+    const error = new Error('publicId is required');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  return safeDecodeURIComponent(rawPublicId);
+};
 
 const buildContext = ({ title, description, type, category, tools, featured, thumbnailUrl, thumbnailPublicId }) => ({
   title: String(title || '').trim(),
@@ -120,6 +160,9 @@ const uploadPortfolioAsset = asyncHandler(async (req, res) => {
     throw new Error(`${config.label} uploads must be image files`);
   }
 
+  assertFileSize(file, config.resourceType);
+  assertFileSize(thumbnail, 'image');
+
   const thumbnailResult = await uploadAssociatedThumbnail(thumbnail, title);
   const context = buildContext({
     title,
@@ -145,7 +188,18 @@ const uploadPortfolioAsset = asyncHandler(async (req, res) => {
     uploadOptions.eager_async = false;
   }
 
-  const result = await uploadBufferToCloudinary(file.buffer, uploadOptions);
+  let result;
+
+  try {
+    result = await uploadBufferToCloudinary(file.buffer, uploadOptions);
+  } catch (error) {
+    if (thumbnailResult.thumbnailPublicId) {
+      await deleteFromCloudinary(thumbnailResult.thumbnailPublicId, 'image').catch(() => undefined);
+    }
+
+    throw error;
+  }
+
   const item = normalizeCloudinaryAsset({
     ...result,
     resource_type: config.resourceType,
@@ -157,28 +211,44 @@ const uploadPortfolioAsset = asyncHandler(async (req, res) => {
 });
 
 const deletePortfolioAsset = asyncHandler(async (req, res) => {
-  const publicId = decodeURIComponent(req.params.publicId);
-  const resourceType = req.query.resourceType || 'image';
-  const thumbnailPublicId = req.query.thumbnailPublicId;
+  const publicId = getPublicIdFromRequest(req);
+  const resourceType = req.body?.resourceType || req.query.resourceType || 'image';
+  const thumbnailPublicId = req.body?.thumbnailPublicId || req.query.thumbnailPublicId;
 
   await deleteFromCloudinary(publicId, resourceType);
 
   if (thumbnailPublicId) {
-    await deleteFromCloudinary(decodeURIComponent(thumbnailPublicId), 'image');
+    await deleteFromCloudinary(safeDecodeURIComponent(thumbnailPublicId), 'image');
   }
 
   res.json({ message: 'Cloudinary asset deleted' });
 });
 
 const updatePortfolioMetadata = asyncHandler(async (req, res) => {
-  const publicId = decodeURIComponent(req.params.publicId);
-  const { title, description, type, category, tools, featured, thumbnailUrl, thumbnailPublicId, resourceType } = req.body;
+  const publicId = getPublicIdFromRequest(req);
+  const { thumbnail } = getUploadFiles(req);
+  const {
+    title,
+    description,
+    type,
+    category,
+    tools,
+    featured,
+    thumbnailUrl,
+    thumbnailPublicId,
+    resourceType
+  } = req.body;
   const errors = validatePayload({ title, type });
 
   if (errors.length) {
     res.status(400);
     throw new Error(errors.join(', '));
   }
+
+  assertFileSize(thumbnail, 'image');
+  const uploadedThumbnail = await uploadAssociatedThumbnail(thumbnail, title);
+  const nextThumbnailUrl = uploadedThumbnail.thumbnailUrl || thumbnailUrl;
+  const nextThumbnailPublicId = uploadedThumbnail.thumbnailPublicId || thumbnailPublicId;
 
   const context = buildContext({
     title,
@@ -187,15 +257,33 @@ const updatePortfolioMetadata = asyncHandler(async (req, res) => {
     category,
     tools,
     featured,
-    thumbnailUrl,
-    thumbnailPublicId
+    thumbnailUrl: nextThumbnailUrl,
+    thumbnailPublicId: nextThumbnailPublicId
   });
   const tags = buildTags({ type, category, featured });
-  const item = await updateCloudinaryMetadata(publicId, {
-    resourceType: resourceType || (type === 'reel' || type === 'video' ? 'video' : 'image'),
-    context,
-    tags
-  });
+  let item;
+
+  try {
+    item = await updateCloudinaryMetadata(publicId, {
+      resourceType: resourceType || (type === 'reel' || type === 'video' ? 'video' : 'image'),
+      context,
+      tags
+    });
+  } catch (error) {
+    if (uploadedThumbnail.thumbnailPublicId) {
+      await deleteFromCloudinary(uploadedThumbnail.thumbnailPublicId, 'image').catch(() => undefined);
+    }
+
+    throw error;
+  }
+
+  if (
+    uploadedThumbnail.thumbnailPublicId &&
+    thumbnailPublicId &&
+    uploadedThumbnail.thumbnailPublicId !== thumbnailPublicId
+  ) {
+    await deleteFromCloudinary(thumbnailPublicId, 'image');
+  }
 
   res.json({ item });
 });

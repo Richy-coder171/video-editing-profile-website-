@@ -1,6 +1,6 @@
-import { motion, useInView } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { Maximize2, Play, Sparkles } from 'lucide-react';
-import { useEffect, useRef } from 'react';
+import { useRef } from 'react';
 
 const aspectMap = {
   reel: 'aspect-[9/16]',
@@ -12,30 +12,9 @@ const aspectMap = {
 const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
   const isVideo = item.type === 'video' || item.type === 'reel';
   const poster = item.thumbnailUrl || item.mediaUrl || '/cinematic-editor-hero.png';
-  const videoRef = useRef(null);
   const cardRef = useRef(null);
-  const inView = useInView(cardRef, { amount: 0.55, margin: '0px 0px -12% 0px' });
   const isReel = variant === 'reel';
   const isDesign = variant === 'design';
-
-  useEffect(() => {
-    const video = videoRef.current;
-
-    if (!video || !isVideo || !item.mediaUrl) {
-      return;
-    }
-
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-      return;
-    }
-
-    if (inView) {
-      video.play().catch(() => undefined);
-      return;
-    }
-
-    video.pause();
-  }, [inView, isVideo, item.mediaUrl]);
 
   return (
     <motion.article
@@ -56,7 +35,6 @@ const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
       >
         {isVideo && item.mediaUrl ? (
           <video
-            ref={videoRef}
             className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
             poster={poster}
             preload="none"
@@ -64,7 +42,12 @@ const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
             loop
             playsInline
             onMouseEnter={(event) => event.currentTarget.play().catch(() => undefined)}
+            onFocus={(event) => event.currentTarget.play().catch(() => undefined)}
             onMouseLeave={(event) => {
+              event.currentTarget.pause();
+              event.currentTarget.currentTime = 0;
+            }}
+            onBlur={(event) => {
               event.currentTarget.pause();
               event.currentTarget.currentTime = 0;
             }}
