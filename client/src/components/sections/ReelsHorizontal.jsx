@@ -1,0 +1,88 @@
+import { useEffect, useRef, useState } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import ProjectLightbox from '../portfolio/ProjectLightbox.jsx';
+
+gsap.registerPlugin(ScrollTrigger);
+
+const ReelsHorizontal = ({ items }) => {
+  const sectionRef = useRef(null);
+  const trackRef = useRef(null);
+  const [activeItem, setActiveItem] = useState(null);
+  const reels = items.filter((item) => item.type === 'reel').slice(0, 6);
+
+  useEffect(() => {
+    const section = sectionRef.current;
+    const track = trackRef.current;
+
+    if (!section || !track || window.matchMedia('(max-width: 1023px)').matches) {
+      return undefined;
+    }
+
+    const ctx = gsap.context(() => {
+      const distance = Math.max(0, track.scrollWidth - section.offsetWidth + 64);
+
+      gsap.to(track, {
+        x: -distance,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: section,
+          start: 'top top',
+          end: () => `+=${distance}`,
+          scrub: 1,
+          pin: true,
+          invalidateOnRefresh: true
+        }
+      });
+    }, section);
+
+    return () => ctx.revert();
+  }, [reels.length]);
+
+  if (!reels.length) {
+    return null;
+  }
+
+  return (
+    <section ref={sectionRef} className="overflow-hidden bg-black py-20">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <p className="eyebrow">Vertical reels</p>
+        <h2 className="reveal-text mt-3 max-w-4xl font-display text-4xl font-bold text-white md:text-6xl">
+          A swipe-styled reel wall with agency-grade scroll motion.
+        </h2>
+      </div>
+
+      <div
+        ref={trackRef}
+        className="mx-auto mt-12 grid max-w-7xl gap-5 px-4 sm:grid-cols-2 sm:px-6 lg:mx-0 lg:flex lg:w-max lg:max-w-none lg:px-[max(2rem,calc((100vw-80rem)/2))]"
+      >
+        {reels.map((item, index) => (
+          <button
+            key={item._id || item.id}
+            className="group relative aspect-[9/16] w-full shrink-0 overflow-hidden rounded-lg border border-white/10 bg-graphite text-left shadow-glow lg:w-[320px]"
+            onClick={() => setActiveItem(item)}
+          >
+            <img
+              src={item.thumbnailUrl || '/cinematic-editor-hero.png'}
+              alt={item.title}
+              loading="lazy"
+              className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
+            />
+            <span className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
+            <span className="absolute left-4 top-4 rounded-full bg-white text-xs font-semibold text-ink px-3 py-1">
+              {String(index + 1).padStart(2, '0')}
+            </span>
+            <span className="absolute bottom-0 left-0 right-0 p-5">
+              <span className="text-xs uppercase tracking-[0.24em] text-electric">{item.category}</span>
+              <span className="mt-2 block font-display text-2xl font-semibold text-white">{item.title}</span>
+              <span className="mt-2 block text-sm leading-6 text-white/60">{item.description}</span>
+            </span>
+          </button>
+        ))}
+      </div>
+      <ProjectLightbox item={activeItem} onClose={() => setActiveItem(null)} />
+    </section>
+  );
+};
+
+export default ReelsHorizontal;

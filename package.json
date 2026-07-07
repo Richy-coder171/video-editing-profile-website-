@@ -1,0 +1,20 @@
+{
+  "name": "cinematic-video-editing-portfolio",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Full-stack cinematic portfolio for a video editor and graphic designer.",
+  "workspaces": [
+    "client",
+    "server"
+  ],
+  "scripts": {
+    "dev": "concurrently -n server,client -c red,cyan \"npm run dev --workspace server\" \"npm run dev --workspace client\"",
+    "install:all": "npm install",
+    "build": "npm run build --workspace client",
+    "start": "npm run start --workspace server",
+    "lint": "npm run lint --workspace client"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
