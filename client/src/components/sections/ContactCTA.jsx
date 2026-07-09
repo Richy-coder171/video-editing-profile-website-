@@ -13,8 +13,8 @@ const ContactCTA = () => (
             Ready to turn your next idea into a polished visual drop?
           </h2>
           <p className="mt-5 text-sm leading-7 text-white/60">
-            Send the project details, deadline, references, and platform goals. The portfolio can be updated from the
-            admin dashboard as new work lands.
+            Send the project details, deadline, references, and platform goals. I will shape the visuals around the
+            rhythm, audience, and feeling you want the final piece to carry.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
             <Link to="/contact" className="btn-primary">

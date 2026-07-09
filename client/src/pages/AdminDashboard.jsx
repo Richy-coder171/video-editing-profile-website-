@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Edit3, LogOut, RefreshCw, Star, Trash2 } from 'lucide-react';
+import { CalendarDays, Edit3, LogOut, RefreshCw, Star, Trash2 } from 'lucide-react';
 import PortfolioForm from '../components/admin/PortfolioForm.jsx';
 import { useAuth } from '../contexts/authContext.js';
 import { portfolioTypes } from '../data/portfolioMeta.js';
@@ -13,6 +13,7 @@ const AdminDashboard = () => {
   const [filter, setFilter] = useState('all');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [editingItem, setEditingItem] = useState(null);
   const { admin, logout } = useAuth();
 
@@ -43,6 +44,7 @@ const AdminDashboard = () => {
   }, [filter, items]);
 
   const handleSaved = async () => {
+    setSuccess(editingItem ? 'Portfolio item updated.' : 'Portfolio item uploaded.');
     setEditingItem(null);
     await loadItems();
   };
@@ -54,14 +56,22 @@ const AdminDashboard = () => {
       return;
     }
 
-    await api.delete(`/portfolio/${item.id}`);
-    await loadItems();
+    try {
+      setError('');
+      setSuccess('');
+      await api.delete(`/portfolio/${item.id}`);
+      setSuccess('Portfolio item deleted.');
+      await loadItems();
+    } catch (requestError) {
+      setError(requestError.response?.data?.message || 'Unable to delete portfolio item');
+    }
   };
 
   return (
-    <main className="page-pad bg-ink">
+    <main className="page-pad relative overflow-hidden bg-ink">
+      <div className="pointer-events-none absolute inset-0 bg-cinematic-sheen opacity-20" />
       <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+        <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="eyebrow">Admin dashboard</p>
             <h1 className="mt-3 font-display text-4xl font-black leading-none text-white md:text-6xl lg:text-7xl">
@@ -81,10 +91,12 @@ const AdminDashboard = () => {
           </div>
         </div>
 
-        <div className="mt-10 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
+        {success && <p className="relative mt-6 rounded-lg border border-electric/30 bg-electric/10 p-3 text-sm text-electric">{success}</p>}
+
+        <div className="relative mt-10 grid gap-6 lg:grid-cols-[0.9fr_1.1fr]">
           <PortfolioForm editingItem={editingItem} onSaved={handleSaved} onCancel={() => setEditingItem(null)} />
 
-          <div className="rounded-lg border border-white/10 bg-white/[0.045] p-5">
+          <div className="anime-surface rounded-lg p-5">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
               <div>
                 <p className="eyebrow">Library</p>
@@ -94,8 +106,8 @@ const AdminDashboard = () => {
                 {filters.map((itemFilter) => (
                   <button
                     key={itemFilter.value}
-                    className={`rounded-full px-3 py-2 text-xs capitalize ${
-                      filter === itemFilter.value ? 'bg-white text-ink' : 'border border-white/10 text-white/60'
+                    className={`rounded-full px-3 py-2 text-xs capitalize transition ${
+                      filter === itemFilter.value ? 'bg-white text-ink shadow-glow' : 'border border-white/10 text-white/60 hover:border-electric/30 hover:text-white'
                     }`}
                     onClick={() => setFilter(itemFilter.value)}
                     type="button"
@@ -117,7 +129,7 @@ const AdminDashboard = () => {
               )}
 
               {filteredItems.map((item) => (
-                <article key={item.id} className="grid gap-4 rounded-lg border border-white/10 bg-black/30 p-3 sm:grid-cols-[112px_1fr]">
+                <article key={item.id} className="manga-panel grid gap-4 p-3 sm:grid-cols-[112px_1fr]">
                   <img
                     src={item.thumbnailUrl || item.mediaUrl || '/cinematic-editor-hero.png'}
                     alt={item.title}
@@ -131,10 +143,15 @@ const AdminDashboard = () => {
                           <h3 className="font-display text-lg font-semibold text-white">{item.title}</h3>
                           {item.featured && <Star size={16} className="fill-acid text-acid" />}
                         </div>
-                        <p className="mt-1 text-xs uppercase tracking-[0.22em] text-white/40">
+                        <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/40 sm:tracking-[0.22em]">
                           {item.type} / {item.category}
-                          {item.projectDate ? ` / ${formatProjectDate(item.projectDate)}` : ''}
                         </p>
+                        {item.projectDate && (
+                          <p className="mt-2 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.16em] text-electric/80">
+                            <CalendarDays size={13} />
+                            {formatProjectDate(item.projectDate)}
+                          </p>
+                        )}
                         <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/60">{item.description}</p>
                       </div>
                       <div className="flex gap-2">

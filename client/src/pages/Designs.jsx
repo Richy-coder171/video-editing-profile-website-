@@ -5,7 +5,7 @@ import usePortfolio from '../hooks/usePortfolio.js';
 import { designTabs, designTypes } from '../data/portfolioMeta.js';
 
 const Designs = () => {
-  const { items, loading } = usePortfolio('/portfolio');
+  const { items, loading, error } = usePortfolio('/portfolio');
   const designItems = items.filter((item) => designTypes.includes(item.type));
   const [activeType, setActiveType] = useState('all');
 
@@ -54,6 +54,7 @@ const Designs = () => {
           ))}
         </div>
         {loading && <p className="mt-6 text-sm text-white/60">Loading design work...</p>}
+        {error && <p className="mt-6 rounded-lg border border-ember/30 bg-ember/10 p-3 text-sm text-ember">{error}</p>}
         <div className="mt-8 sm:mt-12">
           {filteredItems.length ? (
             <PortfolioGrid items={filteredItems} variant="design" columns="lg:grid-cols-3" />

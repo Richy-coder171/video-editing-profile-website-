@@ -12,7 +12,7 @@ import usePortfolio from '../hooks/usePortfolio.js';
 gsap.registerPlugin(ScrollTrigger);
 
 const Home = () => {
-  const { items } = usePortfolio('/portfolio/featured');
+  const { items, error } = usePortfolio('/portfolio/featured');
 
   useEffect(() => {
     if (window.matchMedia('(max-width: 767px), (prefers-reduced-motion: reduce)').matches) {
@@ -68,6 +68,13 @@ const Home = () => {
   return (
     <main>
       <HeroSection />
+      {error && (
+        <section className="bg-ink px-4">
+          <div className="mx-auto max-w-7xl rounded-lg border border-ember/30 bg-ember/10 p-3 text-sm text-ember">
+            {error}
+          </div>
+        </section>
+      )}
       <FeaturedShowcase items={items} />
       <ReelsHorizontal items={items} />
       <ServicesTools />

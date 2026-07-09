@@ -33,7 +33,7 @@ const About = () => (
           { icon: Clapperboard, title: 'Narrative editing', text: 'Strong hooks, clean pacing, and edits shaped around viewer attention.' },
           { icon: Layers3, title: 'Design depth', text: 'Layered thumbnails, posters, logos, and social graphics that scan fast.' },
           { icon: Gauge, title: 'Performance-aware', text: 'Poster-first media, lazy loading, Cloudinary delivery, and optimized effects.' },
-          { icon: ShieldCheck, title: 'Production-ready', text: 'Admin-only upload flows, JWT protection, server validation, and deployment notes.' }
+          { icon: ShieldCheck, title: 'Production-ready', text: 'Clean exports, organized assets, platform-aware sizes, and files prepared for publishing.' }
         ].map((item) => (
           <article key={item.title} className="anime-surface rounded-lg p-6 transition duration-500 hover:-translate-y-1 hover:border-electric/30">
             <item.icon className="text-electric" size={22} />

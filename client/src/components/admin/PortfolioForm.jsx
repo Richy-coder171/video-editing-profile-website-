@@ -286,13 +286,16 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
   };
 
   return (
-    <form className="rounded-lg border border-white/10 bg-white/[0.045] p-5" onSubmit={handleSubmit}>
+    <form className="anime-surface rounded-lg p-5 sm:p-6" onSubmit={handleSubmit}>
       <div className="flex items-center justify-between gap-3">
         <div>
           <p className="eyebrow">Portfolio item</p>
           <h2 className="mt-2 font-display text-2xl font-semibold text-white">
             {editingItem ? 'Edit project' : 'Upload new work'}
           </h2>
+          <p className="mt-2 text-sm leading-6 text-white/55">
+            Add finished edits, design work, and launch-ready visual assets.
+          </p>
         </div>
         {editingItem && (
           <button className="icon-button" type="button" onClick={onCancel} aria-label="Cancel edit">
@@ -370,6 +373,9 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
           <span className="file-drop">
             <UploadCloud size={20} />
             <span>{mediaFile ? mediaFile.name : 'Choose video or image'}</span>
+            <span className="text-xs text-white/40">
+              Videos up to {MAX_VIDEO_SIZE_MB}MB. Images up to {MAX_IMAGE_SIZE_MB}MB.
+            </span>
             <input
               className="sr-only"
               type="file"
@@ -383,6 +389,7 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
           <span className="file-drop">
             <ImageUp size={20} />
             <span>{thumbnailFile ? thumbnailFile.name : 'Optional poster image'}</span>
+            <span className="text-xs text-white/40">Recommended for video previews and reel covers.</span>
             <input
               className="sr-only"
               type="file"
@@ -394,7 +401,7 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
       </div>
 
       {previewUrl && (
-        <div className="mt-5 overflow-hidden rounded-lg border border-white/10 bg-black">
+        <div className="mt-5 overflow-hidden rounded-lg border border-white/10 bg-black shadow-panel">
           {form.type === 'video' || form.type === 'reel' ? (
             <video className="h-64 w-full object-contain" src={previewUrl} controls muted playsInline />
           ) : (

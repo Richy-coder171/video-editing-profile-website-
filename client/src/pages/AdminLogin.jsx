@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router-dom';
-import { LockKeyhole, LogIn } from 'lucide-react';
+import { LockKeyhole, LogIn, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../contexts/authContext.js';
 
 const AdminLogin = () => {
@@ -32,13 +32,19 @@ const AdminLogin = () => {
   };
 
   return (
-    <main className="page-pad grid place-items-center bg-ink px-4">
-      <form className="w-full max-w-md rounded-lg border border-white/10 bg-white/[0.045] p-6" onSubmit={handleSubmit}>
-        <span className="grid h-12 w-12 place-items-center rounded-full bg-white text-ink">
+    <main className="page-pad relative grid place-items-center overflow-hidden bg-ink px-4">
+      <div className="pointer-events-none absolute inset-0 bg-cinematic-sheen opacity-30" />
+      <div className="pointer-events-none absolute inset-0 bg-manga-lines opacity-10" />
+      <form className="anime-surface w-full max-w-md rounded-lg p-6 sm:p-8" onSubmit={handleSubmit}>
+        <span className="grid h-12 w-12 place-items-center rounded-full bg-white text-ink shadow-glow">
           <LockKeyhole size={21} />
         </span>
         <h1 className="mt-5 font-display text-3xl font-bold text-white">Admin Login</h1>
         <p className="mt-2 text-sm leading-6 text-white/60">Sign in to upload, edit, feature, and remove portfolio work.</p>
+        <p className="mt-4 inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/30 px-3 py-1 text-xs text-white/55">
+          <ShieldCheck size={14} className="text-electric" />
+          Protected portfolio dashboard
+        </p>
 
         {error && <p className="mt-5 rounded-lg border border-ember/30 bg-ember/10 p-3 text-sm text-ember">{error}</p>}
 

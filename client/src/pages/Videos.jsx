@@ -5,7 +5,7 @@ import usePortfolio from '../hooks/usePortfolio.js';
 import { videoCategories } from '../data/portfolioMeta.js';
 
 const Videos = () => {
-  const { items, loading } = usePortfolio('/portfolio/type/video');
+  const { items, loading, error } = usePortfolio('/portfolio/type/video');
   const [activeCategory, setActiveCategory] = useState('All');
 
   const filteredItems = useMemo(() => {
@@ -46,6 +46,7 @@ const Videos = () => {
           ))}
         </div>
         {loading && <p className="mt-6 text-sm text-white/60">Loading video edits...</p>}
+        {error && <p className="mt-6 rounded-lg border border-ember/30 bg-ember/10 p-3 text-sm text-ember">{error}</p>}
         <div className="mt-8 sm:mt-12">
           {filteredItems.length ? <PortfolioGrid items={filteredItems} variant="video" /> : !loading && <EmptyState />}
         </div>
