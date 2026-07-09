@@ -239,7 +239,12 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
           <span className="file-drop">
             <UploadCloud size={20} />
             <span>{mediaFile ? mediaFile.name : 'Choose video or image'}</span>
-            <input className="sr-only" type="file" accept="image/*,video/mp4,video/webm,video/quicktime" onChange={(event) => setMediaFile(event.target.files?.[0] || null)} />
+            <input
+              className="sr-only"
+              type="file"
+              accept="image/*,.avif,.heic,.heif,video/mp4,video/webm,video/quicktime,.mov,.m4v,.avi,.mkv"
+              onChange={(event) => setMediaFile(event.target.files?.[0] || null)}
+            />
           </span>
         </label>
         <label className="field-label">
@@ -247,7 +252,12 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
           <span className="file-drop">
             <ImageUp size={20} />
             <span>{thumbnailFile ? thumbnailFile.name : 'Optional poster image'}</span>
-            <input className="sr-only" type="file" accept="image/*" onChange={(event) => setThumbnailFile(event.target.files?.[0] || null)} />
+            <input
+              className="sr-only"
+              type="file"
+              accept="image/*,.avif,.heic,.heif"
+              onChange={(event) => setThumbnailFile(event.target.files?.[0] || null)}
+            />
           </span>
         </label>
       </div>

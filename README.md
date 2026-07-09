@@ -89,8 +89,8 @@ CLOUDINARY_API_SECRET=your_cloudinary_api_secret
 SUPABASE_URL=https://your-project-id.supabase.co
 SUPABASE_SECRET_KEY=your_supabase_service_role_key
 
-MAX_IMAGE_SIZE_MB=8
-MAX_VIDEO_SIZE_MB=80
+MAX_IMAGE_SIZE_MB=25
+MAX_VIDEO_SIZE_MB=500
 ```
 
 Manually replace the Cloudinary and Supabase placeholders with real values. For production, prefer `ADMIN_PASSWORD_HASH` instead of `ADMIN_PASSWORD`.
@@ -111,7 +111,7 @@ Leave optional contact/social values empty until you have real links. The public
 
 ## Supabase Table
 
-Create the metadata table in the Supabase SQL editor:
+Create the metadata table in the Supabase SQL Editor. The same script is saved in `supabase/schema.sql`.
 
 ```sql
 create extension if not exists pgcrypto;

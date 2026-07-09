@@ -14,7 +14,13 @@ const hasOwn = (object, key) => Object.prototype.hasOwnProperty.call(object, key
 const getLimit = (value, fallback = 60) => Math.min(Math.max(Number(value) || fallback, 1), 200);
 
 const throwSupabaseError = (error, fallbackMessage = 'Supabase request failed') => {
-  const requestError = new Error(error?.message || fallbackMessage);
+  const tableMissing =
+    error?.code === 'PGRST205' ||
+    error?.message?.includes("Could not find the table 'public.portfolio_items'");
+  const message = tableMissing
+    ? 'Supabase table public.portfolio_items was not found. Run supabase/schema.sql in the Supabase SQL Editor, then restart or refresh the app.'
+    : error?.message || fallbackMessage;
+  const requestError = new Error(message);
   requestError.statusCode = error?.code === 'PGRST116' ? 404 : 500;
   throw requestError;
 };

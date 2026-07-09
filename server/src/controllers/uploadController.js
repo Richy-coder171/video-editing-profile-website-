@@ -2,6 +2,7 @@ import { getSupabaseClient } from '../config/supabase.js';
 import { getTypeConfig } from '../config/portfolioTypes.js';
 import asyncHandler from '../utils/asyncHandler.js';
 import { cloudinaryDeliveryUrl, deleteFromCloudinary, uploadBufferToCloudinary } from '../utils/cloudinaryUpload.js';
+import { getFileKind } from '../middleware/upload.js';
 import {
   normalizePortfolioRow,
   normalizeTools,
@@ -19,11 +20,11 @@ const assertFileSize = (file, kind) => {
 
   const maxBytes =
     kind === 'video'
-      ? bytesFromMb(process.env.MAX_VIDEO_SIZE_MB, 80)
-      : bytesFromMb(process.env.MAX_IMAGE_SIZE_MB, 8);
+      ? bytesFromMb(process.env.MAX_VIDEO_SIZE_MB, 500)
+      : bytesFromMb(process.env.MAX_IMAGE_SIZE_MB, 25);
 
   if (file.size > maxBytes) {
-    const maxMb = kind === 'video' ? process.env.MAX_VIDEO_SIZE_MB || 80 : process.env.MAX_IMAGE_SIZE_MB || 8;
+    const maxMb = kind === 'video' ? process.env.MAX_VIDEO_SIZE_MB || 500 : process.env.MAX_IMAGE_SIZE_MB || 25;
     const error = new Error(`${kind === 'video' ? 'Video' : 'Image'} uploads must be ${maxMb}MB or smaller`);
     error.statusCode = 400;
     throw error;
@@ -36,7 +37,14 @@ const getUploadFiles = (req) => ({
 });
 
 const throwSupabaseError = (error) => {
-  const requestError = new Error(error?.message || 'Unable to save portfolio metadata');
+  const tableMissing =
+    error?.code === 'PGRST205' ||
+    error?.message?.includes("Could not find the table 'public.portfolio_items'");
+  const requestError = new Error(
+    tableMissing
+      ? 'Supabase table public.portfolio_items was not found. Run supabase/schema.sql in the Supabase SQL Editor, then try uploading again.'
+      : error?.message || 'Unable to save portfolio metadata'
+  );
   requestError.statusCode = error?.code === '23505' ? 409 : 500;
   throw requestError;
 };
@@ -106,14 +114,14 @@ const uploadPortfolioAsset = asyncHandler(async (req, res) => {
   }
 
   const config = getTypeConfig(type);
-  const isVideoFile = file.mimetype.startsWith('video/');
+  const fileKind = getFileKind(file);
 
-  if (config.resourceType === 'video' && !isVideoFile) {
+  if (config.resourceType === 'video' && fileKind !== 'video') {
     res.status(400);
     throw new Error(`${config.label} uploads must be video files`);
   }
 
-  if (config.resourceType === 'image' && isVideoFile) {
+  if (config.resourceType === 'image' && fileKind !== 'image') {
     res.status(400);
     throw new Error(`${config.label} uploads must be image files`);
   }

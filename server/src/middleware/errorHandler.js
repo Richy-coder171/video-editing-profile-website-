@@ -9,7 +9,19 @@ const errorHandler = (err, _req, res, _next) => {
     return;
   }
 
-  if (err.name === 'MulterError' || err.message?.startsWith('Invalid ')) {
+  if (err.name === 'MulterError') {
+    if (err.code === 'LIMIT_FILE_SIZE') {
+      res.status(413).json({
+        message: `Upload file too large. Videos must be ${process.env.MAX_VIDEO_SIZE_MB || 500}MB or smaller. Images must be ${process.env.MAX_IMAGE_SIZE_MB || 25}MB or smaller.`
+      });
+      return;
+    }
+
+    res.status(400).json({ message: err.message });
+    return;
+  }
+
+  if (err.message?.startsWith('Invalid ')) {
     res.status(400).json({ message: err.message });
     return;
   }

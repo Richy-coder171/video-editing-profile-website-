@@ -35,6 +35,15 @@ const throwPlaceholderEnv = (name) => {
   throw new Error(`Environment variable ${name} still has a placeholder value. Fill it in server/.env.`);
 };
 
+const isValidHttpUrl = (value) => {
+  try {
+    const url = new URL(value);
+    return url.protocol === 'http:' || url.protocol === 'https:';
+  } catch {
+    return false;
+  }
+};
+
 const validateServerEnv = () => {
   requiredServerEnv.forEach((name) => {
     if (isBlank(process.env[name])) {
@@ -51,6 +60,10 @@ const validateServerEnv = () => {
       throwPlaceholderEnv(name);
     }
   });
+
+  if (!isValidHttpUrl(process.env.SUPABASE_URL)) {
+    throw new Error('SUPABASE_URL must be a valid HTTP or HTTPS URL, for example https://your-project-id.supabase.co');
+  }
 };
 
 export { validateServerEnv };

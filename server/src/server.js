@@ -1,11 +1,14 @@
 import dotenv from 'dotenv';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import app from './app.js';
-import { validateServerEnv } from './config/env.js';
 
 const serverRoot = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 dotenv.config({ path: resolve(serverRoot, '.env') });
+
+const [{ default: app }, { validateServerEnv }] = await Promise.all([
+  import('./app.js'),
+  import('./config/env.js')
+]);
 
 const PORT = process.env.PORT || 5000;
 
