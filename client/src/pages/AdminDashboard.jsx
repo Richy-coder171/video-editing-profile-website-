@@ -4,6 +4,7 @@ import PortfolioForm from '../components/admin/PortfolioForm.jsx';
 import { useAuth } from '../contexts/authContext.js';
 import { portfolioTypes } from '../data/portfolioMeta.js';
 import { api } from '../services/api.js';
+import { formatProjectDate } from '../utils/date.js';
 
 const filters = [{ label: 'All', value: 'all' }, ...portfolioTypes];
 
@@ -130,7 +131,10 @@ const AdminDashboard = () => {
                           <h3 className="font-display text-lg font-semibold text-white">{item.title}</h3>
                           {item.featured && <Star size={16} className="fill-acid text-acid" />}
                         </div>
-                        <p className="mt-1 text-xs uppercase tracking-[0.22em] text-white/40">{item.type} / {item.category}</p>
+                        <p className="mt-1 text-xs uppercase tracking-[0.22em] text-white/40">
+                          {item.type} / {item.category}
+                          {item.projectDate ? ` / ${formatProjectDate(item.projectDate)}` : ''}
+                        </p>
                         <p className="mt-2 line-clamp-2 text-sm leading-6 text-white/60">{item.description}</p>
                       </div>
                       <div className="flex gap-2">

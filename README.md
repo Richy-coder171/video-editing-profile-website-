@@ -135,6 +135,7 @@ create table if not exists public.portfolio_items (
     )
   ),
   category text,
+  project_date date,
   tools text[] default '{}',
   media_url text,
   thumbnail_url text,
@@ -147,10 +148,16 @@ create table if not exists public.portfolio_items (
   updated_at timestamptz default now()
 );
 
+alter table if exists public.portfolio_items
+  add column if not exists project_date date;
+
 create index if not exists portfolio_items_type_idx on public.portfolio_items (type);
 create index if not exists portfolio_items_featured_idx on public.portfolio_items (featured);
+create index if not exists portfolio_items_project_date_idx on public.portfolio_items (project_date desc);
 create index if not exists portfolio_items_sort_idx on public.portfolio_items (sort_order, created_at desc);
 ```
+
+If your Supabase table already exists, run the updated script again. The `alter table` line safely adds the optional `project_date` column without deleting existing portfolio items.
 
 Use the Supabase service role key as `SUPABASE_SECRET_KEY` on the backend only. Never add it to `client/.env`, Vercel frontend variables, or browser code.
 
@@ -167,7 +174,7 @@ Uploaded media is stored in these Cloudinary folders:
 - `portfolio/posters`
 - `portfolio/social`
 
-Cloudinary stores files only. Supabase stores metadata such as title, type, tools, featured status, sort order, media URL, Cloudinary public ID, and thumbnail public ID.
+Cloudinary stores files only. Supabase stores metadata such as title, type, project date, tools, featured status, sort order, media URL, Cloudinary public ID, and thumbnail public ID.
 
 ## Run Locally
 
@@ -221,6 +228,7 @@ Upload requests are protected and expect multipart fields:
 - `description`
 - `type`
 - `category`
+- `project_date`: optional `YYYY-MM-DD`
 - `tools`
 - `featured`
 - `sort_order`

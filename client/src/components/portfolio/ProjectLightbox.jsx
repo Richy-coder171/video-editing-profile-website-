@@ -1,5 +1,6 @@
 import { AnimatePresence, motion } from 'framer-motion';
 import { ExternalLink, X } from 'lucide-react';
+import { formatProjectDate } from '../../utils/date.js';
 
 const ProjectLightbox = ({ item, onClose }) => {
   const isVideo = item?.type === 'video' || item?.type === 'reel';
@@ -23,7 +24,10 @@ const ProjectLightbox = ({ item, onClose }) => {
           >
             <div className="flex items-center justify-between border-b border-white/10 p-4">
               <div>
-                <p className="text-xs uppercase tracking-[0.26em] text-electric">{item.category}</p>
+                <p className="text-xs uppercase tracking-[0.26em] text-electric">
+                  {item.category}
+                  {item.projectDate ? ` / ${formatProjectDate(item.projectDate)}` : ''}
+                </p>
                 <h2 className="mt-1 font-display text-2xl font-semibold text-white">{item.title}</h2>
               </div>
               <button className="icon-button" onClick={onClose} aria-label="Close project">

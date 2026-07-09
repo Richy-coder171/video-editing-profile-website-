@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 import EmptyState from '../portfolio/EmptyState.jsx';
 import ProjectLightbox from '../portfolio/ProjectLightbox.jsx';
+import { formatProjectDate } from '../../utils/date.js';
 
 const FeaturedShowcase = ({ items }) => {
   const [activeItem, setActiveItem] = useState(null);
@@ -54,6 +55,11 @@ const FeaturedShowcase = ({ items }) => {
                   <span className="rounded-full border border-white/10 bg-black/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-white/70 backdrop-blur">
                     {item.category || item.type}
                   </span>
+                  {item.projectDate && (
+                    <span className="mt-3 block text-xs font-semibold uppercase tracking-[0.18em] text-electric/80">
+                      {formatProjectDate(item.projectDate)}
+                    </span>
+                  )}
                   <span className="mt-4 block font-display text-2xl font-bold leading-tight text-white">{item.title}</span>
                   <span className="mt-2 block text-sm leading-6 text-white/60">{item.description}</span>
                   <span className="mt-4 flex flex-wrap gap-2">

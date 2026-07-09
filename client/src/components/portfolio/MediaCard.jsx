@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { Maximize2, Play, Sparkles } from 'lucide-react';
 import { useRef } from 'react';
+import { formatProjectDate } from '../../utils/date.js';
 
 const aspectMap = {
   reel: 'aspect-[9/16]',
@@ -75,6 +76,11 @@ const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
 
       <div className={`${isReel ? 'px-2 pb-3 pt-5' : 'p-5'} space-y-4`}>
         <div>
+          {item.projectDate && (
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-electric/80">
+              {formatProjectDate(item.projectDate)}
+            </p>
+          )}
           <h3 className={`${isDesign ? 'text-xl' : 'text-lg'} font-display font-bold leading-tight text-white`}>
             {item.title}
           </h3>

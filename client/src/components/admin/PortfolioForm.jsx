@@ -8,6 +8,7 @@ const blankForm = {
   description: '',
   type: 'reel',
   category: '',
+  projectDate: '',
   tools: '',
   mediaUrl: '',
   thumbnailUrl: '',
@@ -104,6 +105,7 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         description: editingItem.description || '',
         type: editingItem.type || 'reel',
         category: editingItem.category || '',
+        projectDate: editingItem.projectDate || '',
         tools: (editingItem.tools || []).join(', '),
         mediaUrl: editingItem.mediaUrl || '',
         thumbnailUrl: editingItem.thumbnailUrl || '',
@@ -188,6 +190,7 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
     payload.append('description', form.description);
     payload.append('type', form.type);
     payload.append('category', form.category);
+    payload.append('project_date', form.projectDate);
     payload.append('tools', form.tools);
     payload.append('featured', String(form.featured));
     payload.append('sort_order', form.sortOrder);
@@ -238,6 +241,7 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         description: form.description,
         type: form.type,
         category: form.category,
+        project_date: form.projectDate,
         tools: form.tools
           .split(',')
           .map((tool) => tool.trim())
@@ -317,6 +321,15 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         <label className="field-label">
           Category
           <input className="input" value={form.category} onChange={(event) => updateField('category', event.target.value)} required />
+        </label>
+        <label className="field-label">
+          Date
+          <input
+            className="input"
+            type="date"
+            value={form.projectDate}
+            onChange={(event) => updateField('projectDate', event.target.value)}
+          />
         </label>
         <label className="field-label">
           Tools used

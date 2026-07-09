@@ -8,6 +8,7 @@ import {
   normalizePortfolioRow,
   normalizeTools,
   parseFeatured,
+  parseProjectDate,
   parseSortOrder,
   validatePortfolioPayload
 } from '../utils/portfolioRows.js';
@@ -49,11 +50,20 @@ const throwSupabaseError = (error) => {
   const tableMissing =
     error?.code === 'PGRST205' ||
     error?.message?.includes("Could not find the table 'public.portfolio_items'");
-  const requestError = new Error(
-    tableMissing
-      ? 'Supabase table public.portfolio_items was not found. Run supabase/schema.sql in the Supabase SQL Editor, then try uploading again.'
-      : error?.message || 'Unable to save portfolio metadata'
-  );
+  const projectDateColumnMissing =
+    error?.code === 'PGRST204' &&
+    error?.message?.includes('project_date');
+  let message = error?.message || 'Unable to save portfolio metadata';
+
+  if (tableMissing) {
+    message = 'Supabase table public.portfolio_items was not found. Run supabase/schema.sql in the Supabase SQL Editor, then try uploading again.';
+  }
+
+  if (projectDateColumnMissing) {
+    message = 'Supabase column public.portfolio_items.project_date was not found. Run the updated supabase/schema.sql in the Supabase SQL Editor, then try uploading again.';
+  }
+
+  const requestError = new Error(message);
   requestError.statusCode = error?.code === '23505' ? 409 : 500;
   throw requestError;
 };
@@ -115,7 +125,17 @@ const uploadPortfolioAsset = asyncHandler(async (req, res) => {
       throw new Error('Portfolio file is required in the file field');
     }
 
-    const { title, description, type, category, tools, featured, sort_order: sortOrder } = req.body;
+    const {
+      title,
+      description,
+      type,
+      category,
+      project_date: projectDate,
+      projectDate: camelProjectDate,
+      tools,
+      featured,
+      sort_order: sortOrder
+    } = req.body;
     const errors = validatePortfolioPayload({ title, type });
 
     if (errors.length) {
@@ -175,6 +195,7 @@ const uploadPortfolioAsset = asyncHandler(async (req, res) => {
     const thumbnailUrl =
       thumbnailResult.thumbnailUrl || getGeneratedThumbnailUrl(mediaResult.public_id, config.resourceType, mediaUrl);
     const timestamp = new Date().toISOString();
+    const parsedProjectDate = parseProjectDate(projectDate ?? camelProjectDate);
 
     const insertPayload = {
       title: String(title || '').trim(),
@@ -192,6 +213,10 @@ const uploadPortfolioAsset = asyncHandler(async (req, res) => {
       created_at: timestamp,
       updated_at: timestamp
     };
+
+    if (parsedProjectDate) {
+      insertPayload.project_date = parsedProjectDate;
+    }
 
     const { data, error } = await supabase.from('portfolio_items').insert(insertPayload).select('*').single();
 

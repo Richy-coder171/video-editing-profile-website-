@@ -22,6 +22,39 @@ const parseSortOrder = (value) => {
   return Number.isFinite(parsed) ? Math.trunc(parsed) : null;
 };
 
+const parseProjectDate = (value) => {
+  if (value === undefined || value === null || value === '') {
+    return null;
+  }
+
+  const normalized = String(value).trim().slice(0, 10);
+  const match = normalized.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (!match) {
+    const error = new Error('project_date must use YYYY-MM-DD format');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  const [, yearValue, monthValue, dayValue] = match;
+  const year = Number(yearValue);
+  const month = Number(monthValue);
+  const day = Number(dayValue);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  const isValidDate =
+    parsed.getUTCFullYear() === year &&
+    parsed.getUTCMonth() === month - 1 &&
+    parsed.getUTCDate() === day;
+
+  if (!isValidDate) {
+    const error = new Error('project_date must be a real calendar date');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  return normalized;
+};
+
 const normalizePortfolioRow = (row = {}) => {
   const resourceType = row.resource_type || (row.type === 'reel' || row.type === 'video' ? 'video' : 'image');
   const mediaUrl = row.media_url || '';
@@ -34,6 +67,7 @@ const normalizePortfolioRow = (row = {}) => {
     description: row.description || '',
     type: row.type || '',
     category: row.category || '',
+    projectDate: row.project_date || '',
     tools: normalizeTools(row.tools),
     mediaUrl,
     thumbnailUrl,
@@ -62,4 +96,4 @@ const validatePortfolioPayload = ({ title, type }, { requireTitle = true, requir
   return errors;
 };
 
-export { normalizePortfolioRow, normalizeTools, parseFeatured, parseSortOrder, validatePortfolioPayload };
+export { normalizePortfolioRow, normalizeTools, parseFeatured, parseProjectDate, parseSortOrder, validatePortfolioPayload };

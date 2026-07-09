@@ -6,6 +6,7 @@ import {
   normalizePortfolioRow,
   normalizeTools,
   parseFeatured,
+  parseProjectDate,
   parseSortOrder
 } from '../utils/portfolioRows.js';
 
@@ -17,9 +18,19 @@ const throwSupabaseError = (error, fallbackMessage = 'Supabase request failed') 
   const tableMissing =
     error?.code === 'PGRST205' ||
     error?.message?.includes("Could not find the table 'public.portfolio_items'");
-  const message = tableMissing
-    ? 'Supabase table public.portfolio_items was not found. Run supabase/schema.sql in the Supabase SQL Editor, then restart or refresh the app.'
-    : error?.message || fallbackMessage;
+  const projectDateColumnMissing =
+    error?.code === 'PGRST204' &&
+    error?.message?.includes('project_date');
+  let message = error?.message || fallbackMessage;
+
+  if (tableMissing) {
+    message = 'Supabase table public.portfolio_items was not found. Run supabase/schema.sql in the Supabase SQL Editor, then restart or refresh the app.';
+  }
+
+  if (projectDateColumnMissing) {
+    message = 'Supabase column public.portfolio_items.project_date was not found. Run the updated supabase/schema.sql in the Supabase SQL Editor, then restart or refresh the app.';
+  }
+
   const requestError = new Error(message);
   requestError.statusCode = error?.code === 'PGRST116' ? 404 : 500;
   throw requestError;
@@ -121,6 +132,11 @@ const buildUpdatePayload = (body) => {
 
   if (hasOwn(body, 'category')) {
     payload.category = String(body.category || '').trim();
+  }
+
+  const projectDate = hasOwn(body, 'project_date') ? body.project_date : body.projectDate;
+  if (projectDate !== undefined) {
+    payload.project_date = parseProjectDate(projectDate);
   }
 
   if (hasOwn(body, 'tools')) {

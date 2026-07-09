@@ -17,6 +17,7 @@ create table if not exists public.portfolio_items (
     )
   ),
   category text,
+  project_date date,
   tools text[] default '{}',
   media_url text,
   thumbnail_url text,
@@ -29,6 +30,10 @@ create table if not exists public.portfolio_items (
   updated_at timestamptz default now()
 );
 
+alter table if exists public.portfolio_items
+  add column if not exists project_date date;
+
 create index if not exists portfolio_items_type_idx on public.portfolio_items (type);
 create index if not exists portfolio_items_featured_idx on public.portfolio_items (featured);
+create index if not exists portfolio_items_project_date_idx on public.portfolio_items (project_date desc);
 create index if not exists portfolio_items_sort_idx on public.portfolio_items (sort_order, created_at desc);
