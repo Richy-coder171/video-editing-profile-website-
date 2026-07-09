@@ -90,7 +90,7 @@ SUPABASE_URL=https://your-project-id.supabase.co
 SUPABASE_SECRET_KEY=your_supabase_service_role_key
 
 MAX_IMAGE_SIZE_MB=25
-MAX_VIDEO_SIZE_MB=500
+MAX_VIDEO_SIZE_MB=100
 ```
 
 Manually replace the Cloudinary and Supabase placeholders with real values. For production, prefer `ADMIN_PASSWORD_HASH` instead of `ADMIN_PASSWORD`.
@@ -99,6 +99,8 @@ Fill in `client/.env`:
 
 ```env
 VITE_API_URL=http://localhost:5000/api
+VITE_MAX_IMAGE_SIZE_MB=25
+VITE_MAX_VIDEO_SIZE_MB=100
 VITE_CONTACT_EMAIL=
 VITE_WHATSAPP_URL=
 VITE_INSTAGRAM_URL=
@@ -107,7 +109,7 @@ VITE_BEHANCE_URL=
 VITE_DRIBBBLE_URL=
 ```
 
-Leave optional contact/social values empty until you have real links. The public contact page only shows configured links.
+Keep the `VITE_MAX_*` upload limits aligned with the backend `MAX_*` limits. They are public UI pre-checks only; Cloudinary and the backend still enforce the real upload limit. Leave optional contact/social values empty until you have real links. The public contact page only shows configured links.
 
 ## Supabase Table
 
@@ -287,6 +289,7 @@ If Supabase insert fails after a Cloudinary upload, the backend cleans up the up
 - Empty states are shown when no records exist
 - Videos use thumbnails, `preload="none"`, and muted previews
 - Public media is delivered through Cloudinary URLs
+- Cloudinary free/current accounts may reject videos over 100MB; compress large edits or increase the Cloudinary account upload limit before raising `MAX_VIDEO_SIZE_MB`
 - Supabase secret key stays backend-only
 - Upload routes are protected by JWT
 - JWT sessions are stored in an httpOnly cookie

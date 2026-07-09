@@ -1,7 +1,8 @@
+import { unlink } from 'node:fs/promises';
 import { getSupabaseClient } from '../config/supabase.js';
 import { getTypeConfig } from '../config/portfolioTypes.js';
 import asyncHandler from '../utils/asyncHandler.js';
-import { cloudinaryDeliveryUrl, deleteFromCloudinary, uploadBufferToCloudinary } from '../utils/cloudinaryUpload.js';
+import { cloudinaryDeliveryUrl, deleteFromCloudinary, uploadFileToCloudinary } from '../utils/cloudinaryUpload.js';
 import { getFileKind } from '../middleware/upload.js';
 import {
   normalizePortfolioRow,
@@ -20,11 +21,11 @@ const assertFileSize = (file, kind) => {
 
   const maxBytes =
     kind === 'video'
-      ? bytesFromMb(process.env.MAX_VIDEO_SIZE_MB, 500)
+      ? bytesFromMb(process.env.MAX_VIDEO_SIZE_MB, 100)
       : bytesFromMb(process.env.MAX_IMAGE_SIZE_MB, 25);
 
   if (file.size > maxBytes) {
-    const maxMb = kind === 'video' ? process.env.MAX_VIDEO_SIZE_MB || 500 : process.env.MAX_IMAGE_SIZE_MB || 25;
+    const maxMb = kind === 'video' ? process.env.MAX_VIDEO_SIZE_MB || 100 : process.env.MAX_IMAGE_SIZE_MB || 25;
     const error = new Error(`${kind === 'video' ? 'Video' : 'Image'} uploads must be ${maxMb}MB or smaller`);
     error.statusCode = 400;
     throw error;
@@ -35,6 +36,14 @@ const getUploadFiles = (req) => ({
   file: req.files?.file?.[0],
   thumbnail: req.files?.thumbnail?.[0]
 });
+
+const cleanupTempFiles = async (...files) => {
+  await Promise.all(
+    files
+      .filter((file) => file?.path)
+      .map((file) => unlink(file.path).catch(() => undefined))
+  );
+};
 
 const throwSupabaseError = (error) => {
   const tableMissing =
@@ -68,7 +77,7 @@ const uploadAssociatedThumbnail = async (thumbnail) => {
     return { thumbnailUrl: '', thumbnailPublicId: '' };
   }
 
-  const result = await uploadBufferToCloudinary(thumbnail.buffer, {
+  const result = await uploadFileToCloudinary(thumbnail.path, {
     folder: 'portfolio/thumbnails',
     resource_type: 'image'
   });
@@ -100,102 +109,106 @@ const getGeneratedThumbnailUrl = (publicId, resourceType, mediaUrl) => {
 const uploadPortfolioAsset = asyncHandler(async (req, res) => {
   const { file, thumbnail } = getUploadFiles(req);
 
-  if (!file) {
-    res.status(400);
-    throw new Error('Portfolio file is required in the file field');
-  }
-
-  const { title, description, type, category, tools, featured, sort_order: sortOrder } = req.body;
-  const errors = validatePortfolioPayload({ title, type });
-
-  if (errors.length) {
-    res.status(400);
-    throw new Error(errors.join(', '));
-  }
-
-  const config = getTypeConfig(type);
-  const fileKind = getFileKind(file);
-
-  if (config.resourceType === 'video' && fileKind !== 'video') {
-    res.status(400);
-    throw new Error(`${config.label} uploads must be video files`);
-  }
-
-  if (config.resourceType === 'image' && fileKind !== 'image') {
-    res.status(400);
-    throw new Error(`${config.label} uploads must be image files`);
-  }
-
-  assertFileSize(file, config.resourceType);
-  assertFileSize(thumbnail, 'image');
-
-  const supabase = getSupabaseClient();
-  let mediaResult;
-  let thumbnailResult = { thumbnailUrl: '', thumbnailPublicId: '' };
-
   try {
-    const uploadOptions = {
-      folder: config.folder,
-      resource_type: config.resourceType
-    };
-
-    if (config.resourceType === 'video') {
-      uploadOptions.chunk_size = 6_000_000;
+    if (!file) {
+      res.status(400);
+      throw new Error('Portfolio file is required in the file field');
     }
 
-    mediaResult = await uploadBufferToCloudinary(file.buffer, uploadOptions);
+    const { title, description, type, category, tools, featured, sort_order: sortOrder } = req.body;
+    const errors = validatePortfolioPayload({ title, type });
 
-    thumbnailResult = await uploadAssociatedThumbnail(thumbnail);
-  } catch (error) {
-    await cleanupCloudinaryAssets({
-      mediaPublicId: mediaResult?.public_id,
-      resourceType: config.resourceType,
-      thumbnailPublicId: thumbnailResult.thumbnailPublicId
-    });
-    throw error;
-  }
+    if (errors.length) {
+      res.status(400);
+      throw new Error(errors.join(', '));
+    }
 
-  const mediaUrl =
-    mediaResult.secure_url ||
-    cloudinaryDeliveryUrl(mediaResult.public_id, {
+    const config = getTypeConfig(type);
+    const fileKind = getFileKind(file);
+
+    if (config.resourceType === 'video' && fileKind !== 'video') {
+      res.status(400);
+      throw new Error(`${config.label} uploads must be video files`);
+    }
+
+    if (config.resourceType === 'image' && fileKind !== 'image') {
+      res.status(400);
+      throw new Error(`${config.label} uploads must be image files`);
+    }
+
+    assertFileSize(file, config.resourceType);
+    assertFileSize(thumbnail, 'image');
+
+    const supabase = getSupabaseClient();
+    let mediaResult;
+    let thumbnailResult = { thumbnailUrl: '', thumbnailPublicId: '' };
+
+    try {
+      const uploadOptions = {
+        folder: config.folder,
+        resource_type: config.resourceType
+      };
+
+      if (config.resourceType === 'video') {
+        uploadOptions.chunk_size = 20_000_000;
+      }
+
+      mediaResult = await uploadFileToCloudinary(file.path, uploadOptions);
+
+      thumbnailResult = await uploadAssociatedThumbnail(thumbnail);
+    } catch (error) {
+      await cleanupCloudinaryAssets({
+        mediaPublicId: mediaResult?.public_id,
+        resourceType: config.resourceType,
+        thumbnailPublicId: thumbnailResult.thumbnailPublicId
+      });
+      throw error;
+    }
+
+    const mediaUrl =
+      mediaResult.secure_url ||
+      cloudinaryDeliveryUrl(mediaResult.public_id, {
+        resource_type: config.resourceType,
+        quality: 'auto',
+        fetch_format: 'auto'
+      });
+    const thumbnailUrl =
+      thumbnailResult.thumbnailUrl || getGeneratedThumbnailUrl(mediaResult.public_id, config.resourceType, mediaUrl);
+    const timestamp = new Date().toISOString();
+
+    const insertPayload = {
+      title: String(title || '').trim(),
+      description: String(description || '').trim(),
+      type,
+      category: String(category || '').trim(),
+      tools: normalizeTools(tools),
+      media_url: mediaUrl,
+      thumbnail_url: thumbnailUrl,
+      cloudinary_public_id: mediaResult.public_id,
+      thumbnail_public_id: thumbnailResult.thumbnailPublicId,
       resource_type: config.resourceType,
-      quality: 'auto',
-      fetch_format: 'auto'
-    });
-  const thumbnailUrl =
-    thumbnailResult.thumbnailUrl || getGeneratedThumbnailUrl(mediaResult.public_id, config.resourceType, mediaUrl);
-  const timestamp = new Date().toISOString();
+      featured: parseFeatured(featured),
+      sort_order: parseSortOrder(sortOrder),
+      created_at: timestamp,
+      updated_at: timestamp
+    };
 
-  const insertPayload = {
-    title: String(title || '').trim(),
-    description: String(description || '').trim(),
-    type,
-    category: String(category || '').trim(),
-    tools: normalizeTools(tools),
-    media_url: mediaUrl,
-    thumbnail_url: thumbnailUrl,
-    cloudinary_public_id: mediaResult.public_id,
-    thumbnail_public_id: thumbnailResult.thumbnailPublicId,
-    resource_type: config.resourceType,
-    featured: parseFeatured(featured),
-    sort_order: parseSortOrder(sortOrder),
-    created_at: timestamp,
-    updated_at: timestamp
-  };
+    const { data, error } = await supabase.from('portfolio_items').insert(insertPayload).select('*').single();
 
-  const { data, error } = await supabase.from('portfolio_items').insert(insertPayload).select('*').single();
+    if (error) {
+      await cleanupCloudinaryAssets({
+        mediaPublicId: mediaResult.public_id,
+        resourceType: config.resourceType,
+        thumbnailPublicId: thumbnailResult.thumbnailPublicId
+      });
+      throwSupabaseError(error);
+    }
 
-  if (error) {
-    await cleanupCloudinaryAssets({
-      mediaPublicId: mediaResult.public_id,
-      resourceType: config.resourceType,
-      thumbnailPublicId: thumbnailResult.thumbnailPublicId
-    });
-    throwSupabaseError(error);
+    const item = normalizePortfolioRow(data);
+    res.status(201).json({ item, ...item });
+  } finally {
+    await cleanupTempFiles(file, thumbnail);
   }
-
-  const item = normalizePortfolioRow(data);
-  res.status(201).json({ item, ...item });
 });
 
 export { uploadPortfolioAsset };

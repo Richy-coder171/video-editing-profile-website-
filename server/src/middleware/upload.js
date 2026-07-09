@@ -1,7 +1,26 @@
 import multer from 'multer';
-import { extname } from 'node:path';
+import { mkdirSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { basename, extname, join } from 'node:path';
 
-const storage = multer.memoryStorage();
+const uploadTempDir = join(tmpdir(), 'cinematic-portfolio-uploads');
+mkdirSync(uploadTempDir, { recursive: true });
+
+const storage = multer.diskStorage({
+  destination(_req, _file, callback) {
+    callback(null, uploadTempDir);
+  },
+  filename(_req, file, callback) {
+    const extension = getExtension(file.originalname);
+    const safeName = basename(file.originalname, extension)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+      .slice(0, 60);
+
+    callback(null, `${Date.now()}-${Math.random().toString(16).slice(2)}-${safeName || file.fieldname}${extension}`);
+  }
+});
 
 const bytesFromMb = (value, fallback) => Number(value || fallback) * 1024 * 1024;
 
@@ -46,7 +65,7 @@ const getFileKind = (file) => {
 const portfolioUpload = multer({
   storage,
   limits: {
-    fileSize: bytesFromMb(process.env.MAX_VIDEO_SIZE_MB, 500),
+    fileSize: bytesFromMb(process.env.MAX_VIDEO_SIZE_MB, 100),
     files: 2
   },
   fileFilter(_req, file, callback) {
@@ -69,4 +88,4 @@ const portfolioUpload = multer({
   { name: 'thumbnail', maxCount: 1 }
 ]);
 
-export { allowedExtensions, allowedMimeTypes, getFileKind, portfolioUpload };
+export { allowedExtensions, allowedMimeTypes, getFileKind, portfolioUpload, uploadTempDir };

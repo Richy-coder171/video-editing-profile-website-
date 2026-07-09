@@ -18,6 +18,77 @@ const blankForm = {
   featured: false
 };
 
+const parseLimitMb = (value, fallback) => {
+  const parsed = Number(value);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+};
+
+const MAX_IMAGE_SIZE_MB = parseLimitMb(import.meta.env.VITE_MAX_IMAGE_SIZE_MB, 25);
+const MAX_VIDEO_SIZE_MB = parseLimitMb(import.meta.env.VITE_MAX_VIDEO_SIZE_MB, 100);
+const imageExtensionPattern = /\.(avif|gif|heic|heif|jpe?g|png|webp)$/i;
+const videoExtensionPattern = /\.(avi|m4v|mkv|mov|mp4|mpeg|mpg|webm)$/i;
+
+const bytesFromMb = (value) => Number(value) * 1024 * 1024;
+
+const formatFileSize = (bytes) => {
+  const size = bytes / (1024 * 1024);
+  return `${size >= 10 ? size.toFixed(1) : size.toFixed(2)}MB`;
+};
+
+const getFileKind = (file) => {
+  if (!file) {
+    return '';
+  }
+
+  if (file.type?.startsWith('image/')) {
+    return 'image';
+  }
+
+  if (file.type?.startsWith('video/')) {
+    return 'video';
+  }
+
+  if (imageExtensionPattern.test(file.name || '')) {
+    return 'image';
+  }
+
+  if (videoExtensionPattern.test(file.name || '')) {
+    return 'video';
+  }
+
+  return '';
+};
+
+const getExpectedMediaKind = (type) => (type === 'reel' || type === 'video' ? 'video' : 'image');
+
+const getFileValidationError = (file, expectedKind) => {
+  if (!file) {
+    return '';
+  }
+
+  const detectedKind = getFileKind(file);
+
+  if (!detectedKind) {
+    return 'Unsupported file type. Use a supported image or video file.';
+  }
+
+  if (expectedKind && detectedKind !== expectedKind) {
+    return `${expectedKind === 'video' ? 'Reels and videos' : 'Design uploads'} must use ${expectedKind} files.`;
+  }
+
+  const limitMb = detectedKind === 'video' ? MAX_VIDEO_SIZE_MB : MAX_IMAGE_SIZE_MB;
+
+  if (file.size > bytesFromMb(limitMb)) {
+    const label = detectedKind === 'video' ? 'video' : 'image';
+    const cloudinaryNote =
+      detectedKind === 'video' ? ' Your current Cloudinary account rejects videos over this limit.' : '';
+
+    return `This ${label} is ${formatFileSize(file.size)}. ${label === 'video' ? 'Videos' : 'Images'} must be ${limitMb}MB or smaller.${cloudinaryNote}`;
+  }
+
+  return '';
+};
+
 const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
   const [form, setForm] = useState(blankForm);
   const [mediaFile, setMediaFile] = useState(null);
@@ -72,6 +143,44 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
     setForm((current) => ({ ...current, [field]: value }));
   };
 
+  const handleTypeChange = (value) => {
+    updateField('type', value);
+
+    if (mediaFile) {
+      setError(getFileValidationError(mediaFile, getExpectedMediaKind(value)));
+    }
+  };
+
+  const handleMediaFileChange = (event) => {
+    const selectedFile = event.target.files?.[0] || null;
+    const validationError = getFileValidationError(selectedFile, getExpectedMediaKind(form.type));
+
+    if (validationError) {
+      setMediaFile(null);
+      setError(validationError);
+      event.target.value = '';
+      return;
+    }
+
+    setMediaFile(selectedFile);
+    setError('');
+  };
+
+  const handleThumbnailFileChange = (event) => {
+    const selectedFile = event.target.files?.[0] || null;
+    const validationError = getFileValidationError(selectedFile, 'image');
+
+    if (validationError) {
+      setThumbnailFile(null);
+      setError(validationError);
+      event.target.value = '';
+      return;
+    }
+
+    setThumbnailFile(selectedFile);
+    setError('');
+  };
+
   const savePortfolioAsset = async () => {
     const payload = new FormData();
 
@@ -115,6 +224,15 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
     setProgress(0);
 
     try {
+      const mediaValidationError = getFileValidationError(mediaFile, getExpectedMediaKind(form.type));
+      const thumbnailValidationError = getFileValidationError(thumbnailFile, 'image');
+
+      if (mediaValidationError || thumbnailValidationError) {
+        setError(mediaValidationError || thumbnailValidationError);
+        setSaving(false);
+        return;
+      }
+
       const payload = {
         title: form.title,
         description: form.description,
@@ -188,7 +306,7 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         </label>
         <label className="field-label">
           Type
-          <select className="input" value={form.type} onChange={(event) => updateField('type', event.target.value)}>
+          <select className="input" value={form.type} onChange={(event) => handleTypeChange(event.target.value)}>
             {portfolioTypes.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -243,7 +361,7 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
               className="sr-only"
               type="file"
               accept="image/*,.avif,.heic,.heif,video/mp4,video/webm,video/quicktime,.mov,.m4v,.avi,.mkv"
-              onChange={(event) => setMediaFile(event.target.files?.[0] || null)}
+              onChange={handleMediaFileChange}
             />
           </span>
         </label>
@@ -256,7 +374,7 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
               className="sr-only"
               type="file"
               accept="image/*,.avif,.heic,.heif"
-              onChange={(event) => setThumbnailFile(event.target.files?.[0] || null)}
+              onChange={handleThumbnailFileChange}
             />
           </span>
         </label>
