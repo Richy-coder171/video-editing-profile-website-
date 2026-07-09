@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowRight, Aperture, Film, Images, Play, Sparkles } from 'lucide-react';
+import { ArrowDown, ArrowRight, Aperture, Film, Images, Play, Sparkles, WandSparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 const heroStats = [
@@ -9,39 +9,42 @@ const heroStats = [
 ];
 
 const HeroSection = () => (
-  <section className="relative isolate min-h-[86svh] overflow-hidden pt-24 sm:pt-28">
+  <section className="relative isolate min-h-[90svh] overflow-hidden pt-20 sm:pt-24">
     <img
       src="/cinematic-editor-hero.png"
       alt="Cinematic editing studio with video timeline and design boards"
       fetchPriority="high"
-      className="absolute inset-0 -z-30 h-full w-full object-cover"
+      className="absolute inset-0 -z-30 h-full w-full object-cover opacity-80"
     />
-    <div className="absolute inset-0 -z-20 bg-[linear-gradient(90deg,#050505_0%,rgba(5,5,5,0.93)_38%,rgba(5,5,5,0.44)_100%)]" />
-    <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,rgba(5,5,5,0.2)_0%,rgba(5,5,5,0.08)_46%,#050505_100%)]" />
-    <div className="absolute inset-x-0 top-24 -z-10 h-px bg-gradient-to-r from-transparent via-white/25 to-transparent" />
-    <div className="absolute bottom-0 right-0 -z-10 hidden h-48 w-2/3 bg-[linear-gradient(90deg,transparent,rgba(51,214,255,0.12),rgba(255,54,94,0.1),transparent)] lg:block" />
+    <div className="absolute inset-0 -z-20 bg-[linear-gradient(90deg,#050505_0%,rgba(5,5,5,0.96)_42%,rgba(5,5,5,0.58)_100%)]" />
+    <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,rgba(5,5,5,0.1)_0%,rgba(5,5,5,0.24)_55%,#050505_100%)]" />
+    <div className="absolute inset-0 -z-10 bg-manga-lines opacity-[0.08]" />
+    <div className="absolute inset-x-0 top-24 -z-10 h-px bg-gradient-to-r from-transparent via-electric/50 to-hotpink/30" />
+    <div className="absolute bottom-0 right-0 -z-10 hidden h-56 w-2/3 skew-x-[-18deg] bg-cinematic-sheen opacity-90 blur-2xl lg:block" />
+    <div className="absolute right-[-8rem] top-28 -z-10 hidden h-96 w-[34rem] rotate-12 border border-electric/20 bg-electric/5 lg:block" />
+    <div className="absolute bottom-20 left-[-9rem] -z-10 hidden h-72 w-[30rem] -rotate-12 border border-hotpink/20 bg-hotpink/5 lg:block" />
 
-    <div className="section-shell flex min-h-[calc(86svh-6rem)] items-center py-10 sm:py-12">
+    <div className="section-shell grid min-h-[calc(90svh-5rem)] items-center gap-10 py-10 sm:py-12 lg:grid-cols-[1fr_0.72fr]">
       <div className="max-w-5xl">
         <motion.p
-          className="inline-flex max-w-full items-center gap-2 rounded-full border border-white/10 bg-black/30 px-4 py-2 text-xs font-semibold uppercase tracking-[0.18em] text-white/75 shadow-[inset_0_1px_0_rgba(255,255,255,0.1)] backdrop-blur-xl sm:text-sm"
+          className="inline-flex max-w-full items-center gap-2 rounded-full border border-electric/20 bg-black/45 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/75 shadow-glow backdrop-blur-xl sm:text-sm"
           initial={{ opacity: 0, y: 16 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7 }}
         >
           <Play size={15} fill="currentColor" />
-          Anime energy for reels, edits, thumbnails, posters
+          Premium anime-style editing and design
         </motion.p>
         <motion.h1
-          className="mt-6 max-w-5xl font-display text-4xl font-black leading-[0.92] text-white sm:text-5xl md:text-6xl lg:text-7xl"
+          className="mt-6 max-w-5xl font-display text-[clamp(2.65rem,11vw,7.3rem)] font-black leading-[0.92] text-white"
           initial={{ opacity: 0, y: 28 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.08 }}
         >
-          I Edit Videos That Feel Like Anime Openings
+          I Edit Videos That Feel Like <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric via-hotpink to-ember">Anime Openings</span>
         </motion.h1>
         <motion.p
-          className="mt-6 max-w-2xl text-base leading-8 text-white/70 sm:text-lg"
+          className="mt-6 max-w-2xl text-base leading-8 text-white/72 sm:text-lg"
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.16 }}
@@ -75,17 +78,39 @@ const HeroSection = () => (
           transition={{ duration: 0.8, delay: 0.32 }}
         >
           {heroStats.map((stat) => (
-            <div key={stat.label} className="border-l border-white/20 pl-4">
+            <div key={stat.label} className="anime-surface rounded-lg px-4 py-4">
               <p className="font-display text-2xl font-bold text-white">{stat.value}</p>
               <p className="mt-1 text-xs uppercase tracking-[0.22em] text-white/50">{stat.label}</p>
             </div>
           ))}
         </motion.div>
       </div>
+
+      <motion.div
+        className="relative hidden min-h-[34rem] lg:block"
+        initial={{ opacity: 0, x: 28 }}
+        animate={{ opacity: 1, x: 0 }}
+        transition={{ duration: 0.85, delay: 0.28 }}
+      >
+        <div className="manga-panel absolute right-4 top-0 aspect-[4/5] w-[68%] rotate-3 rounded-lg p-2">
+          <img src="/cinematic-editor-hero.png" alt="" className="h-full w-full rounded-md object-cover" />
+          <div className="absolute inset-2 rounded-md bg-gradient-to-t from-black via-black/25 to-transparent" />
+          <span className="meta-pill absolute left-5 top-5">Color grade</span>
+        </div>
+        <div className="manga-panel absolute bottom-10 left-0 aspect-[9/12] w-[47%] -rotate-6 rounded-lg p-2">
+          <div className="grid h-full rounded-md bg-black p-3">
+            <div className="space-y-2 self-end">
+              <WandSparkles className="text-hotpink" size={24} />
+              <p className="font-display text-2xl font-bold leading-tight text-white">Hook first. Impact second.</p>
+              <p className="text-sm leading-6 text-white/55">Cuts, speed ramps, captions, grade, sound.</p>
+            </div>
+          </div>
+        </div>
+      </motion.div>
     </div>
 
     <motion.div
-      className="absolute bottom-8 right-4 hidden w-[min(37rem,42vw)] rounded-lg border border-white/10 bg-black/30 p-4 shadow-[0_20px_70px_rgba(0,0,0,0.36)] backdrop-blur-xl lg:block"
+      className="absolute bottom-8 right-4 hidden w-[min(37rem,42vw)] rounded-lg border border-white/10 bg-black/40 p-4 shadow-panel backdrop-blur-xl lg:block"
       initial={{ opacity: 0, y: 24 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.8, delay: 0.42 }}

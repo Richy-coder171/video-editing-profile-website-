@@ -15,6 +15,11 @@ const Home = () => {
   const { items } = usePortfolio('/portfolio/featured');
 
   useEffect(() => {
+    if (window.matchMedia('(max-width: 767px), (prefers-reduced-motion: reduce)').matches) {
+      return undefined;
+    }
+
+    const refresh = () => ScrollTrigger.refresh();
     const ctx = gsap.context(() => {
       gsap.utils.toArray('.reveal-text').forEach((element) => {
         gsap.fromTo(
@@ -34,7 +39,7 @@ const Home = () => {
         );
       });
 
-      gsap.utils.toArray('.panel-premium').forEach((element) => {
+      gsap.utils.toArray('.panel-premium, .reveal-panel').forEach((element) => {
         gsap.fromTo(
           element,
           { y: 22, opacity: 0 },
@@ -51,11 +56,11 @@ const Home = () => {
         );
       });
 
-      window.addEventListener('load', ScrollTrigger.refresh);
+      window.addEventListener('load', refresh);
     });
 
     return () => {
-      window.removeEventListener('load', ScrollTrigger.refresh);
+      window.removeEventListener('load', refresh);
       ctx.revert();
     };
   }, []);

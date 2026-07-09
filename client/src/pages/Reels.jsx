@@ -8,13 +8,14 @@ const Reels = () => {
   return (
     <main className="page-pad bg-ink">
       <section className="section-shell">
-        <div className="relative overflow-hidden rounded-lg border border-white/10 bg-black p-6 sm:p-8 lg:p-10">
+        <div className="page-hero">
           <img
             src="/cinematic-editor-hero.png"
             alt=""
             className="absolute inset-0 h-full w-full object-cover opacity-25"
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 to-black/50" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 to-black/55" />
+          <div className="absolute inset-0 bg-manga-lines opacity-10" />
           <div className="relative">
             <p className="eyebrow">Reels and shorts</p>
             <h1 className="page-title mt-4 max-w-4xl">
@@ -22,7 +23,7 @@ const Reels = () => {
             </h1>
             <div className="mt-6 flex flex-wrap gap-2 text-sm text-white/60">
               {['9:16 frame', 'Hook-focused', 'Mobile-first'].map((label) => (
-                <span key={label} className="rounded-full border border-white/10 bg-white/10 px-3 py-1">
+                <span key={label} className="meta-pill">
                   {label}
                 </span>
               ))}

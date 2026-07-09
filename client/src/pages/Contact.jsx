@@ -1,10 +1,12 @@
-import { MapPin, Send } from 'lucide-react';
+import { MapPin, Send, Sparkles } from 'lucide-react';
 import { contactEmail, primaryContactLinks, socialLinks } from '../data/contactLinks.js';
 
 const Contact = () => (
   <main className="page-pad bg-black">
     <section className="section-shell grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
-      <div>
+      <div className="page-hero">
+        <div className="absolute inset-0 bg-cinematic-sheen opacity-30" />
+        <div className="absolute inset-0 bg-manga-lines opacity-10" />
         <p className="eyebrow">Contact</p>
         <h1 className="mt-4 font-display text-5xl font-black leading-none text-white md:text-7xl">
           Book editing and design work for your next launch.
@@ -14,12 +16,12 @@ const Contact = () => (
         </p>
         <div className="mt-8 grid gap-3 text-sm text-white/70">
           {primaryContactLinks.map((link) => (
-            <a key={link.label} className="flex min-w-0 items-center gap-3 break-words hover:text-white" href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noreferrer' : undefined}>
+            <a key={link.label} className="flex min-w-0 items-center gap-3 break-words rounded-lg border border-white/10 bg-black/25 p-3 transition hover:border-electric/30 hover:text-white" href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noreferrer' : undefined}>
               <link.icon size={18} />
               <span className="min-w-0">{link.label}</span>
             </a>
           ))}
-          <span className="flex items-center gap-3">
+          <span className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/25 p-3">
             <MapPin size={18} />
             Available for remote projects
           </span>
@@ -37,7 +39,16 @@ const Contact = () => (
       </div>
 
       {contactEmail ? (
-        <form className="rounded-lg border border-white/10 bg-white/[0.045] p-6" action={`mailto:${contactEmail}`} method="post" encType="text/plain">
+        <form className="anime-surface rounded-lg p-6" action={`mailto:${contactEmail}`} method="post" encType="text/plain">
+          <div className="mb-6 flex items-center gap-3">
+            <span className="grid h-11 w-11 place-items-center rounded-full bg-white text-ink shadow-glow">
+              <Sparkles size={18} />
+            </span>
+            <div>
+              <p className="eyebrow">Hire me</p>
+              <h2 className="font-display text-2xl font-semibold text-white">Send the brief</h2>
+            </div>
+          </div>
           <div className="grid gap-4 sm:grid-cols-2">
             <label className="field-label">
               Name
@@ -62,13 +73,13 @@ const Contact = () => (
             Message
             <textarea className="input min-h-40 resize-y" name="message" required placeholder="Tell me about the footage, goal, deadline, and references." />
           </label>
-          <button className="btn-primary mt-6" type="submit">
+          <button className="btn-primary mt-6 w-full sm:w-auto" type="submit">
             <Send size={18} />
             Send project details
           </button>
         </form>
       ) : (
-        <div className="rounded-lg border border-dashed border-white/15 bg-white/[0.045] p-8">
+        <div className="anime-surface rounded-lg border-dashed p-8">
           <p className="eyebrow">Booking</p>
           <h2 className="mt-4 font-display text-3xl font-bold text-white">Contact details coming soon.</h2>
           <p className="mt-3 text-sm leading-7 text-white/60">

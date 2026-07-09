@@ -31,7 +31,7 @@ const FeaturedShowcase = ({ items }) => {
             {featured.map((item, index) => (
               <motion.button
                 key={item._id || item.id}
-                className={`group relative min-h-[340px] overflow-hidden rounded-lg border border-white/10 bg-white/5 text-left shadow-[0_22px_80px_rgba(0,0,0,0.28)] transition duration-500 hover:-translate-y-1 hover:border-white/20 ${
+                className={`manga-panel group relative min-h-[340px] text-left transition duration-500 hover:-translate-y-1 hover:border-electric/35 ${
                   index === 0 ? 'sm:col-span-2 lg:col-span-2 lg:row-span-2 lg:min-h-[700px]' : ''
                 }`}
                 onClick={() => setActiveItem(item)}
@@ -46,13 +46,13 @@ const FeaturedShowcase = ({ items }) => {
                   loading="lazy"
                   className="absolute inset-0 h-full w-full object-cover transition duration-700 group-hover:scale-105"
                 />
-                <span className="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent" />
+                <span className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
                 <span className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/60 to-transparent" />
-                <span className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white text-ink shadow-[0_12px_34px_rgba(0,0,0,0.28)] transition group-hover:rotate-12">
+                <span className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white text-ink shadow-[0_12px_34px_rgba(0,0,0,0.28)] transition group-hover:rotate-12 group-hover:shadow-glow">
                   <ArrowUpRight size={19} />
                 </span>
                 <span className="absolute bottom-0 left-0 right-0 p-5">
-                  <span className="rounded-full border border-white/10 bg-black/40 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-white/70 backdrop-blur">
+                  <span className="meta-pill">
                     {item.category || item.type}
                   </span>
                   {item.projectDate && (
@@ -61,7 +61,7 @@ const FeaturedShowcase = ({ items }) => {
                     </span>
                   )}
                   <span className="mt-4 block font-display text-2xl font-bold leading-tight text-white">{item.title}</span>
-                  <span className="mt-2 block text-sm leading-6 text-white/60">{item.description}</span>
+                  <span className="mt-2 line-clamp-3 block text-sm leading-6 text-white/60">{item.description}</span>
                   <span className="mt-4 flex flex-wrap gap-2">
                     {(item.tools || []).slice(0, 3).map((tool) => (
                       <span key={tool} className="rounded-full bg-white/10 px-3 py-1 text-xs text-white/70">

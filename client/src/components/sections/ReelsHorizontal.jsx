@@ -15,7 +15,7 @@ const ReelsHorizontal = ({ items }) => {
     const section = sectionRef.current;
     const track = trackRef.current;
 
-    if (!section || !track || window.matchMedia('(max-width: 1023px)').matches) {
+    if (!section || !track || window.matchMedia('(max-width: 1023px), (prefers-reduced-motion: reduce)').matches) {
       return undefined;
     }
 
@@ -48,7 +48,7 @@ const ReelsHorizontal = ({ items }) => {
   }
 
   return (
-    <section ref={sectionRef} className="relative overflow-hidden bg-black py-20 sm:py-24">
+    <section ref={sectionRef} className="relative overflow-hidden bg-black py-16 sm:py-24">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-electric/40 to-transparent" />
       <div className="section-shell">
         <p className="eyebrow">Vertical reels</p>
@@ -64,7 +64,7 @@ const ReelsHorizontal = ({ items }) => {
         {reels.map((item, index) => (
           <button
             key={item._id || item.id}
-            className="group relative aspect-[9/16] w-full shrink-0 overflow-hidden rounded-lg border border-white/10 bg-graphite p-2 text-left shadow-[0_24px_80px_rgba(0,0,0,0.34)] transition duration-500 hover:-translate-y-1 hover:border-white/25 lg:w-[320px]"
+            className="manga-panel group relative aspect-[9/16] w-full shrink-0 p-2 text-left transition duration-500 hover:-translate-y-1 hover:border-electric/35 lg:w-[320px]"
             onClick={() => setActiveItem(item)}
           >
             <span className="absolute left-1/2 top-3 z-10 h-1 w-12 -translate-x-1/2 rounded-full bg-white/20" />
@@ -78,13 +78,13 @@ const ReelsHorizontal = ({ items }) => {
               <span className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
               <span className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/60 to-transparent" />
             </span>
-            <span className="absolute left-5 top-5 rounded-full bg-white px-3 py-1 text-xs font-bold text-ink shadow-[0_10px_28px_rgba(0,0,0,0.28)]">
+            <span className="absolute left-5 top-5 rounded-full bg-white px-3 py-1 text-xs font-bold text-ink shadow-[0_10px_28px_rgba(0,0,0,0.28)] group-hover:shadow-glow">
               {String(index + 1).padStart(2, '0')}
             </span>
             <span className="absolute bottom-0 left-0 right-0 p-6">
               <span className="text-xs uppercase tracking-[0.24em] text-electric">{item.category}</span>
               <span className="mt-2 block font-display text-2xl font-bold leading-tight text-white">{item.title}</span>
-              <span className="mt-2 block text-sm leading-6 text-white/60">{item.description}</span>
+              <span className="mt-2 line-clamp-3 block text-sm leading-6 text-white/60">{item.description}</span>
             </span>
           </button>
         ))}

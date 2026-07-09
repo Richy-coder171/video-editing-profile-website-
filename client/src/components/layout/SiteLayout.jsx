@@ -14,8 +14,8 @@ const navItems = [
 ];
 
 const navClass = ({ isActive }) =>
-  `rounded-full px-3 py-2 text-sm transition ${
-    isActive ? 'bg-white text-ink' : 'text-white/70 hover:bg-white/10 hover:text-white'
+  `rounded-full px-3 py-2 text-sm font-semibold transition ${
+    isActive ? 'bg-white text-ink shadow-glow' : 'text-white/70 hover:bg-white/10 hover:text-white'
   }`;
 
 const SiteLayout = () => {
@@ -25,17 +25,18 @@ const SiteLayout = () => {
   return (
     <div className="min-h-screen overflow-x-hidden bg-ink text-frost">
       <ScrollProgress />
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink/80 backdrop-blur-xl">
-        <div className="mx-auto flex h-20 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink/85 backdrop-blur-xl">
+        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-electric/40 to-transparent" />
+        <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-            <span className="grid h-10 w-10 place-items-center rounded-full border border-white/10 bg-white text-ink">
+            <span className="grid h-10 w-10 place-items-center rounded-full border border-electric/25 bg-white text-ink shadow-glow">
               <Clapperboard size={20} />
             </span>
-            <span className="leading-tight">
-              <span className="block font-display text-sm font-semibold uppercase tracking-[0.28em] text-white">
+            <span className="min-w-0 leading-tight">
+              <span className="block truncate font-display text-sm font-semibold uppercase tracking-[0.22em] text-white sm:tracking-[0.28em]">
                 Cinematic
               </span>
-              <span className="block text-xs text-white/60">Video Editing Portfolio</span>
+              <span className="block truncate text-xs text-white/60">Video Editing Portfolio</span>
             </span>
           </Link>
 
@@ -75,16 +76,16 @@ const SiteLayout = () => {
         </div>
 
         {open && (
-          <div className="border-t border-white/10 bg-ink px-4 py-4 shadow-[0_28px_80px_rgba(0,0,0,0.55)] md:hidden">
-            <nav className="grid gap-2">
+          <div className="absolute inset-x-0 top-full border-t border-white/10 bg-ink/95 px-4 py-4 shadow-[0_28px_80px_rgba(0,0,0,0.65)] backdrop-blur-xl md:hidden">
+            <nav className="mx-auto grid max-w-md gap-2">
               {navItems.map((item) => (
-                <NavLink key={item.to} to={item.to} className={navClass} onClick={() => setOpen(false)}>
+                <NavLink key={item.to} to={item.to} className={(state) => `${navClass(state)} flex items-center justify-start px-4 py-3`} onClick={() => setOpen(false)}>
                   {item.label}
                 </NavLink>
               ))}
               <NavLink
                 to={isAuthenticated ? '/admin' : '/admin-login'}
-                className={navClass}
+                className={(state) => `${navClass(state)} flex items-center justify-start px-4 py-3`}
                 onClick={() => setOpen(false)}
               >
                 {isAuthenticated ? 'Dashboard' : 'Admin'}
@@ -106,8 +107,6 @@ const SiteLayout = () => {
           </div>
         )}
       </header>
-
-      {open && <div className="h-[27rem] md:hidden" />}
 
       <Outlet />
 

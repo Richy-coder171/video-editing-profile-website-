@@ -19,6 +19,7 @@
 html {
   background: #050505;
   scroll-behavior: auto;
+  overflow-x: hidden;
 }
 
 body {
@@ -27,8 +28,9 @@ body {
   margin: 0;
   overflow-x: hidden;
   background:
-    linear-gradient(115deg, rgba(51, 214, 255, 0.07), transparent 32%),
-    linear-gradient(245deg, rgba(255, 54, 94, 0.075), transparent 34%),
+    linear-gradient(115deg, rgba(51, 214, 255, 0.08), transparent 30%),
+    linear-gradient(245deg, rgba(155, 92, 255, 0.09), transparent 34%),
+    linear-gradient(180deg, rgba(255, 79, 216, 0.055), transparent 28%),
     linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
     linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
     #050505;
@@ -56,6 +58,7 @@ button:disabled {
 img,
 video {
   display: block;
+  max-width: 100%;
 }
 
 ::selection {
@@ -65,23 +68,23 @@ video {
 
 @layer components {
   .section-pad {
-    @apply py-20 sm:py-24 lg:py-32;
+    @apply py-16 sm:py-24 lg:py-32;
   }
 
   .page-pad {
-    @apply min-h-screen pt-28 pb-20 sm:pt-36 sm:pb-24 lg:pt-40;
+    @apply min-h-screen pt-24 pb-16 sm:pt-32 sm:pb-24 lg:pt-36;
   }
 
   .eyebrow {
-    @apply inline-flex items-center gap-2 text-[0.68rem] font-bold uppercase tracking-[0.28em] text-electric;
+    @apply inline-flex max-w-full items-center gap-2 text-[0.68rem] font-bold uppercase tracking-[0.24em] text-electric sm:tracking-[0.28em];
   }
 
   .btn-primary {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-ink shadow-[0_18px_50px_rgba(255,255,255,0.14)] transition duration-300 hover:translate-y-[-2px] hover:shadow-glow focus:outline-none focus:ring-2 focus:ring-electric focus:ring-offset-2 focus:ring-offset-ink;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-ink shadow-[0_18px_50px_rgba(255,255,255,0.14)] transition duration-300 hover:translate-y-[-2px] hover:shadow-[0_0_36px_rgba(51,214,255,0.22),0_18px_50px_rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-electric focus:ring-offset-2 focus:ring-offset-ink;
   }
 
   .btn-secondary {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl transition duration-300 hover:translate-y-[-2px] hover:border-white/30 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-electric focus:ring-offset-2 focus:ring-offset-ink;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl transition duration-300 hover:translate-y-[-2px] hover:border-electric/50 hover:bg-electric/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-electric focus:ring-offset-2 focus:ring-offset-ink;
   }
 
   .btn-ghost {
@@ -89,7 +92,7 @@ video {
   }
 
   .icon-button {
-    @apply inline-grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-white/10 text-white transition hover:bg-white hover:text-ink focus:outline-none focus:ring-2 focus:ring-electric focus:ring-offset-2 focus:ring-offset-ink;
+    @apply inline-grid h-10 w-10 shrink-0 place-items-center rounded-full border border-white/10 bg-white/10 text-white transition hover:border-electric/50 hover:bg-white hover:text-ink focus:outline-none focus:ring-2 focus:ring-electric focus:ring-offset-2 focus:ring-offset-ink;
   }
 
   .section-shell {
@@ -97,15 +100,15 @@ video {
   }
 
   .panel-premium {
-    @apply border border-white/10 bg-white/[0.055] shadow-[0_24px_90px_rgba(0,0,0,0.32)] backdrop-blur-xl;
+    @apply border border-white/10 bg-white/[0.055] shadow-panel backdrop-blur-xl;
   }
 
   .section-title {
-    @apply font-display text-4xl font-extrabold leading-[1.02] text-white sm:text-5xl lg:text-6xl;
+    @apply font-display text-3xl font-extrabold leading-[1.04] text-white sm:text-5xl lg:text-6xl;
   }
 
   .page-title {
-    @apply font-display text-4xl font-black leading-[0.98] text-white md:text-6xl lg:text-7xl;
+    @apply font-display text-4xl font-black leading-[1.02] text-white sm:text-5xl md:text-6xl lg:text-7xl;
   }
 
   .filter-chip {
@@ -126,6 +129,43 @@ video {
 
   .file-drop {
     @apply mt-2 flex min-h-28 cursor-pointer flex-col items-center justify-center gap-3 rounded-lg border border-dashed border-white/20 bg-black/30 px-4 py-5 text-center text-sm text-white/60 transition hover:border-electric hover:text-white;
+  }
+
+  .anime-surface {
+    @apply relative overflow-hidden border border-white/10 bg-white/[0.045] shadow-panel backdrop-blur-xl;
+  }
+
+  .anime-surface::before {
+    content: "";
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-electric/70 to-transparent opacity-70;
+  }
+
+  .manga-panel {
+    @apply relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.045] shadow-panel;
+  }
+
+  .manga-panel::after {
+    content: "";
+    @apply pointer-events-none absolute inset-0 opacity-0 transition duration-500;
+    background:
+      linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 14px),
+      linear-gradient(110deg, transparent, rgba(51, 214, 255, 0.12), transparent);
+  }
+
+  .manga-panel:hover::after {
+    @apply opacity-100;
+  }
+
+  .meta-pill {
+    @apply inline-flex items-center gap-2 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs font-semibold uppercase tracking-[0.16em] text-white/70 backdrop-blur;
+  }
+
+  .page-hero {
+    @apply relative overflow-hidden rounded-lg border border-white/10 bg-black p-5 shadow-panel sm:p-8 lg:p-10;
+  }
+
+  .soft-divider {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-white/15 to-transparent;
   }
 }
 

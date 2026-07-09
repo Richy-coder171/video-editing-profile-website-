@@ -11,9 +11,10 @@ const services = [
 const tools = ['Premiere Pro', 'After Effects', 'DaVinci Resolve', 'Photoshop', 'Illustrator', 'Audition', 'CapCut', 'Lightroom'];
 
 const ServicesTools = () => (
-  <section className="section-pad bg-graphite">
+  <section className="section-pad relative overflow-hidden bg-graphite">
+    <div className="pointer-events-none absolute inset-0 bg-cinematic-sheen opacity-25" />
     <div className="mx-auto grid max-w-7xl gap-12 px-4 sm:px-6 lg:grid-cols-[0.9fr_1.1fr] lg:px-8">
-      <div>
+      <div className="relative">
         <p className="eyebrow">Services</p>
         <h2 className="reveal-text mt-3 font-display text-4xl font-bold text-white md:text-6xl">
           Creative production for videos people actually finish.
@@ -24,38 +25,38 @@ const ServicesTools = () => (
         </p>
         <div className="mt-8 flex flex-wrap gap-3">
           {tools.map((tool) => (
-            <span key={tool} className="rounded-full border border-white/10 bg-black/30 px-4 py-2 text-sm text-white/70">
+            <span key={tool} className="rounded-full border border-white/10 bg-black/35 px-4 py-2 text-sm text-white/70 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)]">
               {tool}
             </span>
           ))}
         </div>
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="relative grid gap-4 sm:grid-cols-2">
         {services.map((service, index) => (
           <motion.article
             key={service.title}
-            className="rounded-lg border border-white/10 bg-white/[0.04] p-6"
+            className="reveal-panel anime-surface rounded-lg p-6 transition duration-500 hover:-translate-y-1 hover:border-electric/30"
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: index * 0.08 }}
           >
-            <span className="grid h-12 w-12 place-items-center rounded-full bg-white text-ink">
+            <span className="grid h-12 w-12 place-items-center rounded-full bg-white text-ink shadow-glow">
               <service.icon size={20} />
             </span>
             <h3 className="mt-5 font-display text-xl font-semibold text-white">{service.title}</h3>
             <p className="mt-3 text-sm leading-7 text-white/60">{service.text}</p>
           </motion.article>
         ))}
-        <div className="rounded-lg border border-acid/30 bg-acid/10 p-6 text-acid">
+        <div className="reveal-panel rounded-lg border border-hotpink/30 bg-hotpink/10 p-6 text-hotpink">
           <BadgeCheck size={22} />
           <p className="mt-4 font-display text-xl font-semibold">Export-ready deliverables</p>
           <p className="mt-3 text-sm leading-7 text-white/60">
             Shorts, reels, thumbnails, posters, and campaign assets prepared for platform-specific delivery.
           </p>
         </div>
-        <div className="rounded-lg border border-electric/30 bg-electric/10 p-6 text-electric">
+        <div className="reveal-panel rounded-lg border border-electric/30 bg-electric/10 p-6 text-electric">
           <Captions size={22} />
           <p className="mt-4 font-display text-xl font-semibold">Retention-first caption work</p>
           <p className="mt-3 text-sm leading-7 text-white/60">

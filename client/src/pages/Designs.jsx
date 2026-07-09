@@ -20,7 +20,9 @@ const Designs = () => {
   return (
     <main className="page-pad bg-graphite">
       <section className="section-shell">
-        <div className="grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
+        <div className="page-hero grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
+          <div className="absolute inset-0 bg-cinematic-sheen opacity-30" />
+          <div className="absolute inset-0 bg-manga-lines opacity-10" />
           <div>
             <p className="eyebrow">Design gallery</p>
             <h1 className="page-title mt-4 max-w-4xl">
@@ -33,7 +35,7 @@ const Designs = () => {
               ['AI', 'Vector systems'],
               ['Social', 'Launch assets']
             ].map(([value, label]) => (
-              <div key={value} className="panel-premium rounded-lg p-4">
+              <div key={value} className="anime-surface rounded-lg p-4">
                 <p className="font-display text-2xl font-bold text-white">{value}</p>
                 <p className="mt-1 text-xs uppercase tracking-[0.18em] text-white/50">{label}</p>
               </div>
