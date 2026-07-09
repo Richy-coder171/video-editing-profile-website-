@@ -12,7 +12,7 @@ const EmptyState = ({ className = '' }) => {
       </div>
       <h3 className="mt-4 font-display text-2xl font-bold text-white">No projects uploaded yet.</h3>
       <p className="mx-auto mt-2 max-w-md text-sm leading-6 text-white/55">
-        Upload your first project from the admin dashboard. Real Cloudinary uploads will appear here.
+        Upload your first project from the admin dashboard. Your real work will appear here.
       </p>
       {isAuthenticated && (
         <Link to="/admin" className="btn-primary mt-6 inline-flex">
