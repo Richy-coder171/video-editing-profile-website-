@@ -1,9 +1,18 @@
+import { useMemo, useState } from 'react';
 import PortfolioGrid from '../components/portfolio/PortfolioGrid.jsx';
 import EmptyState from '../components/portfolio/EmptyState.jsx';
 import usePortfolio from '../hooks/usePortfolio.js';
 
 const Reels = () => {
   const { items, loading, error } = usePortfolio('/portfolio/type/reel');
+  const [activeCategory, setActiveCategory] = useState('All');
+  const reelCategories = ['All', 'Gaming', 'Cinematic', 'Ads', 'YouTube Shorts', 'Instagram Reels'];
+  const filteredItems = useMemo(() => {
+    if (activeCategory === 'All') return items;
+    const category = activeCategory.toLowerCase();
+    const terms = category === 'youtube shorts' ? ['youtube', 'short'] : category === 'instagram reels' ? ['instagram', 'reel'] : [category];
+    return items.filter((item) => terms.some((term) => String(item.category || '').toLowerCase().includes(term)));
+  }, [activeCategory, items]);
 
   return (
     <main className="page-pad bg-ink">
@@ -30,10 +39,15 @@ const Reels = () => {
             </div>
           </div>
         </div>
+        <div className="mt-8 flex gap-2 overflow-x-auto pb-3 sm:flex-wrap sm:overflow-visible">
+          {reelCategories.map((category) => (
+            <button key={category} className={`filter-chip shrink-0 ${activeCategory === category ? 'filter-chip-active' : ''}`} onClick={() => setActiveCategory(category)}>{category}</button>
+          ))}
+        </div>
         {loading && <p className="mt-6 text-sm text-white/60">Loading reel wall...</p>}
         {error && <p className="mt-6 rounded-lg border border-ember/30 bg-ember/10 p-3 text-sm text-ember">{error}</p>}
         <div className="mt-8 sm:mt-12">
-          {items.length ? <PortfolioGrid items={items} variant="reel" columns="lg:grid-cols-4" /> : !loading && <EmptyState />}
+          {filteredItems.length ? <PortfolioGrid items={filteredItems} variant="reel" columns="lg:grid-cols-3" /> : !loading && <EmptyState />}
         </div>
       </section>
     </main>

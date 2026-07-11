@@ -18,6 +18,13 @@ create table if not exists public.portfolio_items (
   ),
   category text,
   project_date date,
+  role text,
+  project_goal text,
+  process text,
+  result text,
+  aspect_ratio text,
+  external_url text,
+  client_name text,
   tools text[] default '{}',
   media_url text,
   thumbnail_url text,
@@ -32,6 +39,15 @@ create table if not exists public.portfolio_items (
 
 alter table if exists public.portfolio_items
   add column if not exists project_date date;
+
+alter table if exists public.portfolio_items
+  add column if not exists role text,
+  add column if not exists project_goal text,
+  add column if not exists process text,
+  add column if not exists result text,
+  add column if not exists aspect_ratio text,
+  add column if not exists external_url text,
+  add column if not exists client_name text;
 
 create index if not exists portfolio_items_type_idx on public.portfolio_items (type);
 create index if not exists portfolio_items_featured_idx on public.portfolio_items (featured);

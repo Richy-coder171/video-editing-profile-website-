@@ -9,6 +9,13 @@ const blankForm = {
   type: 'reel',
   category: '',
   projectDate: '',
+  role: '',
+  projectGoal: '',
+  process: '',
+  result: '',
+  aspectRatio: '',
+  externalUrl: '',
+  clientName: '',
   tools: '',
   mediaUrl: '',
   thumbnailUrl: '',
@@ -106,6 +113,13 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         type: editingItem.type || 'reel',
         category: editingItem.category || '',
         projectDate: editingItem.projectDate || '',
+        role: editingItem.role || '',
+        projectGoal: editingItem.projectGoal || '',
+        process: editingItem.process || '',
+        result: editingItem.result || '',
+        aspectRatio: editingItem.aspectRatio || '',
+        externalUrl: editingItem.externalUrl || '',
+        clientName: editingItem.clientName || '',
         tools: (editingItem.tools || []).join(', '),
         mediaUrl: editingItem.mediaUrl || '',
         thumbnailUrl: editingItem.thumbnailUrl || '',
@@ -191,6 +205,13 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
     payload.append('type', form.type);
     payload.append('category', form.category);
     payload.append('project_date', form.projectDate);
+    payload.append('role', form.role);
+    payload.append('project_goal', form.projectGoal);
+    payload.append('process', form.process);
+    payload.append('result', form.result);
+    payload.append('aspect_ratio', form.aspectRatio);
+    payload.append('external_url', form.externalUrl);
+    payload.append('client_name', form.clientName);
     payload.append('tools', form.tools);
     payload.append('featured', String(form.featured));
     payload.append('sort_order', form.sortOrder);
@@ -242,6 +263,13 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         type: form.type,
         category: form.category,
         project_date: form.projectDate,
+        role: form.role,
+        project_goal: form.projectGoal,
+        process: form.process,
+        result: form.result,
+        aspect_ratio: form.aspectRatio,
+        external_url: form.externalUrl,
+        client_name: form.clientName,
         tools: form.tools
           .split(',')
           .map((tool) => tool.trim())
@@ -355,6 +383,40 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         Description
         <textarea className="input min-h-28 resize-y" value={form.description} onChange={(event) => updateField('description', event.target.value)} required />
       </label>
+
+      <div className="mt-6 border-t border-white/10 pt-5">
+        <p className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-acid">Optional case-study details</p>
+        <div className="mt-4 grid gap-4 sm:grid-cols-2">
+          <label className="field-label">
+            Role / What I did
+            <input className="input" value={form.role} onChange={(event) => updateField('role', event.target.value)} placeholder="Editor, colorist, motion designer" />
+          </label>
+          <label className="field-label">
+            Client name
+            <input className="input" value={form.clientName} onChange={(event) => updateField('clientName', event.target.value)} />
+          </label>
+          <label className="field-label">
+            Aspect ratio
+            <input className="input" value={form.aspectRatio} onChange={(event) => updateField('aspectRatio', event.target.value)} placeholder="9:16, 16:9, 4:5" />
+          </label>
+          <label className="field-label">
+            External project URL
+            <input className="input" type="url" value={form.externalUrl} onChange={(event) => updateField('externalUrl', event.target.value)} placeholder="https://" />
+          </label>
+        </div>
+        <label className="field-label mt-4">
+          Project goal
+          <textarea className="input min-h-24 resize-y" value={form.projectGoal} onChange={(event) => updateField('projectGoal', event.target.value)} />
+        </label>
+        <label className="field-label mt-4">
+          Editing / design process
+          <textarea className="input min-h-24 resize-y" value={form.process} onChange={(event) => updateField('process', event.target.value)} />
+        </label>
+        <label className="field-label mt-4">
+          Final result
+          <textarea className="input min-h-24 resize-y" value={form.result} onChange={(event) => updateField('result', event.target.value)} />
+        </label>
+      </div>
 
       {editingItem && (
         <label className="field-label mt-4">

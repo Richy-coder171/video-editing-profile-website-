@@ -8,4 +8,23 @@ const api = axios.create({
   timeout: 30000
 });
 
-export { api, API_URL };
+const unwrapItems = ({ data }) => data.items || [];
+const unwrapItem = ({ data }) => data.item || data;
+
+const getAllProjects = (params = {}) => api.get('/portfolio', { params }).then(unwrapItems);
+const getFeaturedProjects = () => api.get('/portfolio/featured').then(unwrapItems);
+const getProjectsByType = (type, params = {}) => api.get(`/portfolio/type/${type}`, { params }).then(unwrapItems);
+const getProjectById = (id) => api.get(`/portfolio/${id}`).then(unwrapItem);
+const updateProject = (id, payload) => api.put(`/portfolio/${id}`, payload).then(unwrapItem);
+const deleteProject = (id) => api.delete(`/portfolio/${id}`).then(({ data }) => data);
+
+export {
+  api,
+  API_URL,
+  deleteProject,
+  getAllProjects,
+  getFeaturedProjects,
+  getProjectById,
+  getProjectsByType,
+  updateProject
+};

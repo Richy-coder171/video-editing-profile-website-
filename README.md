@@ -136,6 +136,13 @@ create table if not exists public.portfolio_items (
   ),
   category text,
   project_date date,
+  role text,
+  project_goal text,
+  process text,
+  result text,
+  aspect_ratio text,
+  external_url text,
+  client_name text,
   tools text[] default '{}',
   media_url text,
   thumbnail_url text,
@@ -151,13 +158,33 @@ create table if not exists public.portfolio_items (
 alter table if exists public.portfolio_items
   add column if not exists project_date date;
 
+alter table if exists public.portfolio_items
+  add column if not exists role text,
+  add column if not exists project_goal text,
+  add column if not exists process text,
+  add column if not exists result text,
+  add column if not exists aspect_ratio text,
+  add column if not exists external_url text,
+  add column if not exists client_name text;
+
 create index if not exists portfolio_items_type_idx on public.portfolio_items (type);
 create index if not exists portfolio_items_featured_idx on public.portfolio_items (featured);
 create index if not exists portfolio_items_project_date_idx on public.portfolio_items (project_date desc);
 create index if not exists portfolio_items_sort_idx on public.portfolio_items (sort_order, created_at desc);
 ```
 
-If your Supabase table already exists, run the updated script again. The `alter table` line safely adds the optional `project_date` column without deleting existing portfolio items.
+If your Supabase table already exists, run this migration in the SQL Editor. All new fields are optional, so existing uploads continue to work:
+
+```sql
+alter table portfolio_items
+add column if not exists role text,
+add column if not exists project_goal text,
+add column if not exists process text,
+add column if not exists result text,
+add column if not exists aspect_ratio text,
+add column if not exists external_url text,
+add column if not exists client_name text;
+```
 
 Use the Supabase service role key as `SUPABASE_SECRET_KEY` on the backend only. Never add it to `client/.env`, Vercel frontend variables, or browser code.
 
@@ -213,6 +240,7 @@ Portfolio:
 - `GET /api/portfolio`
 - `GET /api/portfolio/featured`
 - `GET /api/portfolio/type/:type`
+- `GET /api/portfolio/:id`
 - `PUT /api/portfolio/:id`
 - `DELETE /api/portfolio/:id`
 
@@ -232,6 +260,13 @@ Upload requests are protected and expect multipart fields:
 - `tools`
 - `featured`
 - `sort_order`
+- `role`: optional
+- `project_goal`: optional
+- `process`: optional
+- `result`: optional
+- `aspect_ratio`: optional
+- `external_url`: optional
+- `client_name`: optional
 
 Supported portfolio types:
 

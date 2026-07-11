@@ -6,6 +6,7 @@ import { cloudinaryDeliveryUrl, deleteFromCloudinary, uploadFileToCloudinary } f
 import { getFileKind } from '../middleware/upload.js';
 import {
   normalizePortfolioRow,
+  normalizeExternalUrl,
   normalizeTools,
   parseFeatured,
   parseProjectDate,
@@ -50,17 +51,15 @@ const throwSupabaseError = (error) => {
   const tableMissing =
     error?.code === 'PGRST205' ||
     error?.message?.includes("Could not find the table 'public.portfolio_items'");
-  const projectDateColumnMissing =
-    error?.code === 'PGRST204' &&
-    error?.message?.includes('project_date');
+  const columnMissing = error?.code === 'PGRST204';
   let message = error?.message || 'Unable to save portfolio metadata';
 
   if (tableMissing) {
     message = 'Supabase table public.portfolio_items was not found. Run supabase/schema.sql in the Supabase SQL Editor, then try uploading again.';
   }
 
-  if (projectDateColumnMissing) {
-    message = 'Supabase column public.portfolio_items.project_date was not found. Run the updated supabase/schema.sql in the Supabase SQL Editor, then try uploading again.';
+  if (columnMissing) {
+    message = 'One or more portfolio columns are missing in Supabase. Run the migration in supabase/schema.sql, then try uploading again.';
   }
 
   const requestError = new Error(message);
@@ -134,7 +133,14 @@ const uploadPortfolioAsset = asyncHandler(async (req, res) => {
       projectDate: camelProjectDate,
       tools,
       featured,
-      sort_order: sortOrder
+      sort_order: sortOrder,
+      role,
+      project_goal: projectGoal,
+      process,
+      result,
+      aspect_ratio: aspectRatio,
+      external_url: externalUrl,
+      client_name: clientName
     } = req.body;
     const errors = validatePortfolioPayload({ title, type });
 
@@ -202,6 +208,13 @@ const uploadPortfolioAsset = asyncHandler(async (req, res) => {
       description: String(description || '').trim(),
       type,
       category: String(category || '').trim(),
+      role: String(role || '').trim(),
+      project_goal: String(projectGoal || '').trim(),
+      process: String(process || '').trim(),
+      result: String(result || '').trim(),
+      aspect_ratio: String(aspectRatio || '').trim(),
+      external_url: normalizeExternalUrl(externalUrl),
+      client_name: String(clientName || '').trim(),
       tools: normalizeTools(tools),
       media_url: mediaUrl,
       thumbnail_url: thumbnailUrl,

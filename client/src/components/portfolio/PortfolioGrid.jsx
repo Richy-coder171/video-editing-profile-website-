@@ -12,7 +12,7 @@ const PortfolioGrid = ({ items, variant = 'video', columns = 'lg:grid-cols-3' })
           <MediaCard key={item._id || item.id} item={item} variant={variant} index={index} onOpen={setActiveItem} />
         ))}
       </div>
-      <ProjectLightbox item={activeItem} onClose={() => setActiveItem(null)} />
+      <ProjectLightbox item={activeItem} items={items} onChange={setActiveItem} onClose={() => setActiveItem(null)} />
     </>
   );
 };

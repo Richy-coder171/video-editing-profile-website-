@@ -13,6 +13,28 @@ const normalizeTools = (tools) => {
 
 const parseFeatured = (value) => value === true || value === 'true' || value === 'on';
 
+const normalizeExternalUrl = (value) => {
+  const normalized = String(value || '').trim();
+  if (!normalized) return '';
+
+  let parsed;
+  try {
+    parsed = new URL(normalized);
+  } catch {
+    const error = new Error('external_url must be a valid URL');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  if (!['http:', 'https:'].includes(parsed.protocol)) {
+    const error = new Error('external_url must use http or https');
+    error.statusCode = 400;
+    throw error;
+  }
+
+  return parsed.toString();
+};
+
 const parseSortOrder = (value) => {
   if (value === undefined || value === null || value === '') {
     return null;
@@ -68,6 +90,13 @@ const normalizePortfolioRow = (row = {}) => {
     type: row.type || '',
     category: row.category || '',
     projectDate: row.project_date || '',
+    role: row.role || '',
+    projectGoal: row.project_goal || '',
+    process: row.process || '',
+    result: row.result || '',
+    aspectRatio: row.aspect_ratio || '',
+    externalUrl: row.external_url || '',
+    clientName: row.client_name || '',
     tools: normalizeTools(row.tools),
     mediaUrl,
     thumbnailUrl,
@@ -96,4 +125,4 @@ const validatePortfolioPayload = ({ title, type }, { requireTitle = true, requir
   return errors;
 };
 
-export { normalizePortfolioRow, normalizeTools, parseFeatured, parseProjectDate, parseSortOrder, validatePortfolioPayload };
+export { normalizeExternalUrl, normalizePortfolioRow, normalizeTools, parseFeatured, parseProjectDate, parseSortOrder, validatePortfolioPayload };

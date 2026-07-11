@@ -4,6 +4,7 @@ import asyncHandler from '../utils/asyncHandler.js';
 import { deleteFromCloudinary } from '../utils/cloudinaryUpload.js';
 import {
   normalizePortfolioRow,
+  normalizeExternalUrl,
   normalizeTools,
   parseFeatured,
   parseProjectDate,
@@ -14,21 +15,31 @@ const hasOwn = (object, key) => Object.prototype.hasOwnProperty.call(object, key
 
 const getLimit = (value, fallback = 60) => Math.min(Math.max(Number(value) || fallback, 1), 200);
 
+const optionalTextFields = {
+  role: 'role',
+  project_goal: 'project_goal',
+  projectGoal: 'project_goal',
+  process: 'process',
+  result: 'result',
+  aspect_ratio: 'aspect_ratio',
+  aspectRatio: 'aspect_ratio',
+  client_name: 'client_name',
+  clientName: 'client_name'
+};
+
 const throwSupabaseError = (error, fallbackMessage = 'Supabase request failed') => {
   const tableMissing =
     error?.code === 'PGRST205' ||
     error?.message?.includes("Could not find the table 'public.portfolio_items'");
-  const projectDateColumnMissing =
-    error?.code === 'PGRST204' &&
-    error?.message?.includes('project_date');
+  const columnMissing = error?.code === 'PGRST204';
   let message = error?.message || fallbackMessage;
 
   if (tableMissing) {
     message = 'Supabase table public.portfolio_items was not found. Run supabase/schema.sql in the Supabase SQL Editor, then restart or refresh the app.';
   }
 
-  if (projectDateColumnMissing) {
-    message = 'Supabase column public.portfolio_items.project_date was not found. Run the updated supabase/schema.sql in the Supabase SQL Editor, then restart or refresh the app.';
+  if (columnMissing) {
+    message = 'One or more portfolio columns are missing in Supabase. Run the migration in supabase/schema.sql, then restart or refresh the app.';
   }
 
   const requestError = new Error(message);
@@ -41,6 +52,7 @@ const getPortfolioQuery = ({ type, featured, limit }) => {
   let query = supabase
     .from('portfolio_items')
     .select('*')
+    .order('featured', { ascending: false })
     .order('sort_order', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false })
     .limit(getLimit(limit));
@@ -89,6 +101,22 @@ const getFeaturedItems = asyncHandler(async (_req, res) => {
   res.json({ items, count: items.length });
 });
 
+const getPortfolioItem = asyncHandler(async (req, res) => {
+  const supabase = getSupabaseClient();
+  const { data, error } = await supabase
+    .from('portfolio_items')
+    .select('*')
+    .eq('id', req.params.id)
+    .single();
+
+  if (error) {
+    throwSupabaseError(error, 'Portfolio item not found');
+  }
+
+  const item = normalizePortfolioRow(data);
+  res.json({ item, ...item });
+});
+
 const getItemsByType = asyncHandler(async (req, res) => {
   const { type } = req.params;
 
@@ -132,6 +160,17 @@ const buildUpdatePayload = (body) => {
 
   if (hasOwn(body, 'category')) {
     payload.category = String(body.category || '').trim();
+  }
+
+  Object.entries(optionalTextFields).forEach(([inputKey, databaseKey]) => {
+    if (hasOwn(body, inputKey)) {
+      payload[databaseKey] = String(body[inputKey] || '').trim();
+    }
+  });
+
+  const externalUrl = hasOwn(body, 'external_url') ? body.external_url : body.externalUrl;
+  if (externalUrl !== undefined) {
+    payload.external_url = normalizeExternalUrl(externalUrl);
   }
 
   const projectDate = hasOwn(body, 'project_date') ? body.project_date : body.projectDate;
@@ -212,4 +251,4 @@ const deletePortfolioItem = asyncHandler(async (req, res) => {
   res.json({ message: 'Portfolio item deleted' });
 });
 
-export { getPortfolioItems, getFeaturedItems, getItemsByType, updatePortfolioItem, deletePortfolioItem };
+export { getPortfolioItem, getPortfolioItems, getFeaturedItems, getItemsByType, updatePortfolioItem, deletePortfolioItem };

@@ -11,6 +11,7 @@ import Contact from './pages/Contact.jsx';
 import AdminLogin from './pages/AdminLogin.jsx';
 import AdminDashboard from './pages/AdminDashboard.jsx';
 import NotFound from './pages/NotFound.jsx';
+import ProjectDetail from './pages/ProjectDetail.jsx';
 
 const App = () => {
   useLenis();
@@ -24,6 +25,7 @@ const App = () => {
         <Route path="designs" element={<Designs />} />
         <Route path="about" element={<About />} />
         <Route path="contact" element={<Contact />} />
+        <Route path="project/:id" element={<ProjectDetail />} />
         <Route path="admin-login" element={<AdminLogin />} />
         <Route element={<ProtectedRoute />}>
           <Route path="admin" element={<AdminDashboard />} />

@@ -3,6 +3,7 @@ import {
   deletePortfolioItem,
   getFeaturedItems,
   getItemsByType,
+  getPortfolioItem,
   getPortfolioItems,
   updatePortfolioItem
 } from '../controllers/portfolioController.js';
@@ -13,6 +14,7 @@ const router = express.Router();
 router.get('/', getPortfolioItems);
 router.get('/featured', getFeaturedItems);
 router.get('/type/:type', getItemsByType);
+router.get('/:id', getPortfolioItem);
 router.put('/:id', protect, updatePortfolioItem);
 router.delete('/:id', protect, deletePortfolioItem);
 

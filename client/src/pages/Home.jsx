@@ -3,6 +3,7 @@ import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import HeroSection from '../components/sections/HeroSection.jsx';
 import FeaturedShowcase from '../components/sections/FeaturedShowcase.jsx';
+import FeaturedShowreel from '../components/sections/FeaturedShowreel.jsx';
 import ReelsHorizontal from '../components/sections/ReelsHorizontal.jsx';
 import ServicesTools from '../components/sections/ServicesTools.jsx';
 import ProcessTimeline from '../components/sections/ProcessTimeline.jsx';
@@ -12,7 +13,7 @@ import usePortfolio from '../hooks/usePortfolio.js';
 gsap.registerPlugin(ScrollTrigger);
 
 const Home = () => {
-  const { items, error } = usePortfolio('/portfolio/featured');
+  const { items, error } = usePortfolio('/portfolio?limit=80');
 
   useEffect(() => {
     if (window.matchMedia('(max-width: 767px), (prefers-reduced-motion: reduce)').matches) {
@@ -75,6 +76,7 @@ const Home = () => {
           </div>
         </section>
       )}
+      <FeaturedShowreel items={items} />
       <FeaturedShowcase items={items} />
       <ReelsHorizontal items={items} />
       <ServicesTools />

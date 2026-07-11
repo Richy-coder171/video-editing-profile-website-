@@ -2,6 +2,7 @@ import { motion } from 'framer-motion';
 import { CalendarDays, Maximize2, Play, Sparkles } from 'lucide-react';
 import { useRef } from 'react';
 import { formatProjectDate } from '../../utils/date.js';
+import { Link } from 'react-router-dom';
 
 const aspectMap = {
   reel: 'aspect-[9/16]',
@@ -12,7 +13,7 @@ const aspectMap = {
 
 const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
   const isVideo = item.type === 'video' || item.type === 'reel';
-  const poster = item.thumbnailUrl || item.mediaUrl || '/cinematic-editor-hero.png';
+  const poster = item.thumbnailUrl || '';
   const cardRef = useRef(null);
   const isReel = variant === 'reel';
   const isDesign = variant === 'design';
@@ -57,10 +58,10 @@ const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
           </video>
         ) : (
           <img
-            src={poster}
+            src={item.mediaUrl || item.thumbnailUrl}
             alt={item.title}
             loading="lazy"
-            className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
+            className={`h-full w-full transition duration-700 group-hover:scale-[1.02] ${isDesign ? 'bg-black object-contain' : 'object-cover'}`}
           />
         )}
 
@@ -82,7 +83,8 @@ const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
               {formatProjectDate(item.projectDate)}
             </p>
           )}
-          <h3 className={`${isDesign ? 'text-xl' : 'text-lg'} font-display font-bold leading-tight text-white`}>
+          <p className="mb-2 font-mono text-[0.58rem] uppercase tracking-[0.12em] text-white/40">{item.type} / {item.category || 'Uncategorised'}</p>
+          <h3 className={`${isDesign ? 'text-2xl' : 'text-2xl'} font-display font-bold uppercase leading-none text-white`}>
             {item.title}
           </h3>
           <p className="mt-2 line-clamp-3 text-sm leading-6 text-white/60">{item.description}</p>
@@ -98,6 +100,9 @@ const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
             </span>
           ))}
         </div>
+        <Link className="btn-secondary w-full" to={`/project/${item.id}`}>
+          View project
+        </Link>
       </div>
     </motion.article>
   );

@@ -48,7 +48,7 @@ const Videos = () => {
         {loading && <p className="mt-6 text-sm text-white/60">Loading video edits...</p>}
         {error && <p className="mt-6 rounded-lg border border-ember/30 bg-ember/10 p-3 text-sm text-ember">{error}</p>}
         <div className="mt-8 sm:mt-12">
-          {filteredItems.length ? <PortfolioGrid items={filteredItems} variant="video" /> : !loading && <EmptyState />}
+          {filteredItems.length ? <PortfolioGrid items={filteredItems} variant="video" columns="lg:grid-cols-2" /> : !loading && <EmptyState />}
         </div>
       </section>
     </main>
