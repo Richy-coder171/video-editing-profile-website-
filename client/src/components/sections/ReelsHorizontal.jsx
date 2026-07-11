@@ -51,9 +51,9 @@ const ReelsHorizontal = ({ items }) => {
     <section ref={sectionRef} className="relative overflow-hidden bg-black py-16 sm:py-24">
       <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-electric/40 to-transparent" />
       <div className="section-shell">
-        <p className="eyebrow">Vertical reels</p>
+        <p className="eyebrow">Vertical cuts / 01B</p>
         <h2 className="reveal-text section-title mt-3 max-w-4xl">
-          A focused wall of vertical edits with clean cinematic pacing.
+          Made to stop the thumb, then reward the watch.
         </h2>
       </div>
 
@@ -78,12 +78,12 @@ const ReelsHorizontal = ({ items }) => {
               <span className="absolute inset-0 bg-gradient-to-t from-black via-black/25 to-transparent" />
               <span className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/60 to-transparent" />
             </span>
-            <span className="absolute left-5 top-5 rounded-full bg-white px-3 py-1 text-xs font-bold text-ink shadow-[0_10px_28px_rgba(0,0,0,0.28)] group-hover:shadow-glow">
+            <span className="absolute left-5 top-5 border border-white/20 bg-black/55 px-3 py-1 font-mono text-[0.6rem] text-acid backdrop-blur">
               {String(index + 1).padStart(2, '0')}
             </span>
             <span className="absolute bottom-0 left-0 right-0 p-6">
               <span className="text-xs uppercase tracking-[0.24em] text-electric">{item.category}</span>
-              <span className="mt-2 block font-display text-2xl font-bold leading-tight text-white">{item.title}</span>
+              <span className="mt-2 block font-display text-3xl font-bold uppercase leading-none text-white">{item.title}</span>
               <span className="mt-2 line-clamp-3 block text-sm leading-6 text-white/60">{item.description}</span>
             </span>
           </button>

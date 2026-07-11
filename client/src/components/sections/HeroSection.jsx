@@ -1,148 +1,137 @@
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowRight, Aperture, Film, Images, Play, Sparkles, WandSparkles } from 'lucide-react';
+import { ArrowDown, ArrowRight, Play, Volume2 } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-const heroStats = [
-  { label: 'Vertical edits', value: '9:16' },
-  { label: 'Long-form rhythm', value: '16:9' },
-  { label: 'Design polish', value: 'PSD + AI' }
+const timelineClips = [
+  { label: 'HOOK', width: '18%', color: 'bg-ember' },
+  { label: 'BUILD', width: '25%', color: 'bg-electric' },
+  { label: 'DROP', width: '14%', color: 'bg-acid text-ink' },
+  { label: 'PAYOFF', width: '31%', color: 'bg-violet' }
 ];
 
 const HeroSection = () => (
-  <section className="relative isolate min-h-[90svh] overflow-hidden pt-20 sm:pt-24">
+  <section className="relative isolate min-h-[100svh] overflow-hidden border-b border-white/10 pt-[4.5rem] sm:pt-20">
+    <div className="absolute inset-0 -z-30 bg-ink" />
     <img
       src="/cinematic-editor-hero.png"
-      alt="Cinematic editing studio with video timeline and design boards"
+      alt="Cinematic video edit displayed across studio monitors"
       fetchPriority="high"
-      className="absolute inset-0 -z-30 h-full w-full object-cover opacity-80"
+      className="absolute inset-y-0 right-0 -z-20 h-full w-full object-cover object-[68%_center] opacity-40 lg:w-[62%] lg:opacity-75"
     />
-    <div className="absolute inset-0 -z-20 bg-[linear-gradient(90deg,#050505_0%,rgba(5,5,5,0.96)_42%,rgba(5,5,5,0.58)_100%)]" />
-    <div className="absolute inset-0 -z-20 bg-[linear-gradient(180deg,rgba(5,5,5,0.1)_0%,rgba(5,5,5,0.24)_55%,#050505_100%)]" />
-    <div className="absolute inset-0 -z-10 bg-manga-lines opacity-[0.08]" />
-    <div className="absolute inset-x-0 top-24 -z-10 h-px bg-gradient-to-r from-transparent via-electric/50 to-hotpink/30" />
-    <div className="absolute bottom-0 right-0 -z-10 hidden h-56 w-2/3 skew-x-[-18deg] bg-cinematic-sheen opacity-90 blur-2xl lg:block" />
-    <div className="absolute right-[-8rem] top-28 -z-10 hidden h-96 w-[34rem] rotate-12 border border-electric/20 bg-electric/5 lg:block" />
-    <div className="absolute bottom-20 left-[-9rem] -z-10 hidden h-72 w-[30rem] -rotate-12 border border-hotpink/20 bg-hotpink/5 lg:block" />
+    <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,#07090b_0%,#07090b_42%,rgba(7,9,11,0.85)_62%,rgba(7,9,11,0.25)_100%)]" />
+    <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(7,9,11,0.12)_0%,rgba(7,9,11,0.2)_62%,#07090b_100%)]" />
 
-    <div className="section-shell grid min-h-[calc(90svh-5rem)] items-center gap-10 py-10 sm:py-12 lg:grid-cols-[1fr_0.72fr]">
-      <div className="max-w-5xl">
-        <motion.p
-          className="inline-flex max-w-full items-center gap-2 rounded-full border border-electric/20 bg-black/45 px-4 py-2 text-xs font-semibold uppercase tracking-[0.16em] text-white/75 shadow-glow backdrop-blur-xl sm:text-sm"
-          initial={{ opacity: 0, y: 16 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-        >
-          <Play size={15} fill="currentColor" />
-          Premium anime-style editing and design
-        </motion.p>
-        <motion.h1
-          className="mt-6 max-w-5xl font-display text-[clamp(2.65rem,11vw,7.3rem)] font-black leading-[0.92] text-white"
-          initial={{ opacity: 0, y: 28 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.08 }}
-        >
-          I Edit Videos That Feel Like <span className="text-transparent bg-clip-text bg-gradient-to-r from-electric via-hotpink to-ember">Anime Openings</span>
-        </motion.h1>
-        <motion.p
-          className="mt-6 max-w-2xl text-base leading-8 text-white/72 sm:text-lg"
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.16 }}
-        >
-          Reels, cinematic edits, thumbnails, posters, Photoshop, Illustrator, and visual storytelling.
-        </motion.p>
-        <motion.div
-          className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.24 }}
-        >
-          <Link className="btn-primary w-full sm:w-auto" to="/reels">
-            <Play size={18} fill="currentColor" />
-            Watch Reels
-          </Link>
-          <Link className="btn-secondary w-full sm:w-auto" to="/designs">
-            <Images size={18} />
-            View Designs
-          </Link>
-          <Link className="btn-secondary w-full sm:w-auto" to="/contact">
-            Hire Me
-            <ArrowRight size={18} />
-          </Link>
-        </motion.div>
+    <div className="section-shell flex min-h-[calc(100svh-4.5rem)] flex-col justify-between py-8 sm:min-h-[calc(100svh-5rem)] sm:py-10 lg:py-12">
+      <div className="flex items-center justify-between border-b border-white/15 pb-3 font-mono text-[0.62rem] uppercase tracking-[0.18em] text-white/45">
+        <span>Editor / Motion designer</span>
+        <span className="hidden sm:block">Sequence 01 · Main title</span>
+        <span className="text-acid">Rec ●</span>
+      </div>
+
+      <div className="grid flex-1 items-center gap-10 py-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.72fr)]">
+        <div>
+          <motion.p
+            className="eyebrow"
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.55 }}
+          >
+            Cuts with pulse. Frames with purpose.
+          </motion.p>
+          <motion.h1
+            className="mt-5 max-w-5xl font-display text-[clamp(4.4rem,14.3vw,10.8rem)] font-black uppercase leading-[0.75] tracking-[-0.045em] text-frost"
+            initial={{ opacity: 0, y: 32 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.75, delay: 0.08, ease: [0.2, 0.8, 0.2, 1] }}
+          >
+            I edit
+            <span className="block text-electric">videos</span>
+            <span className="block text-transparent [-webkit-text-stroke:1.5px_#f2eee6]">like openings.</span>
+          </motion.h1>
+          <motion.div
+            className="mt-7 grid max-w-3xl gap-6 border-l-2 border-acid pl-5 sm:grid-cols-[1fr_auto] sm:items-end"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.2 }}
+          >
+            <p className="max-w-xl text-sm leading-7 text-white/65 sm:text-base">
+              Reels, cinematic edits, thumbnails, posters, and visual systems shaped around rhythm—not presets.
+            </p>
+            <p className="font-mono text-[0.62rem] uppercase leading-5 tracking-[0.16em] text-white/40">
+              Premiere / AE<br />Resolve / PS / AI
+            </p>
+          </motion.div>
+          <motion.div
+            className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap"
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.65, delay: 0.28 }}
+          >
+            <Link className="btn-primary w-full sm:w-auto" to="/reels">
+              <Play size={16} fill="currentColor" />
+              Watch the cuts
+            </Link>
+            <Link className="btn-secondary w-full sm:w-auto" to="/contact">
+              Start a project
+              <ArrowRight size={16} />
+            </Link>
+          </motion.div>
+        </div>
 
         <motion.div
-          className="mt-10 grid max-w-3xl gap-3 sm:grid-cols-3"
-          initial={{ opacity: 0, y: 18 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.32 }}
+          className="hidden self-end lg:block"
+          initial={{ opacity: 0, x: 30 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ duration: 0.8, delay: 0.25 }}
         >
-          {heroStats.map((stat) => (
-            <div key={stat.label} className="anime-surface rounded-lg px-4 py-4">
-              <p className="font-display text-2xl font-bold text-white">{stat.value}</p>
-              <p className="mt-1 text-xs uppercase tracking-[0.22em] text-white/50">{stat.label}</p>
+          <div className="border border-white/15 bg-black/60 p-2 shadow-panel backdrop-blur-sm">
+            <div className="flex items-center justify-between border-b border-white/10 px-2 py-2 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-white/45">
+              <span>Program monitor</span>
+              <span className="text-white/75">00:00:12:18</span>
             </div>
-          ))}
+            <div className="relative aspect-video overflow-hidden bg-black">
+              <img src="/cinematic-editor-hero.png" alt="" className="h-full w-full object-cover" />
+              <span className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
+              <span className="absolute bottom-3 left-3 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-white/70">Preview / Color pass</span>
+            </div>
+            <div className="flex items-center justify-between px-2 py-2 font-mono text-[0.6rem] text-white/40">
+              <span>1/2</span>
+              <Play size={12} fill="currentColor" className="text-frost" />
+              <Volume2 size={12} />
+            </div>
+          </div>
         </motion.div>
       </div>
 
       <motion.div
-        className="relative hidden min-h-[34rem] lg:block"
-        initial={{ opacity: 0, x: 28 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.85, delay: 0.28 }}
+        className="relative border-y border-white/15 bg-black/40 px-3 py-3 backdrop-blur-sm sm:px-4"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.38 }}
       >
-        <div className="manga-panel absolute right-4 top-0 aspect-[4/5] w-[68%] rotate-3 rounded-lg p-2">
-          <img src="/cinematic-editor-hero.png" alt="" className="h-full w-full rounded-md object-cover" />
-          <div className="absolute inset-2 rounded-md bg-gradient-to-t from-black via-black/25 to-transparent" />
-          <span className="meta-pill absolute left-5 top-5">Color grade</span>
+        <div className="mb-2 flex justify-between font-mono text-[0.55rem] uppercase tracking-[0.12em] text-white/35">
+          <span>V1 · Story rhythm</span>
+          <span>00:00:18:24</span>
         </div>
-        <div className="manga-panel absolute bottom-10 left-0 aspect-[9/12] w-[47%] -rotate-6 rounded-lg p-2">
-          <div className="grid h-full rounded-md bg-black p-3">
-            <div className="space-y-2 self-end">
-              <WandSparkles className="text-hotpink" size={24} />
-              <p className="font-display text-2xl font-bold leading-tight text-white">Hook first. Impact second.</p>
-              <p className="text-sm leading-6 text-white/55">Cuts, speed ramps, captions, grade, sound.</p>
-            </div>
-          </div>
+        <div className="timecode-grid relative flex h-9 gap-1 overflow-hidden border-y border-white/10 py-1">
+          {timelineClips.map((clip) => (
+            <span
+              key={clip.label}
+              className={`${clip.color} flex items-center overflow-hidden px-2 font-mono text-[0.5rem] font-semibold tracking-[0.12em] text-white/85`}
+              style={{ width: clip.width }}
+            >
+              {clip.label}
+            </span>
+          ))}
+          <span className="timeline-playhead absolute inset-y-0 left-0 z-10 w-px bg-frost shadow-[0_0_9px_rgba(242,238,230,0.9)]">
+            <span className="absolute -top-1.5 -left-[3px] h-2 w-2 rotate-45 bg-frost" />
+          </span>
+        </div>
+        <div className="mt-2 flex items-center justify-between font-mono text-[0.55rem] uppercase tracking-[0.12em] text-white/35">
+          <span>Hook → build → impact → payoff</span>
+          <span className="hidden items-center gap-2 sm:flex"><ArrowDown size={11} /> Scroll for selected work</span>
         </div>
       </motion.div>
-    </div>
-
-    <motion.div
-      className="absolute bottom-8 right-4 hidden w-[min(37rem,42vw)] rounded-lg border border-white/10 bg-black/40 p-4 shadow-panel backdrop-blur-xl lg:block"
-      initial={{ opacity: 0, y: 24 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.8, delay: 0.42 }}
-    >
-      <div className="mb-4 flex items-center justify-between text-xs uppercase tracking-[0.22em] text-white/50">
-        <span className="inline-flex items-center gap-2">
-          <Film size={14} />
-          Edit timeline
-        </span>
-        <span className="inline-flex items-center gap-2 text-electric">
-          <Aperture size={14} />
-          color pass
-        </span>
-      </div>
-      <div className="grid grid-cols-12 gap-2">
-        {['bg-electric', 'bg-white/25', 'bg-ember', 'bg-acid', 'bg-white/20', 'bg-electric/60'].map((color, index) => (
-          <span
-            key={`${color}-${index}`}
-            className={`h-9 rounded-md ${color}`}
-            style={{ gridColumn: `span ${index % 2 === 0 ? 3 : 2}` }}
-          />
-        ))}
-      </div>
-      <div className="mt-4 flex items-center gap-2 text-sm text-white/60">
-        <Sparkles size={16} className="text-acid" />
-        Hook, pacing, captions, grade, sound, export.
-      </div>
-    </motion.div>
-
-    <div className="absolute bottom-6 left-1/2 hidden -translate-x-1/2 items-center gap-2 text-xs uppercase tracking-[0.28em] text-white/50 md:flex">
-      <ArrowDown size={14} />
-      Scroll
     </div>
   </section>
 );

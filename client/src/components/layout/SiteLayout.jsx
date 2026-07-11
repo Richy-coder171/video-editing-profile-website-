@@ -1,5 +1,5 @@
 import { Link, NavLink, Outlet } from 'react-router-dom';
-import { Clapperboard, LogOut, Menu, X } from 'lucide-react';
+import { LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import ScrollProgress from './ScrollProgress.jsx';
 import { useAuth } from '../../contexts/authContext.js';
@@ -14,8 +14,8 @@ const navItems = [
 ];
 
 const navClass = ({ isActive }) =>
-  `rounded-full px-3 py-2 text-sm font-semibold transition ${
-    isActive ? 'bg-white text-ink shadow-glow' : 'text-white/70 hover:bg-white/10 hover:text-white'
+  `relative px-3 py-2 font-mono text-[0.68rem] font-medium uppercase tracking-[0.1em] transition ${
+    isActive ? 'text-acid after:absolute after:inset-x-3 after:-bottom-1 after:h-px after:bg-acid' : 'text-white/55 hover:text-white'
   }`;
 
 const SiteLayout = () => {
@@ -25,18 +25,17 @@ const SiteLayout = () => {
   return (
     <div className="min-h-screen overflow-x-hidden bg-ink text-frost">
       <ScrollProgress />
-      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink/85 backdrop-blur-xl">
-        <div className="absolute inset-x-0 bottom-0 h-px bg-gradient-to-r from-transparent via-electric/40 to-transparent" />
+      <header className="fixed inset-x-0 top-0 z-50 border-b border-white/10 bg-ink/90 backdrop-blur-xl">
         <div className="mx-auto flex h-[4.5rem] max-w-7xl items-center justify-between px-4 sm:h-20 sm:px-6 lg:px-8">
           <Link to="/" className="flex items-center gap-3" onClick={() => setOpen(false)}>
-            <span className="grid h-10 w-10 place-items-center rounded-full border border-electric/25 bg-white text-ink shadow-glow">
-              <Clapperboard size={20} />
+            <span className="relative grid h-9 w-9 place-items-center border border-white/20 bg-frost font-display text-lg font-black text-ink">
+              C<span className="absolute -right-1 -top-1 h-2 w-2 bg-acid" />
             </span>
             <span className="min-w-0 leading-tight">
-              <span className="block truncate font-display text-sm font-semibold uppercase tracking-[0.22em] text-white sm:tracking-[0.28em]">
-                Cinematic
+              <span className="block truncate font-display text-lg font-bold uppercase tracking-[0.08em] text-white">
+                Cut / Frame
               </span>
-              <span className="block truncate text-xs text-white/60">Video Editing Portfolio</span>
+              <span className="block truncate font-mono text-[0.55rem] uppercase tracking-[0.13em] text-white/40">Editing portfolio</span>
             </span>
           </Link>
 
@@ -59,7 +58,7 @@ const SiteLayout = () => {
                 </button>
               </>
             ) : (
-              <NavLink to="/admin-login" className="btn-ghost">
+              <NavLink to="/admin-login" className="font-mono text-[0.62rem] uppercase tracking-[0.12em] text-white/35 transition hover:text-white">
                 Admin
               </NavLink>
             )}
@@ -111,9 +110,12 @@ const SiteLayout = () => {
       <Outlet />
 
       <footer className="border-t border-white/10 bg-black px-4 py-10">
-        <div className="mx-auto flex max-w-7xl flex-col gap-6 text-sm text-white/60 md:flex-row md:items-center md:justify-between">
-          <p>Cinematic Video Editing Portfolio</p>
-          <div className="flex flex-wrap gap-4">
+        <div className="mx-auto flex max-w-7xl flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          <div>
+            <p className="font-display text-xl font-bold uppercase tracking-[0.08em] text-frost">Cut / Frame</p>
+            <p className="mt-1 font-mono text-[0.6rem] uppercase tracking-[0.13em] text-white/35">Picture. Rhythm. Finish.</p>
+          </div>
+          <div className="flex flex-wrap gap-4 font-mono text-[0.65rem] uppercase tracking-[0.1em] text-white/50">
             <Link className="hover:text-white" to="/reels">
               Reels
             </Link>

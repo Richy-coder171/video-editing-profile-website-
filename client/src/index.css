@@ -4,8 +4,8 @@
 
 :root {
   color-scheme: dark;
-  background: #050505;
-  font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  background: #07090b;
+  font-family: Manrope, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
@@ -17,7 +17,7 @@
 }
 
 html {
-  background: #050505;
+  background: #07090b;
   scroll-behavior: auto;
   overflow-x: hidden;
 }
@@ -28,14 +28,13 @@ body {
   margin: 0;
   overflow-x: hidden;
   background:
-    linear-gradient(115deg, rgba(51, 214, 255, 0.08), transparent 30%),
-    linear-gradient(245deg, rgba(155, 92, 255, 0.09), transparent 34%),
-    linear-gradient(180deg, rgba(255, 79, 216, 0.055), transparent 28%),
-    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px),
-    #050505;
+    linear-gradient(115deg, rgba(104, 167, 255, 0.055), transparent 30%),
+    linear-gradient(245deg, rgba(255, 77, 87, 0.045), transparent 34%),
+    linear-gradient(rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px),
+    #07090b;
   background-attachment: fixed;
-  background-size: auto, auto, 44px 44px, 44px 44px;
+  background-size: auto, auto, 48px 48px, 48px 48px;
 }
 
 button,
@@ -62,8 +61,8 @@ video {
 }
 
 ::selection {
-  background: #33d6ff;
-  color: #050505;
+  background: #ffb000;
+  color: #07090b;
 }
 
 @layer components {
@@ -76,15 +75,15 @@ video {
   }
 
   .eyebrow {
-    @apply inline-flex max-w-full items-center gap-2 text-[0.68rem] font-bold uppercase tracking-[0.24em] text-electric sm:tracking-[0.28em];
+    @apply inline-flex max-w-full items-center gap-2 font-mono text-[0.66rem] font-semibold uppercase tracking-[0.2em] text-acid sm:tracking-[0.24em];
   }
 
   .btn-primary {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full bg-white px-5 py-3 text-sm font-bold text-ink shadow-[0_18px_50px_rgba(255,255,255,0.14)] transition duration-300 hover:translate-y-[-2px] hover:shadow-[0_0_36px_rgba(51,214,255,0.22),0_18px_50px_rgba(255,255,255,0.14)] focus:outline-none focus:ring-2 focus:ring-electric focus:ring-offset-2 focus:ring-offset-ink;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-sm bg-frost px-5 py-3 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-ink shadow-[0_18px_50px_rgba(242,238,230,0.12)] transition duration-300 hover:-translate-y-0.5 hover:bg-acid focus:outline-none focus:ring-2 focus:ring-acid focus:ring-offset-2 focus:ring-offset-ink;
   }
 
   .btn-secondary {
-    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-white/20 bg-white/10 px-5 py-3 text-sm font-bold text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xl transition duration-300 hover:translate-y-[-2px] hover:border-electric/50 hover:bg-electric/10 hover:text-white focus:outline-none focus:ring-2 focus:ring-electric focus:ring-offset-2 focus:ring-offset-ink;
+    @apply inline-flex min-h-11 items-center justify-center gap-2 rounded-sm border border-white/20 bg-black/20 px-5 py-3 font-mono text-xs font-semibold uppercase tracking-[0.08em] text-white backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-electric/60 hover:bg-electric/10 focus:outline-none focus:ring-2 focus:ring-electric focus:ring-offset-2 focus:ring-offset-ink;
   }
 
   .btn-ghost {
@@ -105,7 +104,7 @@ video {
   }
 
   .section-title {
-    @apply font-display text-3xl font-extrabold leading-[1.04] text-white sm:text-5xl lg:text-6xl;
+    @apply font-display text-4xl font-bold uppercase leading-[0.93] tracking-[-0.02em] text-frost sm:text-6xl lg:text-7xl;
   }
 
   .page-title {
@@ -133,17 +132,17 @@ video {
   }
 
   .anime-surface {
-    @apply relative overflow-hidden border border-white/10 bg-white/[0.045] backdrop-blur-xl;
+    @apply relative overflow-hidden border border-white/10 bg-white/[0.035] backdrop-blur-xl;
     box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
   }
 
   .anime-surface::before {
     content: "";
-    @apply pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-electric/70 to-transparent opacity-70;
+    @apply pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-electric/60 to-transparent opacity-70;
   }
 
   .manga-panel {
-    @apply relative overflow-hidden rounded-lg border border-white/10 bg-white/[0.045];
+    @apply relative overflow-hidden rounded-sm border border-white/10 bg-white/[0.035];
     box-shadow: 0 28px 90px rgba(0, 0, 0, 0.42);
   }
 
@@ -152,7 +151,7 @@ video {
     @apply pointer-events-none absolute inset-0 opacity-0 transition duration-500;
     background:
       linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0 1px, transparent 1px 14px),
-      linear-gradient(110deg, transparent, rgba(51, 214, 255, 0.12), transparent);
+      linear-gradient(110deg, transparent, rgba(104, 167, 255, 0.12), transparent);
   }
 
   .manga-panel:hover::after {
@@ -173,6 +172,20 @@ video {
   }
 }
 
+.timecode-grid {
+  background-image: linear-gradient(90deg, rgba(255, 255, 255, 0.09) 1px, transparent 1px);
+  background-size: 7.142% 100%;
+}
+
+.timeline-playhead {
+  animation: timeline-scan 8s cubic-bezier(0.65, 0, 0.35, 1) infinite alternate;
+}
+
+@keyframes timeline-scan {
+  from { left: 0; }
+  to { left: calc(100% - 1px); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
@@ -181,5 +194,10 @@ video {
     animation-iteration-count: 1 !important;
     scroll-behavior: auto !important;
     transition-duration: 0.01ms !important;
+  }
+
+  .timeline-playhead {
+    animation: none;
+    left: 38%;
   }
 }

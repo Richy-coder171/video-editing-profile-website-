@@ -12,17 +12,16 @@ const FeaturedShowcase = ({ items }) => {
 
   return (
     <section ref={sectionRef} className="section-pad relative overflow-hidden bg-ink">
-      <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/20 to-transparent" />
       <div className="section-shell">
-        <div className="mb-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+        <div className="mb-10 grid gap-5 border-b border-white/15 pb-7 md:grid-cols-[1fr_0.42fr] md:items-end">
           <div>
-            <p className="eyebrow">Featured projects</p>
+            <p className="eyebrow">Selected timeline / 01</p>
             <h2 className="reveal-text section-title mt-3 max-w-3xl">
-              Edits and visuals built for attention, rhythm, and recall.
+              Work that earns the next frame.
             </h2>
           </div>
-          <p className="max-w-md text-sm leading-7 text-white/60">
-            A curated mix of vertical reels, long-form edits, thumbnails, posters, and brand visuals.
+          <p className="max-w-md border-l border-white/15 pl-4 text-sm leading-7 text-white/55">
+            A live selection of uploaded edits and visuals. Open a frame to see the full piece, tools, and project notes.
           </p>
         </div>
 
@@ -31,7 +30,7 @@ const FeaturedShowcase = ({ items }) => {
             {featured.map((item, index) => (
               <motion.button
                 key={item._id || item.id}
-                className={`manga-panel group relative min-h-[340px] text-left transition duration-500 hover:-translate-y-1 hover:border-electric/35 ${
+                className={`manga-panel group relative min-h-[340px] text-left transition duration-500 hover:-translate-y-1 hover:border-electric/45 ${
                   index === 0 ? 'sm:col-span-2 lg:col-span-2 lg:row-span-2 lg:min-h-[700px]' : ''
                 }`}
                 onClick={() => setActiveItem(item)}
@@ -48,7 +47,7 @@ const FeaturedShowcase = ({ items }) => {
                 />
                 <span className="absolute inset-0 bg-gradient-to-t from-black via-black/55 to-transparent" />
                 <span className="absolute inset-x-0 top-0 h-24 bg-gradient-to-b from-black/60 to-transparent" />
-                <span className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white text-ink shadow-[0_12px_34px_rgba(0,0,0,0.28)] transition group-hover:rotate-12 group-hover:shadow-glow">
+                <span className="absolute right-4 top-4 grid h-10 w-10 place-items-center border border-white/20 bg-black/55 text-white backdrop-blur transition group-hover:border-acid group-hover:bg-acid group-hover:text-ink">
                   <ArrowUpRight size={19} />
                 </span>
                 <span className="absolute bottom-0 left-0 right-0 p-5">
@@ -60,7 +59,7 @@ const FeaturedShowcase = ({ items }) => {
                       {formatProjectDate(item.projectDate)}
                     </span>
                   )}
-                  <span className="mt-4 block font-display text-2xl font-bold leading-tight text-white">{item.title}</span>
+                  <span className="mt-4 block font-display text-3xl font-bold uppercase leading-[0.95] text-white">{item.title}</span>
                   <span className="mt-2 line-clamp-3 block text-sm leading-6 text-white/60">{item.description}</span>
                   <span className="mt-4 flex flex-wrap gap-2">
                     {(item.tools || []).slice(0, 3).map((tool) => (

@@ -7,9 +7,9 @@ const ProcessTimeline = () => (
     <div className="section-shell">
       <div className="grid gap-10 lg:grid-cols-[0.9fr_1.1fr]">
         <div className="lg:sticky lg:top-28 lg:h-fit">
-          <p className="eyebrow">Editing process</p>
+          <p className="eyebrow">The workflow / 03</p>
           <h2 className="reveal-text section-title mt-3">
-            A polished process from raw footage to final delivery.
+            Seven passes. One clean handoff.
           </h2>
           <p className="mt-6 max-w-lg text-sm leading-7 text-white/60">
             A clear production pipeline keeps each project fast, focused, and consistent across platforms.
@@ -21,14 +21,14 @@ const ProcessTimeline = () => (
           {steps.map((step, index) => (
             <article
               key={step}
-              className="panel-premium relative grid gap-5 overflow-hidden rounded-lg p-5 transition duration-500 hover:-translate-y-1 hover:border-electric/30 sm:grid-cols-[90px_1fr]"
+              className="panel-premium relative grid gap-5 overflow-hidden rounded-sm p-5 transition duration-500 hover:-translate-y-1 hover:border-electric/30 sm:grid-cols-[90px_1fr]"
             >
-              <span className="absolute right-4 top-4 h-16 w-24 skew-x-[-16deg] border border-electric/20 bg-electric/5" />
-              <span className="relative z-10 grid h-16 w-16 place-items-center rounded-full border border-white/10 bg-black font-display text-2xl font-black text-white shadow-glow">
+              <span className="absolute right-4 top-4 font-mono text-[0.55rem] uppercase tracking-[0.12em] text-white/20">Pass {String(index + 1).padStart(2, '0')}</span>
+              <span className="relative z-10 grid h-16 w-16 place-items-center border border-white/10 bg-black font-mono text-sm font-medium text-acid">
                 {String(index + 1).padStart(2, '0')}
               </span>
               <div>
-                <h3 className="font-display text-2xl font-semibold text-white">{step}</h3>
+                <h3 className="font-display text-3xl font-semibold uppercase leading-none text-white">{step}</h3>
                 <p className="mt-2 text-sm leading-7 text-white/60">
                   {index === 0 && 'Review footage, define the hook, identify strongest moments, and map the final arc.'}
                   {index === 1 && 'Shape the timeline with clean pacing, beat-aware cuts, and strong scene rhythm.'}
