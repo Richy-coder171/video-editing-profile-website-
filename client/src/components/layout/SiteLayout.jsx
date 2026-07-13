@@ -3,6 +3,7 @@ import { LogOut, Menu, X } from 'lucide-react';
 import { useState } from 'react';
 import ScrollProgress from './ScrollProgress.jsx';
 import { useAuth } from '../../contexts/authContext.js';
+import { primaryContactLinks } from '../../data/contactLinks.js';
 
 const navItems = [
   { label: 'Home', to: '/' },
@@ -129,6 +130,22 @@ const SiteLayout = () => {
               Hire me
             </Link>
           </div>
+          {primaryContactLinks.length > 0 && (
+            <div className="flex flex-wrap gap-3 text-sm text-white/60">
+              {primaryContactLinks.slice(0, 2).map((link) => (
+                <a
+                  key={link.href}
+                  className="inline-flex min-w-0 items-center gap-2 rounded-full border border-white/10 px-3 py-2 transition hover:border-acid/40 hover:text-white"
+                  href={link.href}
+                  target={link.href.startsWith('http') ? '_blank' : undefined}
+                  rel={link.href.startsWith('http') ? 'noreferrer' : undefined}
+                >
+                  <link.icon size={15} />
+                  <span className="truncate">{link.label}</span>
+                </a>
+              ))}
+            </div>
+          )}
         </div>
       </footer>
     </div>

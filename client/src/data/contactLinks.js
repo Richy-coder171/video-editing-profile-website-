@@ -1,6 +1,7 @@
-import { ExternalLink, Instagram, Mail, MessageCircle, Youtube } from 'lucide-react';
+import { ExternalLink, Instagram, Mail, MessageCircle, Phone, Youtube } from 'lucide-react';
 
 const contactEmail = import.meta.env.VITE_CONTACT_EMAIL || '';
+const contactPhone = import.meta.env.VITE_CONTACT_PHONE || '';
 const whatsappUrl = import.meta.env.VITE_WHATSAPP_URL || '';
 
 const primaryContactLinks = [
@@ -9,6 +10,13 @@ const primaryContactLinks = [
         label: contactEmail,
         href: `mailto:${contactEmail}`,
         icon: Mail
+      }
+    : null,
+  contactPhone
+    ? {
+        label: contactPhone,
+        href: `tel:${contactPhone.replace(/[^\d+]/g, '')}`,
+        icon: Phone
       }
     : null,
   whatsappUrl

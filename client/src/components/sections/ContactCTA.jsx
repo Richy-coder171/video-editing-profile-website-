@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
 import { ArrowRight, Mail } from 'lucide-react';
+import { primaryContactLinks } from '../../data/contactLinks.js';
 
 const ContactCTA = () => (
   <section className="section-pad bg-graphite">
@@ -20,6 +21,18 @@ const ContactCTA = () => (
               <Mail size={18} />
               Send the brief
             </Link>
+            {primaryContactLinks.slice(0, 2).map((link) => (
+              <a
+                key={link.href}
+                className="btn-secondary"
+                href={link.href}
+                target={link.href.startsWith('http') ? '_blank' : undefined}
+                rel={link.href.startsWith('http') ? 'noreferrer' : undefined}
+              >
+                <link.icon size={18} />
+                {link.label}
+              </a>
+            ))}
             <Link to="/videos" className="btn-secondary">
               See video edits
               <ArrowRight size={18} />

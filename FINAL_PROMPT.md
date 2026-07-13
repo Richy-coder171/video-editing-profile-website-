@@ -76,6 +76,7 @@ VITE_API_URL=http://localhost:5000/api
 VITE_MAX_IMAGE_SIZE_MB=25
 VITE_MAX_VIDEO_SIZE_MB=100
 VITE_CONTACT_EMAIL=
+VITE_CONTACT_PHONE=
 VITE_WHATSAPP_URL=
 VITE_INSTAGRAM_URL=
 VITE_YOUTUBE_URL=
@@ -271,7 +272,7 @@ Frontend pages:
    - Avoid fake achievements and fake experience claims.
 6. Contact
    - Premium contact page
-   - Show Email, WhatsApp, Instagram, YouTube, Behance, Dribbble only if configured in frontend env.
+   - Show Email, Phone, WhatsApp, Instagram, YouTube, Behance, Dribbble only if configured in frontend env.
    - Do not show empty social links.
    - Clear hire-me CTA.
 7. Admin Login
