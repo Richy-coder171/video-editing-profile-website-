@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { CalendarDays, Maximize2, Play, Sparkles } from 'lucide-react';
+import { CalendarDays, Maximize2, Play, Sparkles, Star } from 'lucide-react';
 import { useRef } from 'react';
 import { formatProjectDate } from '../../utils/date.js';
 import { Link } from 'react-router-dom';
@@ -13,7 +13,7 @@ const aspectMap = {
 
 const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
   const isVideo = item.type === 'video' || item.type === 'reel';
-  const poster = item.thumbnailUrl || '';
+  const poster = item.thumbnailUrl || undefined;
   const cardRef = useRef(null);
   const isReel = variant === 'reel';
   const isDesign = variant === 'design';
@@ -70,6 +70,11 @@ const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
         <span className="meta-pill absolute left-4 top-4 max-w-[calc(100%-5.5rem)] truncate">
           {item.category || item.type}
         </span>
+        {item.featured && (
+          <span className="absolute right-4 top-4 grid h-9 w-9 place-items-center rounded-full bg-acid text-ink shadow-[0_14px_34px_rgba(255,176,0,0.2)]">
+            <Star size={15} fill="currentColor" />
+          </span>
+        )}
         <span className="absolute bottom-4 right-4 grid h-11 w-11 place-items-center rounded-full bg-white text-ink shadow-[0_12px_30px_rgba(0,0,0,0.28)] transition group-hover:scale-105 group-hover:shadow-glow">
           {isVideo ? <Play size={18} fill="currentColor" /> : <Maximize2 size={18} />}
         </span>
@@ -89,20 +94,27 @@ const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
           </h3>
           <p className="mt-2 line-clamp-3 text-sm leading-6 text-white/60">{item.description}</p>
         </div>
-        <div className="flex flex-wrap gap-2">
-          {(item.tools || []).slice(0, 4).map((tool) => (
-            <span
-              key={tool}
-              className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs text-white/70"
-            >
-              <Sparkles size={12} />
-              {tool}
-            </span>
-          ))}
+        <div className="min-h-7">
+          <div className="flex flex-wrap gap-2">
+            {(item.tools || []).slice(0, 4).map((tool) => (
+              <span
+                key={tool}
+                className="inline-flex items-center gap-1 rounded-full border border-white/10 bg-black/35 px-3 py-1 text-xs text-white/70"
+              >
+                <Sparkles size={12} />
+                {tool}
+              </span>
+            ))}
+          </div>
         </div>
-        <Link className="btn-secondary w-full" to={`/project/${item.id}`}>
-          View project
-        </Link>
+        <div className="grid gap-2 sm:grid-cols-2">
+          <button className="btn-secondary w-full" type="button" onClick={() => onOpen?.(item)}>
+            Preview
+          </button>
+          <Link className="btn-primary w-full" to={`/project/${item.id}`}>
+            Details
+          </Link>
+        </div>
       </div>
     </motion.article>
   );
