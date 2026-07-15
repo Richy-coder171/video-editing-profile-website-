@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { CalendarDays, Edit3, LogOut, RefreshCw, Star, Trash2 } from 'lucide-react';
 import PortfolioForm from '../components/admin/PortfolioForm.jsx';
+import LazyPage3DAccent from '../components/three/LazyPage3DAccent.jsx';
 import { useAuth } from '../contexts/authContext.js';
 import { portfolioTypes } from '../data/portfolioMeta.js';
 import { api } from '../services/api.js';
@@ -70,7 +71,11 @@ const AdminDashboard = () => {
   return (
     <main className="page-pad relative overflow-hidden bg-ink">
       <div className="pointer-events-none absolute inset-0 bg-cinematic-sheen opacity-20" />
-      <section className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+      <LazyPage3DAccent
+        variant="admin"
+        className="right-[-13rem] top-28 h-[24rem] w-[32rem] opacity-25 sm:right-[-8rem] sm:h-[30rem] sm:w-[39rem] sm:opacity-42 lg:right-[-3rem] lg:top-28 lg:opacity-50"
+      />
+      <section className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="relative flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="eyebrow">Admin dashboard</p>

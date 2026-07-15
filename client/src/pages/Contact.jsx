@@ -1,5 +1,6 @@
 import { MapPin, Send, Sparkles } from 'lucide-react';
 import { contactEmail, primaryContactLinks, socialLinks } from '../data/contactLinks.js';
+import LazyPage3DAccent from '../components/three/LazyPage3DAccent.jsx';
 
 const Contact = () => (
   <main className="page-pad bg-black">
@@ -7,35 +8,41 @@ const Contact = () => (
       <div className="page-hero">
         <div className="absolute inset-0 bg-cinematic-sheen opacity-30" />
         <div className="absolute inset-0 bg-manga-lines opacity-10" />
-        <p className="eyebrow">Contact</p>
-        <h1 className="mt-4 font-display text-5xl font-black leading-none text-white md:text-7xl">
-          Book editing and design work for your next launch.
-        </h1>
-        <p className="mt-6 text-base leading-8 text-white/60">
-          Share the platform, deadline, reference links, footage status, and the result you want viewers to feel.
-        </p>
-        <div className="mt-8 grid gap-3 text-sm text-white/70">
-          {primaryContactLinks.map((link) => (
-            <a key={link.label} className="flex min-w-0 items-center gap-3 break-words rounded-lg border border-white/10 bg-black/25 p-3 transition hover:border-electric/30 hover:text-white" href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noreferrer' : undefined}>
-              <link.icon size={18} />
-              <span className="min-w-0">{link.label}</span>
-            </a>
-          ))}
-          <span className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/25 p-3">
-            <MapPin size={18} />
-            Available for remote projects
-          </span>
-        </div>
-        {socialLinks.length > 0 && (
-          <div className="mt-6 flex flex-wrap gap-2">
-            {socialLinks.map((link) => (
-            <a key={link.label} className="btn-ghost" href={link.href} target="_blank" rel="noreferrer">
-              <link.icon size={16} />
-              {link.label}
-            </a>
+        <LazyPage3DAccent
+          variant="contact"
+          className="right-[-14rem] top-24 h-[18rem] w-[25rem] opacity-22 sm:right-[-10rem] sm:top-14 sm:h-[22rem] sm:w-[29rem] sm:opacity-34 lg:right-[-17rem] lg:top-16 lg:h-[24rem] lg:w-[31rem] lg:opacity-38"
+        />
+        <div className="relative z-10">
+          <p className="eyebrow">Contact</p>
+          <h1 className="mt-4 font-display text-5xl font-black leading-none text-white md:text-7xl">
+            Book editing and design work for your next launch.
+          </h1>
+          <p className="mt-6 text-base leading-8 text-white/60">
+            Share the platform, deadline, reference links, footage status, and the result you want viewers to feel.
+          </p>
+          <div className="mt-8 grid gap-3 text-sm text-white/70">
+            {primaryContactLinks.map((link) => (
+              <a key={link.label} className="flex min-w-0 items-center gap-3 break-words rounded-lg border border-white/10 bg-black/25 p-3 transition hover:border-electric/30 hover:text-white" href={link.href} target={link.href.startsWith('http') ? '_blank' : undefined} rel={link.href.startsWith('http') ? 'noreferrer' : undefined}>
+                <link.icon size={18} />
+                <span className="min-w-0">{link.label}</span>
+              </a>
             ))}
+            <span className="flex items-center gap-3 rounded-lg border border-white/10 bg-black/25 p-3">
+              <MapPin size={18} />
+              Available for remote projects
+            </span>
           </div>
-        )}
+          {socialLinks.length > 0 && (
+            <div className="mt-6 flex flex-wrap gap-2">
+              {socialLinks.map((link) => (
+              <a key={link.label} className="btn-ghost" href={link.href} target="_blank" rel="noreferrer">
+                <link.icon size={16} />
+                {link.label}
+              </a>
+              ))}
+            </div>
+          )}
+        </div>
       </div>
 
       {contactEmail ? (

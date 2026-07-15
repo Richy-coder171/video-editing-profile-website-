@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import PortfolioGrid from '../components/portfolio/PortfolioGrid.jsx';
 import EmptyState from '../components/portfolio/EmptyState.jsx';
+import LazyPage3DAccent from '../components/three/LazyPage3DAccent.jsx';
 import usePortfolio from '../hooks/usePortfolio.js';
 
 const Reels = () => {
@@ -25,7 +26,11 @@ const Reels = () => {
           />
           <div className="absolute inset-0 bg-gradient-to-r from-black via-black/90 to-black/55" />
           <div className="absolute inset-0 bg-manga-lines opacity-10" />
-          <div className="relative">
+          <LazyPage3DAccent
+            variant="reels"
+            className="right-[-9rem] top-14 h-[18rem] w-[24rem] opacity-30 sm:right-[-7rem] sm:top-7 sm:h-[22rem] sm:w-[28rem] sm:opacity-50 lg:right-[-3rem] lg:top-[-1rem] lg:h-[25rem] lg:w-[32rem] lg:opacity-75"
+          />
+          <div className="relative z-10">
             <p className="eyebrow">Reels and shorts</p>
             <h1 className="page-title mt-4 max-w-4xl">
               Vertical edits built for hooks, holds, and replay value.

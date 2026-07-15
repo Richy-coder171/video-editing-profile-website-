@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import EmptyState from '../components/portfolio/EmptyState.jsx';
 import PortfolioGrid from '../components/portfolio/PortfolioGrid.jsx';
+import LazyPage3DAccent from '../components/three/LazyPage3DAccent.jsx';
 import usePortfolio from '../hooks/usePortfolio.js';
 import { designTabs, designTypes } from '../data/portfolioMeta.js';
 
@@ -23,13 +24,17 @@ const Designs = () => {
         <div className="page-hero grid gap-8 lg:grid-cols-[0.95fr_1.05fr] lg:items-end">
           <div className="absolute inset-0 bg-cinematic-sheen opacity-30" />
           <div className="absolute inset-0 bg-manga-lines opacity-10" />
-          <div>
+          <LazyPage3DAccent
+            variant="designs"
+            className="right-[-12rem] top-24 h-[18rem] w-[25rem] opacity-24 sm:right-[-7rem] sm:top-8 sm:h-[22rem] sm:w-[29rem] sm:opacity-45 lg:right-[1rem] lg:top-[-2rem] lg:h-[25rem] lg:w-[32rem] lg:opacity-70"
+          />
+          <div className="relative z-10">
             <p className="eyebrow">Design gallery</p>
             <h1 className="page-title mt-4 max-w-4xl">
               Photoshop and Illustrator work with cinematic visual hierarchy.
             </h1>
           </div>
-          <div className="grid gap-3 sm:grid-cols-3">
+          <div className="relative z-10 grid gap-3 sm:grid-cols-3">
             {[
               ['PSD', 'Composites'],
               ['AI', 'Vector systems'],

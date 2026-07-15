@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import EmptyState from '../components/portfolio/EmptyState.jsx';
 import PortfolioGrid from '../components/portfolio/PortfolioGrid.jsx';
+import LazyPage3DAccent from '../components/three/LazyPage3DAccent.jsx';
 import usePortfolio from '../hooks/usePortfolio.js';
 import { videoCategories } from '../data/portfolioMeta.js';
 
@@ -22,13 +23,17 @@ const Videos = () => {
         <div className="page-hero grid gap-8 lg:grid-cols-[1fr_0.38fr] lg:items-end">
           <div className="absolute inset-0 bg-cinematic-sheen opacity-35" />
           <div className="absolute inset-0 bg-manga-lines opacity-10" />
-          <div>
+          <LazyPage3DAccent
+            variant="videos"
+            className="right-[-9rem] top-12 h-[18rem] w-[26rem] opacity-30 sm:right-[-6rem] sm:top-5 sm:h-[22rem] sm:w-[30rem] sm:opacity-50 lg:right-[7rem] lg:top-[-1.5rem] lg:h-[24rem] lg:w-[31rem] lg:opacity-65"
+          />
+          <div className="relative z-10">
             <p className="eyebrow">Long-form edits</p>
             <h1 className="page-title mt-4 max-w-4xl">
               Widescreen stories with cinematic pacing and polish.
             </h1>
           </div>
-          <div className="anime-surface rounded-lg p-5">
+          <div className="anime-surface relative z-10 rounded-lg p-5">
             <p className="text-xs uppercase tracking-[0.24em] text-white/50">Delivery format</p>
             <p className="mt-3 font-display text-3xl font-bold text-white">16:9</p>
             <p className="mt-2 text-sm leading-6 text-white/60">YouTube, ads, podcasts, gaming edits, and color grade reels.</p>

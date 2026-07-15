@@ -1,4 +1,5 @@
 import { Clapperboard, Gauge, Layers3, Palette, Scissors, ShieldCheck, WandSparkles } from 'lucide-react';
+import LazyPage3DAccent from '../components/three/LazyPage3DAccent.jsx';
 
 const stats = [
   { label: 'Editing focus', value: 'Retention' },
@@ -18,14 +19,20 @@ const About = () => (
       <div className="page-hero">
         <div className="absolute inset-0 bg-cinematic-sheen opacity-30" />
         <div className="absolute inset-0 bg-manga-lines opacity-10" />
-        <p className="eyebrow">About</p>
-        <h1 className="mt-4 font-display text-5xl font-black leading-none text-white md:text-7xl">
-          A video editor and designer for fast-moving brands and creators.
-        </h1>
-        <p className="mt-6 text-base leading-8 text-white/60">
-          This portfolio is built for a creative who can move across reels, long-form content, thumbnails, posters,
-          branding, Photoshop compositing, and Illustrator layouts without losing the cinematic point of view.
-        </p>
+        <LazyPage3DAccent
+          variant="about"
+          className="right-[-14rem] top-24 h-[18rem] w-[25rem] opacity-22 sm:right-[-10rem] sm:top-14 sm:h-[22rem] sm:w-[29rem] sm:opacity-34 lg:right-[-19rem] lg:top-14 lg:h-[24rem] lg:w-[31rem] lg:opacity-38"
+        />
+        <div className="relative z-10">
+          <p className="eyebrow">About</p>
+          <h1 className="mt-4 font-display text-5xl font-black leading-none text-white md:text-7xl">
+            A video editor and designer for fast-moving brands and creators.
+          </h1>
+          <p className="mt-6 text-base leading-8 text-white/60">
+            This portfolio is built for a creative who can move across reels, long-form content, thumbnails, posters,
+            branding, Photoshop compositing, and Illustrator layouts without losing the cinematic point of view.
+          </p>
+        </div>
       </div>
 
       <div className="grid gap-4">

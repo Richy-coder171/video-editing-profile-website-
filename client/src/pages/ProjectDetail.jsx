@@ -4,6 +4,7 @@ import { Link, useParams } from 'react-router-dom';
 import EmptyState from '../components/portfolio/EmptyState.jsx';
 import PortfolioGrid from '../components/portfolio/PortfolioGrid.jsx';
 import ProjectLightbox from '../components/portfolio/ProjectLightbox.jsx';
+import LazyPage3DAccent from '../components/three/LazyPage3DAccent.jsx';
 import { getAllProjects, getProjectById } from '../services/api.js';
 import { formatProjectDate } from '../utils/date.js';
 import { isVideoProject, sortPortfolioItems } from '../utils/portfolio.js';
@@ -47,13 +48,25 @@ const ProjectDetail = () => {
   }, [allProjects, project]);
 
   if (loading) {
-    return <main className="page-pad bg-ink"><div className="section-shell text-sm text-white/55">Loading project…</div></main>;
+    return (
+      <main className="page-pad relative overflow-hidden bg-ink">
+        <LazyPage3DAccent
+          variant="detail"
+          className="right-[-10rem] top-28 h-[22rem] w-[30rem] opacity-35 sm:right-[-6rem] sm:h-[27rem] sm:w-[36rem] sm:opacity-55"
+        />
+        <div className="section-shell relative z-10 text-sm text-white/55">Loading project...</div>
+      </main>
+    );
   }
 
   if (error || !project) {
     return (
-      <main className="page-pad bg-ink">
-        <div className="section-shell">
+      <main className="page-pad relative overflow-hidden bg-ink">
+        <LazyPage3DAccent
+          variant="notFound"
+          className="right-[-10rem] top-28 h-[22rem] w-[30rem] opacity-35 sm:right-[-6rem] sm:h-[27rem] sm:w-[36rem] sm:opacity-55"
+        />
+        <div className="section-shell relative z-10">
           <EmptyState />
           {error && <p className="mt-4 text-center text-sm text-ember">{error}</p>}
         </div>
@@ -70,8 +83,12 @@ const ProjectDetail = () => {
   ].filter(([, value]) => value);
 
   return (
-    <main className="page-pad bg-ink">
-      <article className="section-shell">
+    <main className="page-pad relative overflow-hidden bg-ink">
+      <LazyPage3DAccent
+        variant="detail"
+        className="right-[-12rem] top-24 h-[24rem] w-[33rem] opacity-28 sm:right-[-7rem] sm:h-[29rem] sm:w-[38rem] sm:opacity-45 lg:right-[-5rem] lg:top-28 lg:h-[32rem] lg:w-[42rem] lg:opacity-55"
+      />
+      <article className="section-shell relative z-10">
         <Link className="inline-flex items-center gap-2 font-mono text-[0.65rem] uppercase tracking-[0.12em] text-white/50 hover:text-white" to={project.type === 'reel' ? '/reels' : project.type === 'video' ? '/videos' : '/designs'}>
           <ArrowLeft size={15} /> Back to work
         </Link>
