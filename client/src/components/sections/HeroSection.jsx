@@ -1,6 +1,9 @@
 import { Link } from 'react-router-dom';
-import { ArrowDown, ArrowRight, Play, Volume2 } from 'lucide-react';
+import { ArrowDown, ArrowRight, Play } from 'lucide-react';
 import { motion } from 'framer-motion';
+import { lazy, Suspense } from 'react';
+
+const Hero3DModel = lazy(() => import('./Hero3DModel.jsx'));
 
 const timelineClips = [
   { label: 'HOOK', width: '18%', color: 'bg-ember' },
@@ -15,17 +18,19 @@ const HeroSection = () => (
     <img
       src="/cinematic-editor-hero.png"
       alt="Cinematic video edit displayed across studio monitors"
-      fetchPriority="high"
       className="absolute inset-y-0 right-0 -z-20 h-full w-full object-cover object-[68%_center] opacity-40 lg:w-[62%] lg:opacity-75"
     />
     <div className="absolute inset-0 -z-10 bg-[linear-gradient(90deg,#07090b_0%,#07090b_42%,rgba(7,9,11,0.85)_62%,rgba(7,9,11,0.25)_100%)]" />
     <div className="absolute inset-0 -z-10 bg-[linear-gradient(180deg,rgba(7,9,11,0.12)_0%,rgba(7,9,11,0.2)_62%,#07090b_100%)]" />
+    <Suspense fallback={null}>
+      <Hero3DModel />
+    </Suspense>
 
-    <div className="section-shell flex min-h-[calc(100svh-4.5rem)] flex-col justify-between py-8 sm:min-h-[calc(100svh-5rem)] sm:py-10 lg:py-12">
+    <div className="section-shell relative z-10 flex min-h-[calc(100svh-4.5rem)] flex-col justify-between py-8 sm:min-h-[calc(100svh-5rem)] sm:py-10 lg:py-12">
       <div className="flex items-center justify-between border-b border-white/15 pb-3 font-mono text-[0.62rem] uppercase tracking-[0.18em] text-white/45">
         <span>Editor / Motion designer</span>
-        <span className="hidden sm:block">Sequence 01 · Main title</span>
-        <span className="text-acid">Rec ●</span>
+        <span className="hidden sm:block">Sequence 01 - Main title</span>
+        <span className="text-acid">Rec</span>
       </div>
 
       <div className="grid flex-1 items-center gap-10 py-10 lg:grid-cols-[minmax(0,1.05fr)_minmax(22rem,0.72fr)]">
@@ -55,7 +60,7 @@ const HeroSection = () => (
             transition={{ duration: 0.65, delay: 0.2 }}
           >
             <p className="max-w-xl text-sm leading-7 text-white/65 sm:text-base">
-              Reels, cinematic edits, thumbnails, posters, and visual systems shaped around rhythm—not presets.
+              Reels, cinematic edits, thumbnails, posters, and visual systems shaped around rhythm, not presets.
             </p>
             <p className="font-mono text-[0.62rem] uppercase leading-5 tracking-[0.16em] text-white/40">
               Premiere / AE<br />Resolve / PS / AI
@@ -78,29 +83,7 @@ const HeroSection = () => (
           </motion.div>
         </div>
 
-        <motion.div
-          className="hidden self-end lg:block"
-          initial={{ opacity: 0, x: 30 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, delay: 0.25 }}
-        >
-          <div className="border border-white/15 bg-black/60 p-2 shadow-panel backdrop-blur-sm">
-            <div className="flex items-center justify-between border-b border-white/10 px-2 py-2 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-white/45">
-              <span>Program monitor</span>
-              <span className="text-white/75">00:00:12:18</span>
-            </div>
-            <div className="relative aspect-video overflow-hidden bg-black">
-              <img src="/cinematic-editor-hero.png" alt="" className="h-full w-full object-cover" />
-              <span className="absolute inset-0 bg-gradient-to-t from-black/45 to-transparent" />
-              <span className="absolute bottom-3 left-3 font-mono text-[0.6rem] uppercase tracking-[0.14em] text-white/70">Preview / Color pass</span>
-            </div>
-            <div className="flex items-center justify-between px-2 py-2 font-mono text-[0.6rem] text-white/40">
-              <span>1/2</span>
-              <Play size={12} fill="currentColor" className="text-frost" />
-              <Volume2 size={12} />
-            </div>
-          </div>
-        </motion.div>
+        <div className="hidden lg:block" aria-hidden="true" />
       </div>
 
       <motion.div
@@ -110,7 +93,7 @@ const HeroSection = () => (
         transition={{ duration: 0.7, delay: 0.38 }}
       >
         <div className="mb-2 flex justify-between font-mono text-[0.55rem] uppercase tracking-[0.12em] text-white/35">
-          <span>V1 · Story rhythm</span>
+          <span>V1 - Story rhythm</span>
           <span>00:00:18:24</span>
         </div>
         <div className="timecode-grid relative flex h-9 gap-1 overflow-hidden border-y border-white/10 py-1">
@@ -128,7 +111,7 @@ const HeroSection = () => (
           </span>
         </div>
         <div className="mt-2 flex items-center justify-between font-mono text-[0.55rem] uppercase tracking-[0.12em] text-white/35">
-          <span>Hook → build → impact → payoff</span>
+          <span>Hook to build to impact to payoff</span>
           <span className="hidden items-center gap-2 sm:flex"><ArrowDown size={11} /> Scroll for selected work</span>
         </div>
       </motion.div>
