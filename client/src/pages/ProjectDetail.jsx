@@ -75,6 +75,7 @@ const ProjectDetail = () => {
   }
 
   const isVideo = isVideoProject(project);
+  const mediaHref = project.mediaUrl || project.thumbnailUrl;
   const detailBlocks = [
     ['Role / What I did', project.role],
     ['Project goal', project.projectGoal],
@@ -128,7 +129,10 @@ const ProjectDetail = () => {
           <div>
             <p className="eyebrow">Project notes</p>
             <div className="mt-5 flex flex-wrap gap-2">{(project.tools || []).map((tool) => <span className="meta-pill" key={tool}>{tool}</span>)}</div>
-            {project.externalUrl && <a className="btn-secondary mt-5" href={project.externalUrl} target="_blank" rel="noreferrer"><ExternalLink size={16} /> View published work</a>}
+            <div className="mt-5 grid gap-3">
+              {project.externalUrl && <a className="btn-secondary" href={project.externalUrl} target="_blank" rel="noreferrer"><ExternalLink size={16} /> View published work</a>}
+              {mediaHref && <a className="btn-secondary" href={mediaHref} target="_blank" rel="noreferrer"><ExternalLink size={16} /> Open media</a>}
+            </div>
           </div>
           <div className="grid gap-px bg-white/10 sm:grid-cols-2">
             {detailBlocks.map(([label, value]) => (

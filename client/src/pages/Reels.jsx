@@ -1,19 +1,30 @@
 import { useMemo, useState } from 'react';
 import PortfolioGrid from '../components/portfolio/PortfolioGrid.jsx';
 import EmptyState from '../components/portfolio/EmptyState.jsx';
+import WorkDiscoveryPanel from '../components/portfolio/WorkDiscoveryPanel.jsx';
 import LazyPage3DAccent from '../components/three/LazyPage3DAccent.jsx';
 import usePortfolio from '../hooks/usePortfolio.js';
+import { applyWorkFilters, getWorkSummary } from '../utils/workPresentation.js';
 
 const Reels = () => {
   const { items, loading, error } = usePortfolio('/portfolio/type/reel');
   const [activeCategory, setActiveCategory] = useState('All');
+  const [query, setQuery] = useState('');
+  const [sortBy, setSortBy] = useState('featured');
+  const [featuredOnly, setFeaturedOnly] = useState(false);
   const reelCategories = ['All', 'Gaming', 'Cinematic', 'Ads', 'YouTube Shorts', 'Instagram Reels'];
-  const filteredItems = useMemo(() => {
+  const categoryItems = useMemo(() => {
     if (activeCategory === 'All') return items;
     const category = activeCategory.toLowerCase();
     const terms = category === 'youtube shorts' ? ['youtube', 'short'] : category === 'instagram reels' ? ['instagram', 'reel'] : [category];
     return items.filter((item) => terms.some((term) => String(item.category || '').toLowerCase().includes(term)));
   }, [activeCategory, items]);
+  const filteredItems = useMemo(
+    () => applyWorkFilters(categoryItems, { query, sortBy, featuredOnly }),
+    [categoryItems, featuredOnly, query, sortBy]
+  );
+  const summary = useMemo(() => getWorkSummary(categoryItems), [categoryItems]);
+  const hasUploads = items.length > 0;
 
   return (
     <main className="page-pad bg-ink">
@@ -49,10 +60,36 @@ const Reels = () => {
             <button key={category} className={`filter-chip shrink-0 ${activeCategory === category ? 'filter-chip-active' : ''}`} onClick={() => setActiveCategory(category)}>{category}</button>
           ))}
         </div>
+        <WorkDiscoveryPanel
+          query={query}
+          onQueryChange={setQuery}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          featuredOnly={featuredOnly}
+          onFeaturedOnlyChange={setFeaturedOnly}
+          totalCount={categoryItems.length}
+          visibleCount={filteredItems.length}
+          placeholder="Search reels, hooks, tools, categories"
+          summaryItems={[
+            { label: 'featured', value: summary.featured },
+            { label: 'categories', value: summary.categories },
+            { label: 'tools', value: summary.tools }
+          ]}
+        />
         {loading && <p className="mt-6 text-sm text-white/60">Loading reel wall...</p>}
         {error && <p className="mt-6 rounded-lg border border-ember/30 bg-ember/10 p-3 text-sm text-ember">{error}</p>}
         <div className="mt-8 sm:mt-12">
-          {filteredItems.length ? <PortfolioGrid items={filteredItems} variant="reel" columns="lg:grid-cols-3" /> : !loading && <EmptyState />}
+          {filteredItems.length ? (
+            <PortfolioGrid items={filteredItems} variant="reel" columns="lg:grid-cols-3" />
+          ) : (
+            !loading && (
+              <EmptyState
+                title={hasUploads ? 'No reels match this view.' : undefined}
+                message={hasUploads ? 'Try a different search, category, sort, or featured filter.' : undefined}
+                showAdminAction={!hasUploads}
+              />
+            )
+          )}
         </div>
       </section>
     </main>

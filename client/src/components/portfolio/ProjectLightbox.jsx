@@ -34,6 +34,14 @@ const ProjectLightbox = ({ item, items = [], onChange, onClose }) => {
   });
 
   const isVideo = isVideoProject(item);
+  const mediaHref = item?.mediaUrl || item?.thumbnailUrl;
+  const projectDateLabel = formatProjectDate(item?.projectDate || item?.createdAt);
+  const quickFacts = item ? [
+    ['Type', item.type],
+    ['Category', item.category],
+    ['Date', projectDateLabel],
+    ['Tools', item.tools?.length ? `${item.tools.length} listed` : '']
+  ].filter(([, value]) => value) : [];
 
   return (
     <AnimatePresence>
@@ -99,15 +107,34 @@ const ProjectLightbox = ({ item, items = [], onChange, onClose }) => {
                 <div className="flex-1">
                   <p className="eyebrow">Project preview</p>
                   <h2 className="mt-3 font-display text-4xl font-bold uppercase leading-[0.9] text-frost sm:text-5xl">{item.title}</h2>
-                  {item.projectDate && <p className="mt-4 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-electric">{formatProjectDate(item.projectDate)}</p>}
+                  {projectDateLabel && <p className="mt-4 font-mono text-[0.62rem] uppercase tracking-[0.12em] text-electric">{projectDateLabel}</p>}
                   <p className="mt-5 text-sm leading-7 text-white/65">{item.description}</p>
+                  {quickFacts.length > 0 && (
+                    <dl className="mt-5 grid grid-cols-2 gap-2">
+                      {quickFacts.map(([label, value]) => (
+                        <div key={label} className="rounded-md border border-white/10 bg-black/25 p-3">
+                          <dt className="font-mono text-[0.56rem] uppercase tracking-[0.12em] text-white/35">{label}</dt>
+                          <dd className="mt-1 truncate text-sm font-semibold text-white/75">{value}</dd>
+                        </div>
+                      ))}
+                    </dl>
+                  )}
                   <div className="mt-5 flex flex-wrap gap-2">
                     {(item.tools || []).map((tool) => <span key={tool} className="meta-pill">{tool}</span>)}
                   </div>
-                  {item.externalUrl && (
-                    <a className="mt-5 inline-flex items-center gap-2 text-sm text-electric hover:text-white" href={item.externalUrl} target="_blank" rel="noreferrer">
-                      <ExternalLink size={15} /> View published work
-                    </a>
+                  {(item.externalUrl || mediaHref) && (
+                    <div className="mt-5 flex flex-wrap gap-3 text-sm">
+                      {item.externalUrl && (
+                        <a className="inline-flex items-center gap-2 text-electric hover:text-white" href={item.externalUrl} target="_blank" rel="noreferrer">
+                          <ExternalLink size={15} /> View published work
+                        </a>
+                      )}
+                      {mediaHref && (
+                        <a className="inline-flex items-center gap-2 text-electric hover:text-white" href={mediaHref} target="_blank" rel="noreferrer">
+                          <ExternalLink size={15} /> Open media
+                        </a>
+                      )}
+                    </div>
                   )}
                 </div>
 

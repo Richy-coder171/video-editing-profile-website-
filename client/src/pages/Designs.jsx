@@ -1,22 +1,33 @@
 import { useMemo, useState } from 'react';
 import EmptyState from '../components/portfolio/EmptyState.jsx';
 import PortfolioGrid from '../components/portfolio/PortfolioGrid.jsx';
+import WorkDiscoveryPanel from '../components/portfolio/WorkDiscoveryPanel.jsx';
 import LazyPage3DAccent from '../components/three/LazyPage3DAccent.jsx';
 import usePortfolio from '../hooks/usePortfolio.js';
 import { designTabs, designTypes } from '../data/portfolioMeta.js';
+import { applyWorkFilters, getWorkSummary } from '../utils/workPresentation.js';
 
 const Designs = () => {
   const { items, loading, error } = usePortfolio('/portfolio');
-  const designItems = items.filter((item) => designTypes.includes(item.type));
   const [activeType, setActiveType] = useState('all');
+  const [query, setQuery] = useState('');
+  const [sortBy, setSortBy] = useState('featured');
+  const [featuredOnly, setFeaturedOnly] = useState(false);
+  const designItems = useMemo(() => items.filter((item) => designTypes.includes(item.type)), [items]);
 
-  const filteredItems = useMemo(() => {
+  const typeItems = useMemo(() => {
     if (activeType === 'all') {
       return designItems;
     }
 
     return designItems.filter((item) => item.type === activeType);
   }, [activeType, designItems]);
+  const filteredItems = useMemo(
+    () => applyWorkFilters(typeItems, { query, sortBy, featuredOnly }),
+    [featuredOnly, query, sortBy, typeItems]
+  );
+  const summary = useMemo(() => getWorkSummary(typeItems), [typeItems]);
+  const hasUploads = designItems.length > 0;
 
   return (
     <main className="page-pad bg-graphite">
@@ -58,13 +69,35 @@ const Designs = () => {
             </button>
           ))}
         </div>
+        <WorkDiscoveryPanel
+          query={query}
+          onQueryChange={setQuery}
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          featuredOnly={featuredOnly}
+          onFeaturedOnlyChange={setFeaturedOnly}
+          totalCount={typeItems.length}
+          visibleCount={filteredItems.length}
+          placeholder="Search designs, tools, formats, categories"
+          summaryItems={[
+            { label: 'featured', value: summary.featured },
+            { label: 'categories', value: summary.categories },
+            { label: 'tools', value: summary.tools }
+          ]}
+        />
         {loading && <p className="mt-6 text-sm text-white/60">Loading design work...</p>}
         {error && <p className="mt-6 rounded-lg border border-ember/30 bg-ember/10 p-3 text-sm text-ember">{error}</p>}
         <div className="mt-8 sm:mt-12">
           {filteredItems.length ? (
             <PortfolioGrid items={filteredItems} variant="design" columns="lg:grid-cols-3" />
           ) : (
-            !loading && <EmptyState />
+            !loading && (
+              <EmptyState
+                title={hasUploads ? 'No design work matches this view.' : undefined}
+                message={hasUploads ? 'Try a different search, design type, sort, or featured filter.' : undefined}
+                showAdminAction={!hasUploads}
+              />
+            )
           )}
         </div>
       </section>
