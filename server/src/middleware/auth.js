@@ -36,4 +36,25 @@ const protect = asyncHandler(async (req, res, next) => {
   }
 });
 
+const optionalAuth = asyncHandler(async (req, _res, next) => {
+  const token = getTokenFromRequest(req);
+
+  if (!token) {
+    req.admin = null;
+    next();
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const configuredEmail = process.env.ADMIN_EMAIL;
+    req.admin = configuredEmail && decoded.email === configuredEmail ? { email: configuredEmail } : null;
+  } catch {
+    req.admin = null;
+  }
+
+  next();
+});
+
 export default protect;
+export { optionalAuth };

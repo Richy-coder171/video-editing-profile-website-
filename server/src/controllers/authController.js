@@ -64,7 +64,7 @@ const logout = asyncHandler(async (_req, res) => {
 });
 
 const me = asyncHandler(async (req, res) => {
-  res.json({ admin: sanitizeAdmin(req.admin) });
+  res.json({ admin: req.admin ? sanitizeAdmin(req.admin) : null });
 });
 
 export { login, logout, me };

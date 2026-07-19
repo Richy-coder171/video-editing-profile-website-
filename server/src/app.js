@@ -73,7 +73,8 @@ app.get('/api/health', (_req, res) => {
   res.json({ status: 'ok', service: 'cinematic-portfolio-api' });
 });
 
-app.use('/api/auth', authLimiter, authRoutes);
+app.use('/api/auth/login', authLimiter);
+app.use('/api/auth', authRoutes);
 app.use('/api/portfolio', apiLimiter, portfolioRoutes);
 app.use('/api/upload', apiLimiter, uploadRoutes);
 
