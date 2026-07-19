@@ -69,22 +69,24 @@ const Designs = () => {
             </button>
           ))}
         </div>
-        <WorkDiscoveryPanel
-          query={query}
-          onQueryChange={setQuery}
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-          featuredOnly={featuredOnly}
-          onFeaturedOnlyChange={setFeaturedOnly}
-          totalCount={typeItems.length}
-          visibleCount={filteredItems.length}
-          placeholder="Search designs, tools, formats, categories"
-          summaryItems={[
-            { label: 'featured', value: summary.featured },
-            { label: 'categories', value: summary.categories },
-            { label: 'tools', value: summary.tools }
-          ]}
-        />
+        {hasUploads && (
+          <WorkDiscoveryPanel
+            query={query}
+            onQueryChange={setQuery}
+            sortBy={sortBy}
+            onSortChange={setSortBy}
+            featuredOnly={featuredOnly}
+            onFeaturedOnlyChange={setFeaturedOnly}
+            totalCount={typeItems.length}
+            visibleCount={filteredItems.length}
+            placeholder="Search designs, tools, formats, categories"
+            summaryItems={[
+              { label: 'featured', value: summary.featured },
+              { label: 'categories', value: summary.categories },
+              { label: 'tools', value: summary.tools }
+            ]}
+          />
+        )}
         {loading && <p className="mt-6 text-sm text-white/60">Loading design work...</p>}
         {error && <p className="mt-6 rounded-lg border border-ember/30 bg-ember/10 p-3 text-sm text-ember">{error}</p>}
         <div className="mt-8 sm:mt-12">
