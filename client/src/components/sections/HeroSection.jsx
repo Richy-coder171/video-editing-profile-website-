@@ -60,7 +60,7 @@ const HeroSection = () => (
             transition={{ duration: 0.65, delay: 0.2 }}
           >
             <p className="max-w-xl text-sm leading-7 text-white/65 sm:text-base">
-              Reels, cinematic edits, thumbnails, posters, and visual systems shaped around rhythm, not presets.
+              I edit reels, shorts, thumbnails, posters, and cinematic videos.
             </p>
             <p className="font-mono text-[0.62rem] uppercase leading-5 tracking-[0.16em] text-white/40">
               Premiere / AE<br />Resolve / PS / AI

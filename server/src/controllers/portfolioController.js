@@ -47,26 +47,21 @@ const throwSupabaseError = (error, fallbackMessage = 'Supabase request failed') 
   throw requestError;
 };
 
-const getPortfolioQuery = ({ type, featured, limit }) => {
+const fetchPortfolioRows = async ({ limit = 200 } = {}) => {
   const supabase = getSupabaseClient();
-  let query = supabase
+  return supabase
     .from('portfolio_items')
     .select('*')
     .order('featured', { ascending: false })
     .order('sort_order', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false })
-    .limit(getLimit(limit));
-
-  if (type) {
-    query = query.eq('type', type);
-  }
-
-  if (featured) {
-    query = query.eq('featured', true);
-  }
-
-  return query;
+  .limit(getLimit(limit));
 };
+
+const filterPortfolioRows = (rows = [], { type, featured, limit }) => rows
+  .filter((row) => !type || row.type === type)
+  .filter((row) => !featured || row.featured === true)
+  .slice(0, getLimit(limit));
 
 const getPortfolioItems = asyncHandler(async (req, res) => {
   const { type, featured, limit = 60 } = req.query;
@@ -76,28 +71,26 @@ const getPortfolioItems = asyncHandler(async (req, res) => {
     throw new Error(`type must be one of: ${PORTFOLIO_TYPES.join(', ')}`);
   }
 
-  const { data, error } = await getPortfolioQuery({
-    type,
-    featured: featured === 'true',
-    limit
-  });
+  const shouldFilterAfterFetch = Boolean(type || featured === 'true');
+  const { data, error } = await fetchPortfolioRows({ limit: shouldFilterAfterFetch ? 200 : limit });
 
   if (error) {
     throwSupabaseError(error);
   }
 
-  const items = (data || []).map(normalizePortfolioRow);
+  const rows = filterPortfolioRows(data || [], { type, featured: featured === 'true', limit });
+  const items = rows.map(normalizePortfolioRow);
   res.json({ items, count: items.length });
 });
 
 const getFeaturedItems = asyncHandler(async (_req, res) => {
-  const { data, error } = await getPortfolioQuery({ featured: true, limit: 12 });
+  const { data, error } = await fetchPortfolioRows({ limit: 200 });
 
   if (error) {
     throwSupabaseError(error);
   }
 
-  const items = (data || []).map(normalizePortfolioRow);
+  const items = filterPortfolioRows(data || [], { featured: true, limit: 12 }).map(normalizePortfolioRow);
   res.json({ items, count: items.length });
 });
 
@@ -125,13 +118,13 @@ const getItemsByType = asyncHandler(async (req, res) => {
     throw new Error(`type must be one of: ${PORTFOLIO_TYPES.join(', ')}`);
   }
 
-  const { data, error } = await getPortfolioQuery({ type, limit: req.query.limit || 100 });
+  const { data, error } = await fetchPortfolioRows({ limit: 200 });
 
   if (error) {
     throwSupabaseError(error);
   }
 
-  const items = (data || []).map(normalizePortfolioRow);
+  const items = filterPortfolioRows(data || [], { type, limit: req.query.limit || 100 }).map(normalizePortfolioRow);
   res.json({ items, count: items.length });
 });
 

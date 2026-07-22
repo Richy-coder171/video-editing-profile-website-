@@ -129,7 +129,7 @@ const AdminDashboard = () => {
             <div className="mt-6 space-y-3">
               {!loading && filteredItems.length === 0 && (
                 <div className="rounded-lg border border-dashed border-white/20 p-8 text-center text-sm text-white/60">
-                  No items in this filter yet.
+                  {items.length === 0 ? 'Upload your first project to start building your portfolio.' : 'No items in this filter yet.'}
                 </div>
               )}
 

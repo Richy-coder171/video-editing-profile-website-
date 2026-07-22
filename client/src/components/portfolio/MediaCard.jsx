@@ -112,7 +112,7 @@ const MediaCard = ({ item, variant = 'video', onOpen, index = 0 }) => {
             Preview
           </button>
           <Link className="btn-primary w-full" to={`/project/${item.id}`}>
-            Details
+            View project
           </Link>
         </div>
       </div>

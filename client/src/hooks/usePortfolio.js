@@ -8,17 +8,22 @@ const usePortfolio = (endpoint = '/portfolio') => {
 
   useEffect(() => {
     let active = true;
+    const controller = new AbortController();
 
     const loadItems = async () => {
       setLoading(true);
       setError('');
 
       try {
-        const { data } = await api.get(endpoint);
+        const { data } = await api.get(endpoint, { signal: controller.signal });
         if (active) {
           setItems(data.items || []);
         }
       } catch (requestError) {
+        if (requestError.code === 'ERR_CANCELED') {
+          return;
+        }
+
         if (active) {
           setError(requestError.response?.data?.message || 'Portfolio API is not available yet');
           setItems([]);
@@ -34,6 +39,7 @@ const usePortfolio = (endpoint = '/portfolio') => {
 
     return () => {
       active = false;
+      controller.abort();
     };
   }, [endpoint]);
 

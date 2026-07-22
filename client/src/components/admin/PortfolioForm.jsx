@@ -388,8 +388,8 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         <p className="font-mono text-[0.65rem] uppercase tracking-[0.14em] text-acid">Optional case-study details</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <label className="field-label">
-            Role / What I did
-            <input className="input" value={form.role} onChange={(event) => updateField('role', event.target.value)} placeholder="Editor, colorist, motion designer" />
+            What did you do in this project?
+            <input className="input" value={form.role} onChange={(event) => updateField('role', event.target.value)} placeholder="Editing, color, thumbnails, motion graphics" />
           </label>
           <label className="field-label">
             Client name
@@ -406,15 +406,15 @@ const PortfolioForm = ({ editingItem, onSaved, onCancel }) => {
         </div>
         <label className="field-label mt-4">
           Project goal
-          <textarea className="input min-h-24 resize-y" value={form.projectGoal} onChange={(event) => updateField('projectGoal', event.target.value)} />
+          <textarea className="input min-h-24 resize-y" value={form.projectGoal} onChange={(event) => updateField('projectGoal', event.target.value)} placeholder="What was this project supposed to do?" />
         </label>
         <label className="field-label mt-4">
           Editing / design process
-          <textarea className="input min-h-24 resize-y" value={form.process} onChange={(event) => updateField('process', event.target.value)} />
+          <textarea className="input min-h-24 resize-y" value={form.process} onChange={(event) => updateField('process', event.target.value)} placeholder="How did you approach the edit or design?" />
         </label>
         <label className="field-label mt-4">
           Final result
-          <textarea className="input min-h-24 resize-y" value={form.result} onChange={(event) => updateField('result', event.target.value)} />
+          <textarea className="input min-h-24 resize-y" value={form.result} onChange={(event) => updateField('result', event.target.value)} placeholder="What changed after the final delivery?" />
         </label>
       </div>
 

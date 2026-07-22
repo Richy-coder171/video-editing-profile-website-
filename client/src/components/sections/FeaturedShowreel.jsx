@@ -80,7 +80,7 @@ const FeaturedShowreel = ({ items }) => {
                 </div>
               </div>
               <div className="mt-8 grid gap-3">
-                <Link className="btn-primary" to={`/project/${featuredProject.id}`}>View full project <ArrowRight size={16} /></Link>
+                <Link className="btn-primary" to={`/project/${featuredProject.id}`}>Watch project <ArrowRight size={16} /></Link>
                 <Link className="btn-secondary" to="/contact">Hire me</Link>
               </div>
             </div>

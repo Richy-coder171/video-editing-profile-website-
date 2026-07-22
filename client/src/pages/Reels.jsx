@@ -12,7 +12,7 @@ const Reels = () => {
   const [query, setQuery] = useState('');
   const [sortBy, setSortBy] = useState('featured');
   const [featuredOnly, setFeaturedOnly] = useState(false);
-  const reelCategories = ['All', 'Gaming', 'Cinematic', 'Ads', 'YouTube Shorts', 'Instagram Reels'];
+  const reelCategories = ['All', 'Instagram Reels', 'YouTube Shorts', 'Gaming', 'Cinematic', 'Ads'];
   const categoryItems = useMemo(() => {
     if (activeCategory === 'All') return items;
     const category = activeCategory.toLowerCase();

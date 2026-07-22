@@ -142,7 +142,7 @@ const ProjectLightbox = ({ item, items = [], onChange, onClose }) => {
                   <p className="font-display text-2xl font-semibold uppercase text-white">Like this style?</p>
                   <div className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-1 xl:grid-cols-2">
                     <Link className="btn-primary" to="/contact" onClick={onClose}>Hire me</Link>
-                    <Link className="btn-secondary" to={`/project/${item.id}`} onClick={onClose}>View full project</Link>
+                    <Link className="btn-secondary" to={`/project/${item.id}`} onClick={onClose}>View project</Link>
                   </div>
                   <button className="mt-3 w-full py-2 font-mono text-[0.65rem] uppercase tracking-[0.1em] text-white/45 hover:text-white" onClick={onClose}>View more work</button>
                 </div>

@@ -154,7 +154,7 @@ const FeaturedShowcase = ({ items }) => {
                         className="btn-secondary"
                         to={`/project/${spotlightItem.id}`}
                       >
-                        Full project <ArrowRight size={15} />
+                        View project <ArrowRight size={15} />
                       </Link>
                     </span>
                   </div>
@@ -178,7 +178,7 @@ const FeaturedShowcase = ({ items }) => {
               <div>
                 <p className="eyebrow">Work together</p>
                 <p className="mt-2 font-display text-3xl font-bold uppercase leading-none text-frost">
-                  Like this editing style? Let's work together.
+                  Like this editing style? Let&apos;s work together.
                 </p>
               </div>
               <Link className="btn-primary mt-5 sm:mt-0" to="/contact">
