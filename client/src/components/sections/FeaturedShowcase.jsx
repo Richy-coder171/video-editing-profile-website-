@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { ArrowRight, Grid2X2, Images, Play, Star } from 'lucide-react';
+import { ArrowRight, Grid2X2, Images, Mail, Play, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import EmptyState from '../portfolio/EmptyState.jsx';
 import MediaCard from '../portfolio/MediaCard.jsx';
@@ -56,12 +56,12 @@ const FeaturedShowcase = ({ items }) => {
       <div className="section-shell">
         <div className="mb-8 grid gap-6 border-b border-white/15 pb-7 md:grid-cols-[1fr_0.42fr] md:items-end">
           <div>
-            <p className="eyebrow">Best work / 02</p>
-            <h2 className="reveal-text section-title mt-3 max-w-4xl">A sharper showcase for the work that matters.</h2>
+            <p className="eyebrow">Selected work</p>
+            <h2 className="reveal-text section-title mt-3 max-w-4xl">Watch the edits and designs clearly.</h2>
           </div>
           <div className="space-y-4 md:border-l md:border-white/15 md:pl-4">
             <p className="max-w-md text-sm leading-7 text-white/55">
-              Filter real uploads by format, open a quick preview, or jump into a full project page with notes and media.
+              See featured projects first, preview the media, and open the full project notes when you need context.
             </p>
             <div className="grid grid-cols-3 gap-2 text-center font-mono text-[0.58rem] uppercase tracking-[0.11em] text-white/45">
               <span className="border border-white/10 bg-white/[0.025] px-2 py-3">
@@ -95,7 +95,8 @@ const FeaturedShowcase = ({ items }) => {
         </div>
 
         {visibleItems.length ? (
-          <div className={`grid gap-5 ${galleryItems.length ? 'lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]' : ''}`}>
+          <>
+            <div className={`grid gap-5 ${galleryItems.length ? 'lg:grid-cols-[minmax(0,0.92fr)_minmax(0,1.08fr)]' : ''}`}>
             {spotlightItem && (
               <article className="manga-panel group min-h-[34rem] border-white/15 bg-black">
                 <div className="relative h-full min-h-[34rem] overflow-hidden">
@@ -172,7 +173,20 @@ const FeaturedShowcase = ({ items }) => {
                 />
               ))}
             </div>
-          </div>
+            </div>
+            <div className="mt-8 anime-surface rounded-lg p-5 sm:flex sm:items-center sm:justify-between sm:gap-6">
+              <div>
+                <p className="eyebrow">Work together</p>
+                <p className="mt-2 font-display text-3xl font-bold uppercase leading-none text-frost">
+                  Like this editing style? Let's work together.
+                </p>
+              </div>
+              <Link className="btn-primary mt-5 sm:mt-0" to="/contact">
+                <Mail size={17} />
+                Hire me
+              </Link>
+            </div>
+          </>
         ) : <EmptyState />}
       </div>
       <ProjectLightbox item={activeItem} items={visibleItems} onChange={setActiveItem} onClose={() => setActiveItem(null)} />

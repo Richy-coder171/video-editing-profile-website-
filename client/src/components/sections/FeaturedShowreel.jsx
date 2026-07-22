@@ -7,8 +7,8 @@ import { isVideoProject, sortPortfolioItems } from '../../utils/portfolio.js';
 const FeaturedShowreel = ({ items }) => {
   const videoRef = useRef(null);
   const [started, setStarted] = useState(false);
-  const sortedVideos = sortPortfolioItems(items).filter(isVideoProject);
-  const featuredProject = sortedVideos.find((item) => item.featured) || sortedVideos[0];
+  const sortedVideos = sortPortfolioItems(items).filter((item) => isVideoProject(item) && item.featured);
+  const featuredProject = sortedVideos[0];
 
   const startPlayback = () => {
     videoRef.current?.play().catch(() => undefined);
@@ -57,7 +57,7 @@ const FeaturedShowreel = ({ items }) => {
             <div className="flex flex-col justify-between border-t border-white/10 p-6 sm:p-8 lg:border-l lg:border-t-0">
               <div>
                 <p className="font-mono text-[0.62rem] uppercase tracking-[0.13em] text-acid">
-                  {featuredProject.featured ? 'Featured pick' : 'Latest video pick'} / {featuredProject.type}
+                  Featured pick / {featuredProject.type}
                 </p>
                 <h3 className="mt-4 break-words font-display text-5xl font-bold uppercase leading-[0.88] text-frost">{featuredProject.title}</h3>
                 <div className="mt-5 grid gap-3 border-y border-white/10 py-4 font-mono text-[0.62rem] uppercase tracking-[0.1em] text-white/45 sm:grid-cols-2">

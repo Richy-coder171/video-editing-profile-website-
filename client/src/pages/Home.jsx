@@ -76,8 +76,8 @@ const Home = () => {
           </div>
         </section>
       )}
-      <FeaturedShowreel items={items} />
       <FeaturedShowcase items={items} />
+      <FeaturedShowreel items={items} />
       <ReelsHorizontal items={items} />
       <ServicesTools />
       <ProcessTimeline />
