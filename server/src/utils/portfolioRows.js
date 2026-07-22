@@ -13,6 +13,13 @@ const normalizeTools = (tools) => {
 
 const parseFeatured = (value) => value === true || value === 'true' || value === 'on';
 
+const parseBoolean = (value) => value === true || value === 'true' || value === 'on' || value === '1';
+
+const parseStatus = (value) => {
+  const status = String(value || 'published').trim().toLowerCase();
+  return ['draft', 'published'].includes(status) ? status : 'published';
+};
+
 const normalizeExternalUrl = (value) => {
   const normalized = String(value || '').trim();
   if (!normalized) return '';
@@ -95,8 +102,15 @@ const normalizePortfolioRow = (row = {}) => {
     process: row.process || '',
     result: row.result || '',
     aspectRatio: row.aspect_ratio || '',
+    format: row.format || '',
+    duration: row.duration || '',
+    deliveryTime: row.delivery_time || '',
     externalUrl: row.external_url || '',
     clientName: row.client_name || '',
+    beforeMediaUrl: row.before_media_url || '',
+    beforePublicId: row.before_public_id || '',
+    afterMediaUrl: row.after_media_url || mediaUrl,
+    afterPublicId: row.after_public_id || row.cloudinary_public_id || '',
     tools: normalizeTools(row.tools),
     mediaUrl,
     thumbnailUrl,
@@ -105,6 +119,8 @@ const normalizePortfolioRow = (row = {}) => {
     thumbnailPublicId: row.thumbnail_public_id || '',
     resourceType,
     featured: Boolean(row.featured),
+    isVisible: row.is_visible !== false,
+    status: row.status || 'published',
     sortOrder: row.sort_order ?? null,
     createdAt: row.created_at,
     updatedAt: row.updated_at
@@ -125,4 +141,14 @@ const validatePortfolioPayload = ({ title, type }, { requireTitle = true, requir
   return errors;
 };
 
-export { normalizeExternalUrl, normalizePortfolioRow, normalizeTools, parseFeatured, parseProjectDate, parseSortOrder, validatePortfolioPayload };
+export {
+  normalizeExternalUrl,
+  normalizePortfolioRow,
+  normalizeTools,
+  parseBoolean,
+  parseFeatured,
+  parseProjectDate,
+  parseSortOrder,
+  parseStatus,
+  validatePortfolioPayload
+};

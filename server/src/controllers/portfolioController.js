@@ -6,9 +6,11 @@ import {
   normalizePortfolioRow,
   normalizeExternalUrl,
   normalizeTools,
+  parseBoolean,
   parseFeatured,
   parseProjectDate,
-  parseSortOrder
+  parseSortOrder,
+  parseStatus
 } from '../utils/portfolioRows.js';
 
 const hasOwn = (object, key) => Object.prototype.hasOwnProperty.call(object, key);
@@ -24,7 +26,15 @@ const optionalTextFields = {
   aspect_ratio: 'aspect_ratio',
   aspectRatio: 'aspect_ratio',
   client_name: 'client_name',
-  clientName: 'client_name'
+  clientName: 'client_name',
+  format: 'format',
+  duration: 'duration',
+  delivery_time: 'delivery_time',
+  deliveryTime: 'delivery_time',
+  before_public_id: 'before_public_id',
+  beforePublicId: 'before_public_id',
+  after_public_id: 'after_public_id',
+  afterPublicId: 'after_public_id'
 };
 
 const throwSupabaseError = (error, fallbackMessage = 'Supabase request failed') => {
@@ -55,10 +65,13 @@ const fetchPortfolioRows = async ({ limit = 200 } = {}) => {
     .order('featured', { ascending: false })
     .order('sort_order', { ascending: true, nullsFirst: false })
     .order('created_at', { ascending: false })
-  .limit(getLimit(limit));
+    .limit(getLimit(limit));
 };
 
-const filterPortfolioRows = (rows = [], { type, featured, limit }) => rows
+const isPublicPortfolioRow = (row = {}) => row.is_visible !== false && (row.status || 'published') === 'published';
+
+const filterPortfolioRows = (rows = [], { type, featured, limit, publicOnly = true } = {}) => rows
+  .filter((row) => !publicOnly || isPublicPortfolioRow(row))
   .filter((row) => !type || row.type === type)
   .filter((row) => !featured || row.featured === true)
   .slice(0, getLimit(limit));
@@ -83,6 +96,18 @@ const getPortfolioItems = asyncHandler(async (req, res) => {
   res.json({ items, count: items.length });
 });
 
+const getAdminPortfolioItems = asyncHandler(async (req, res) => {
+  const { limit = 120 } = req.query;
+  const { data, error } = await fetchPortfolioRows({ limit });
+
+  if (error) {
+    throwSupabaseError(error);
+  }
+
+  const items = filterPortfolioRows(data || [], { limit, publicOnly: false }).map(normalizePortfolioRow);
+  res.json({ items, count: items.length });
+});
+
 const getFeaturedItems = asyncHandler(async (_req, res) => {
   const { data, error } = await fetchPortfolioRows({ limit: 200 });
 
@@ -104,6 +129,11 @@ const getPortfolioItem = asyncHandler(async (req, res) => {
 
   if (error) {
     throwSupabaseError(error, 'Portfolio item not found');
+  }
+
+  if (!isPublicPortfolioRow(data)) {
+    res.status(404);
+    throw new Error('Portfolio item not found');
   }
 
   const item = normalizePortfolioRow(data);
@@ -171,12 +201,31 @@ const buildUpdatePayload = (body) => {
     payload.project_date = parseProjectDate(projectDate);
   }
 
+  const beforeMediaUrl = hasOwn(body, 'before_media_url') ? body.before_media_url : body.beforeMediaUrl;
+  if (beforeMediaUrl !== undefined) {
+    payload.before_media_url = normalizeExternalUrl(beforeMediaUrl);
+  }
+
+  const afterMediaUrl = hasOwn(body, 'after_media_url') ? body.after_media_url : body.afterMediaUrl;
+  if (afterMediaUrl !== undefined) {
+    payload.after_media_url = normalizeExternalUrl(afterMediaUrl);
+  }
+
   if (hasOwn(body, 'tools')) {
     payload.tools = normalizeTools(body.tools);
   }
 
   if (hasOwn(body, 'featured')) {
     payload.featured = parseFeatured(body.featured);
+  }
+
+  const isVisible = hasOwn(body, 'is_visible') ? body.is_visible : body.isVisible;
+  if (isVisible !== undefined) {
+    payload.is_visible = parseBoolean(isVisible);
+  }
+
+  if (hasOwn(body, 'status')) {
+    payload.status = parseStatus(body.status);
   }
 
   const sortOrder = hasOwn(body, 'sort_order') ? body.sort_order : body.sortOrder;
@@ -244,4 +293,12 @@ const deletePortfolioItem = asyncHandler(async (req, res) => {
   res.json({ message: 'Portfolio item deleted' });
 });
 
-export { getPortfolioItem, getPortfolioItems, getFeaturedItems, getItemsByType, updatePortfolioItem, deletePortfolioItem };
+export {
+  getAdminPortfolioItems,
+  getPortfolioItem,
+  getPortfolioItems,
+  getFeaturedItems,
+  getItemsByType,
+  updatePortfolioItem,
+  deletePortfolioItem
+};
