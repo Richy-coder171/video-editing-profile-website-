@@ -17,6 +17,14 @@ const AdminLogin = () => {
     return <Navigate to="/admin" replace />;
   }
 
+  const getLoginErrorMessage = (requestError) => {
+    if (!requestError.response) {
+      return 'Cannot reach the API. Make sure the server is running on http://localhost:5000 and open the site from http://localhost:5173.';
+    }
+
+    return requestError.response.data?.message || 'Unable to log in';
+  };
+
   const handleSubmit = async (event) => {
     event.preventDefault();
     setSubmitting(true);
@@ -26,7 +34,7 @@ const AdminLogin = () => {
       await login({ email, password });
       navigate(location.state?.from?.pathname || '/admin', { replace: true });
     } catch (requestError) {
-      setError(requestError.response?.data?.message || 'Unable to log in');
+      setError(getLoginErrorMessage(requestError));
     } finally {
       setSubmitting(false);
     }

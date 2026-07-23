@@ -12,12 +12,20 @@ import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
 
-const allowedOrigins = (process.env.CORS_ORIGINS || process.env.CLIENT_URL || '')
+const configuredOrigins = (process.env.CORS_ORIGINS || process.env.CLIENT_URL || '')
   .split(',')
   .map((origin) => origin.trim())
   .filter(Boolean);
 
 const defaultDevOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
+
+const getOriginAllowList = () => {
+  if (process.env.NODE_ENV === 'production') {
+    return configuredOrigins;
+  }
+
+  return [...new Set([...configuredOrigins, ...defaultDevOrigins])];
+};
 
 app.set('trust proxy', 1);
 app.use(
@@ -33,8 +41,7 @@ app.use(
         return;
       }
 
-      const originAllowList =
-        allowedOrigins.length > 0 || process.env.NODE_ENV === 'production' ? allowedOrigins : defaultDevOrigins;
+      const originAllowList = getOriginAllowList();
 
       if (originAllowList.includes(origin)) {
         callback(null, true);
