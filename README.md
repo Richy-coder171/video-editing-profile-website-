@@ -95,6 +95,8 @@ MAX_VIDEO_SIZE_MB=100
 
 Manually replace the Cloudinary and Supabase placeholders with real values. For production, prefer `ADMIN_PASSWORD_HASH` instead of `ADMIN_PASSWORD`.
 
+If any secret or password begins with `#`, wrap it in quotes in `.env`, for example `ADMIN_PASSWORD="#your-password"`. Unquoted `#` is treated as a comment by `.env` parsers.
+
 Fill in `client/.env`:
 
 ```env
