@@ -3,6 +3,7 @@ import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import { LockKeyhole, LogIn, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../contexts/authContext.js';
 import LazyPage3DAccent from '../components/three/LazyPage3DAccent.jsx';
+import { API_URL } from '../services/api.js';
 
 const AdminLogin = () => {
   const [email, setEmail] = useState('');
@@ -19,7 +20,7 @@ const AdminLogin = () => {
 
   const getLoginErrorMessage = (requestError) => {
     if (!requestError.response) {
-      return 'Cannot reach the API. Make sure the server is running on http://localhost:5000 and open the site from http://localhost:5173.';
+      return `Cannot reach the API at ${API_URL}. Make sure the server is running and refresh this page.`;
     }
 
     return requestError.response.data?.message || 'Unable to log in';

@@ -1,6 +1,49 @@
 import axios from 'axios';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
+const localHostnames = new Set(['localhost', '127.0.0.1', '[::1]', '::1']);
+
+const isPrivateIpv4 = (hostname = '') =>
+  /^10\./.test(hostname) ||
+  /^192\.168\./.test(hostname) ||
+  /^172\.(1[6-9]|2\d|3[0-1])\./.test(hostname);
+
+const getDevApiUrl = () => {
+  if (typeof window === 'undefined') {
+    return 'http://localhost:5000/api';
+  }
+
+  return `${window.location.protocol}//${window.location.hostname}:5000/api`;
+};
+
+const getApiUrl = () => {
+  const configuredUrl = String(import.meta.env.VITE_API_URL || '').trim();
+
+  if (!configuredUrl) {
+    return getDevApiUrl();
+  }
+
+  if (typeof window === 'undefined') {
+    return configuredUrl;
+  }
+
+  try {
+    const apiUrl = new URL(configuredUrl);
+    const pageHostname = window.location.hostname;
+    const apiIsLocal = localHostnames.has(apiUrl.hostname) || apiUrl.hostname === '[::1]';
+    const pageIsLocal = localHostnames.has(pageHostname) || isPrivateIpv4(pageHostname);
+
+    if (apiIsLocal && pageIsLocal && apiUrl.hostname !== pageHostname) {
+      apiUrl.hostname = pageHostname;
+      return apiUrl.toString().replace(/\/$/, '');
+    }
+  } catch {
+    return configuredUrl;
+  }
+
+  return configuredUrl.replace(/\/$/, '');
+};
+
+const API_URL = getApiUrl();
 
 const api = axios.create({
   baseURL: API_URL,

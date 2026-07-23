@@ -19,6 +19,22 @@ const configuredOrigins = (process.env.CORS_ORIGINS || process.env.CLIENT_URL ||
 
 const defaultDevOrigins = ['http://localhost:5173', 'http://127.0.0.1:5173'];
 
+const isPrivateIpv4 = (hostname = '') =>
+  /^10\./.test(hostname) ||
+  /^192\.168\./.test(hostname) ||
+  /^172\.(1[6-9]|2\d|3[0-1])\./.test(hostname);
+
+const isAllowedDevOrigin = (origin) => {
+  try {
+    const url = new URL(origin);
+    const isDevPort = /^517\d$/.test(url.port);
+    const isLocalHost = ['localhost', '127.0.0.1', '::1'].includes(url.hostname);
+    return isDevPort && (isLocalHost || isPrivateIpv4(url.hostname));
+  } catch {
+    return false;
+  }
+};
+
 const getOriginAllowList = () => {
   if (process.env.NODE_ENV === 'production') {
     return configuredOrigins;
@@ -43,7 +59,7 @@ app.use(
 
       const originAllowList = getOriginAllowList();
 
-      if (originAllowList.includes(origin)) {
+      if (originAllowList.includes(origin) || (process.env.NODE_ENV !== 'production' && isAllowedDevOrigin(origin))) {
         callback(null, true);
         return;
       }

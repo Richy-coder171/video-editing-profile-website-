@@ -218,6 +218,8 @@ Server: `http://localhost:5000`
 
 Health check: `http://localhost:5000/api/health`
 
+If admin login cannot reach the API, close duplicate dev terminals and run `npm run dev` once from the project root. In development the frontend automatically matches the API host to the page host, so `localhost:5173` talks to `localhost:5000` and `127.0.0.1:5173` talks to `127.0.0.1:5000`.
+
 ## Admin Login
 
 Admin credentials come from environment variables:
